@@ -1,0 +1,33 @@
+{
+  "instructions": "GET to /docs - Documentation endpoint with branch information",
+  "endpoint": "http://localhost:3000/docs",
+  "method": "GET",
+  "description": "Returns workshop documentation and branch progression information",
+  "expected_response": {
+    "workshop": "Product Semantic Search Workshop v2",
+    "certification": "OpenAI API Practitioner Certification Ready",
+    "tagline": "From \"zapatillas deportivas\" to intelligent product discovery",
+    "branches": {
+      "1-initial-project": {
+        "description": "Setup multimodal basics: chat, speech-to-text, text-to-speech, image analysis",
+        "features": ["OpenAI SDK configuration", "Basic chat with GPT-4o", "Audio transcription", "Voice responses", "Image analysis"],
+        "duration": "40 minutes"
+      },
+      "2-rag-implementation": {
+        "description": "Semantic search with embeddings and vector store",
+        "features": ["text-embedding-3-large", "Product catalog indexing", "Hybrid search (text + image)", "Similarity scoring", "Smart filtering"],
+        "duration": "50 minutes"
+      }
+    },
+    "totalDuration": "3.5 hours + breaks",
+    "currentFeatures": [
+      "Express server with TypeScript",
+      "OpenAI SDK integration",
+      "Professional logging system",
+      "Health monitoring",
+      "Ready for multimodal inputs"
+    ]
+  },
+  "curl_example": "curl http://localhost:3000/docs",
+  "available_from": "branch-1-initial-project"
+}

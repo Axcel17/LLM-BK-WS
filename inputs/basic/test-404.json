@@ -1,0 +1,21 @@
+{
+  "instructions": "GET to any non-existent endpoint - 404 handler test",
+  "endpoint": "http://localhost:3000/nonexistent",
+  "method": "GET",
+  "description": "Tests the 404 handler for undefined routes",
+  "expected_response": {
+    "error": "Endpoint not found",
+    "available": ["/", "/health", "/docs", "/progress", "/features", "/costs"],
+    "currentBranch": "1-initial-project",
+    "hint": "This is the initial setup! Switch to other branches for more endpoints:",
+    "nextEndpoints": {
+      "branch-2": ["/search", "/index"],
+      "branch-3": ["/assistant", "/tools"],
+      "branch-4": ["/fine-tune", "/intent"],
+      "branch-5": ["/moderate", "/metrics"]
+    }
+  },
+  "curl_example": "curl http://localhost:3000/nonexistent",
+  "available_from": "branch-1-initial-project",
+  "expected_status": 404
+}

@@ -1,0 +1,18 @@
+{
+  "instructions": "GET to / - Welcome endpoint with workshop overview",
+  "endpoint": "http://localhost:3000/",
+  "method": "GET",
+  "description": "Returns workshop overview and available endpoints for current branch",
+  "expected_response": {
+    "message": "🛍️ Product Semantic Search Workshop v2 - OpenAI API Practitioner",
+    "description": "Progressive multimodal AI system: Setup → RAG → Tool Calling → Fine-tuning → Production",
+    "currentBranch": "1-initial-project",
+    "objective": "Build an intelligent product search system that understands voice, text, and images",
+    "nextStep": "Switch to branch 2-rag-implementation to start building the semantic search",
+    "documentation": "/docs",
+    "health": "/health",
+    "demo": "Ready for multimodal product recommendations! 🎯"
+  },
+  "curl_example": "curl http://localhost:3000/",
+  "available_from": "branch-1-initial-project"
+}

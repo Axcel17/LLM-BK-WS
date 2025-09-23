@@ -1,0 +1,35 @@
+{
+  "instructions": "GET to /features - Features showcase endpoint",
+  "endpoint": "http://localhost:3000/features",
+  "method": "GET",
+  "description": "Returns detailed features overview and use cases for the product search system",
+  "expected_response": {
+    "title": "Product Semantic Search - Feature Showcase",
+    "multimodal": {
+      "voice": "Users can ask \"Necesito algo para ejercicio en casa\" by voice",
+      "text": "Natural language queries like \"regalo para mi mamá cocinera\"",
+      "image": "Upload product photos to find similar items",
+      "response": "AI responds via text or personalized voice"
+    },
+    "intelligence": {
+      "semantic": "Understands intent, not just keywords",
+      "contextual": "Considers budget, recipient, occasion automatically",
+      "comparative": "Smart product comparisons with recommendations",
+      "personalized": "Learns from user preferences and context"
+    },
+    "technical": {
+      "embedding": "text-embedding-3-large for semantic similarity",
+      "models": "GPT-4o for vision, GPT-4o-mini for efficiency",
+      "tools": "Specialized functions for search, compare, detail",
+      "safety": "Content moderation and production-grade error handling"
+    },
+    "useCases": [
+      "🎤 \"Auriculares para trabajar desde casa\" → Voice search",
+      "📷 Photo of shoes → \"Find similar products\"",
+      "💭 \"Regalo $100 para mamá\" → Personalized recommendations",
+      "⚖️ \"Compare iPhone vs Samsung\" → Intelligent comparison"
+    ]
+  },
+  "curl_example": "curl http://localhost:3000/features",
+  "available_from": "branch-1-initial-project"
+}
