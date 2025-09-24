@@ -2,6 +2,7 @@ import express from "express";
 import { config } from "./config";
 import { Logger } from "./utils/logger";
 import basicsRoutes from "./routes/basics";
+import ragRoutes from "./routes/rag";
 
 const app = express();
 
@@ -25,19 +26,20 @@ app.get("/", (req, res) => {
     message: "🛍️ Product Semantic Search Workshop v2 - OpenAI API Practitioner",
     description:
       "Progressive multimodal AI system: Setup → RAG → Tool Calling → Fine-tuning → Production",
-    currentBranch: "1-initial-project",
+    currentBranch: "2-rag-implementation",
     objective:
       "Build an intelligent product search system that understands voice, text, and images",
     nextStep:
-      "Switch to branch 2-rag-implementation to start building the semantic search",
+      "Test the RAG endpoints: /rag/search, /rag/categories, /rag/browse/:category",
     documentation: "/docs",
     health: "/health",
-    demo: "Ready for multimodal product recommendations! 🎯",
+    demo: "Ready for semantic product search with RAG! 🔍",
   });
 });
 
-// Mount multimodal AI routes
+// Mount route modules
 app.use("/", basicsRoutes);
+app.use("/rag", ragRoutes);
 
 // Docs endpoint
 app.get("/docs", (req, res) => {
@@ -61,13 +63,20 @@ app.get("/docs", (req, res) => {
       "2-rag-implementation": {
         description: "Semantic search with embeddings and vector store",
         features: [
-          "text-embedding-3-large",
-          "Product catalog indexing",
-          "Hybrid search (text + image)",
-          "Similarity scoring",
-          "Smart filtering",
+          "text-embedding-3-small (cost-optimized)",
+          "Product catalog with 12 items",
+          "Vector similarity search",
+          "Brand and price filtering",
+          "Contextual AI responses",
         ],
         duration: "50 minutes",
+        endpoints: [
+          "POST /rag/search - Semantic product search",
+          "GET /rag/categories - Available filters",
+          "GET /rag/browse/:category - Browse by category",
+          "GET /rag/health - Service status",
+        ],
+        testFiles: "inputs/rag/*.json",
       },
       "3-tool-calling": {
         description:
@@ -125,23 +134,25 @@ app.get("/docs", (req, res) => {
 // Workshop progress endpoint
 app.get("/progress", (req, res) => {
   res.json({
-    currentBranch: "1-initial-project",
+    currentBranch: "2-rag-implementation",
     completed: [
       "✅ Project setup",
       "✅ OpenAI configuration",
-      "✅ Basic server",
+      "✅ Multimodal endpoints (chat, voice, image)",
+      "✅ Product catalog with embeddings",
+      "✅ Vector similarity search",
+      "✅ RAG service implementation",
     ],
-    inProgress: ["🔄 Multimodal capabilities"],
+    inProgress: ["🔄 Testing semantic search functionality"],
     upcoming: [
-      "⏳ RAG with product embeddings",
       "⏳ Intelligent tool calling",
       "⏳ Fine-tuned intent recognition",
       "⏳ Production deployment",
     ],
-    demoReady: false,
-    nextMilestone: "Complete multimodal setup to unlock product search",
+    demoReady: true,
+    nextMilestone: "Test semantic search: POST /rag/search with filters",
     workshopGoal:
-      "Intelligent product assistant that understands voice, text, and images",
+      "Intelligent product assistant with semantic search capabilities",
   });
 });
 
@@ -162,9 +173,9 @@ app.get("/features", (req, res) => {
       personalized: "Learns from user preferences and context",
     },
     technical: {
-      embedding: "text-embedding-3-large for semantic similarity",
-      models: "GPT-4o-mini for efficiency, GPT-4o for vision",
-      tools: "Specialized functions for search, compare, detail",
+      embedding: "text-embedding-3-small for cost optimization",
+      models: "GPT-4o-mini for efficiency, GPT-4o Vision for images",
+      vectorStore: "In-memory cosine similarity with filtering",
       safety: "Content moderation and production-grade error handling",
     },
     useCases: [
@@ -199,7 +210,8 @@ app.get("/costs", (req, res) => {
       "/chat": "300 tokens max",
       "/analyze-image": "50 tokens max (cost optimized)",
       "/query-voice-to-text": "Audio length based (Whisper) + 150 tokens for suggestions",
-      "/query-text-to-voice": "30 tokens for enhancement + TTS based on text length"
+      "/query-text-to-voice": "30 tokens for enhancement + TTS based on text length",
+      "/rag/search": "RAG context + 200 tokens for AI response"
     },
     tips: [
       "Use provided product catalog (no real API calls)",

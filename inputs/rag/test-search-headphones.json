@@ -1,0 +1,7 @@
+{
+  "query": "Necesito auriculares cómodos para trabajar desde casa, que no sean muy caros",
+  "filters": {
+    "maxPrice": 150,
+    "limit": 3
+  }
+}
