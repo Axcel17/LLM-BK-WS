@@ -1,0 +1,32 @@
+{
+  "instructions": "POST to /query-voice-to-text - Speech-to-text with product suggestions",
+  "endpoint": "http://localhost:3000/query-voice-to-text",
+  "method": "POST",
+  "description": "Upload an audio file to transcribe speech and get product suggestions",
+  "content_type": "multipart/form-data",
+  "form_data": {
+    "audio": "FILE - Audio file (mp3, mp4, mpeg, mpga, m4a, wav, webm)"
+  },
+  "expected_response": {
+    "success": true,
+    "transcription": {
+      "model": "whisper-1",
+      "language": "es",
+      "originalAudio": "STRING - Original filename",
+      "transcribedText": "STRING - Transcribed text",
+      "audioSize": "NUMBER - File size in bytes",
+      "processingTime": "NUMBER - Processing timestamp"
+    },
+    "suggestions": {
+      "model": "gpt-4o-mini",
+      "usage": "OBJECT - Token usage",
+      "text": "STRING - Product suggestions based on transcribed text"
+    },
+    "processingTime": "NUMBER - Overall processing time",
+    "workshop": "Product Semantic Search - Speech-to-Text"
+  },
+  "curl_example": "curl -X POST http://localhost:3000/query-voice-to-text -F \"audio=@path/to/your/audio.mp3\"",
+  "available_from": "branch-1-initial-project",
+  "notes": "Supported formats: mp3, mp4, mpeg, mpga, m4a, wav, webm. Max size: 25MB. Files are automatically deleted after processing.",
+  "test_audio_suggestion": "Record yourself saying: 'Hola, estoy buscando unos zapatos deportivos para correr'"
+}

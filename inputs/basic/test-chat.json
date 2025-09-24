@@ -1,0 +1,27 @@
+{
+  "instructions": "POST to /chat - Basic text-to-text chat with GPT-4o",
+  "endpoint": "http://localhost:3000/chat",
+  "method": "POST",
+  "description": "Send a message to GPT-4o and receive a response with configurable temperature",
+  "content_type": "application/json",
+  "body": {
+    "message": "¿Puedes recomendarme unos auriculares para trabajar desde casa?",
+    "temperature": 0.7
+  },
+  "expected_response": {
+    "success": true,
+    "query": "¿Puedes recomendarme unos auriculares para trabajar desde casa?",
+    "response": "STRING - GPT-4o-mini response with product recommendations",
+    "metadata": {
+      "model": "gpt-4o-mini",
+      "temperature": 0.7,
+      "tokensUsed": "NUMBER - Total tokens consumed",
+      "timestamp": "ISO_DATE_STRING",
+      "responseType": "product_assistance"
+    },
+    "workshop": "Product Semantic Search - Basic Chat"
+  },
+  "curl_example": "curl -X POST http://localhost:3000/chat -H \"Content-Type: application/json\" -d '{\"message\":\"¿Puedes recomendarme unos auriculares?\",\"temperature\":0.7}'",
+  "available_from": "branch-1-initial-project",
+  "notes": "Temperature should be between 0-2, message is required"
+}

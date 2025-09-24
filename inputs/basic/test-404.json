@@ -5,9 +5,15 @@
   "description": "Tests the 404 handler for undefined routes",
   "expected_response": {
     "error": "Endpoint not found",
-    "available": ["/", "/health", "/docs", "/progress", "/features", "/costs"],
+    "available": ["/", "/health", "/docs", "/progress", "/features", "/costs", "/chat", "/query-voice-to-text", "/query-text-to-voice", "/analyze-image"],
+    "multimodal": {
+      "chat": "POST - Text-to-text chat with GPT-4o-mini (300 tokens max)",
+      "query-voice-to-text": "POST - Speech-to-text with Whisper + product suggestions (multipart/form-data)",
+      "query-text-to-voice": "POST - Enhanced text-to-speech with TTS",
+      "analyze-image": "POST - Image analysis with GPT-4o-mini (supports file upload or URL)"
+    },
     "currentBranch": "1-initial-project",
-    "hint": "This is the initial setup! Switch to other branches for more endpoints:",
+    "hint": "This is the multimodal setup! Switch to other branches for more endpoints:",
     "nextEndpoints": {
       "branch-2": ["/search", "/index"],
       "branch-3": ["/assistant", "/tools"],

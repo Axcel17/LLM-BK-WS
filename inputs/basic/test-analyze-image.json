@@ -1,0 +1,37 @@
+{
+  "instructions": "POST to /analyze-image - Image analysis with GPT-4o-mini",
+  "endpoint": "http://localhost:3000/analyze-image",
+  "method": "POST",
+  "description": "Upload an image file or send image URL to analyze products using GPT-4o-mini Vision",
+  "content_type_options": [
+    "multipart/form-data (for file upload)",
+    "application/json (for image URL)"
+  ],
+  "form_data_option": {
+    "image": "FILE - Image file (png, jpg, jpeg, gif, webp)"
+  },
+  "json_option": {
+    "imageUrl": "STRING - Direct URL to image"
+  },
+  "expected_response": {
+    "success": true,
+    "analysis": "STRING - Detailed analysis of products in the image in Spanish",
+    "model": "gpt-4o-mini",
+    "imageSource": "STRING - 'uploaded_file' or 'url'",
+    "usage": "OBJECT - Token usage information",
+    "processingTime": "ISO_DATE_STRING",
+    "workshop": "Product Semantic Search - Image Analysis"
+  },
+  "curl_examples": {
+    "file_upload": "curl -X POST http://localhost:3000/analyze-image -F \"image=@path/to/your/image.jpg\"",
+    "url_method": "curl -X POST http://localhost:3000/analyze-image -H \"Content-Type: application/json\" -d '{\"imageUrl\":\"https://example.com/image.jpg\"}'"
+  },
+  "available_from": "branch-1-initial-project",
+  "notes": "Supports both file upload and direct URL. Max file size: 25MB. Uses GPT-4o-mini for cost optimization (50 tokens max). Analysis provided in Spanish.",
+  "test_image_suggestions": [
+    "Photo of running shoes",
+    "Image of a laptop on a desk", 
+    "Picture of kitchen appliances",
+    "Screenshot of a product you want to find similar items for"
+  ]
+}

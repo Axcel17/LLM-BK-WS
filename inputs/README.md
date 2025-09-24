@@ -27,15 +27,23 @@ Importa cada archivo JSON como un request en Postman:
 # Ejemplo para búsqueda básica
 curl http://localhost:3000/
 
+# Ejemplo para transcripción de voz con sugerencias (rama 1)
+curl -X POST http://localhost:3000/query-voice-to-text \
+  -F "audio=@path/to/audio.mp3"
+
+# Ejemplo para síntesis de voz mejorada (rama 1)
+curl -X POST http://localhost:3000/query-text-to-voice \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Busco auriculares","voice":"nova"}' --output speech.mp3
+
+# Ejemplo para análisis de imagen (rama 1)
+curl -X POST http://localhost:3000/analyze-image \
+  -F "image=@path/to/image.jpg"
+
 # Ejemplo para búsqueda semántica (rama 2)
 curl -X POST http://localhost:3000/search \
   -H "Content-Type: application/json" \
   -d @inputs/rag/test-product-search.json
-
-# Ejemplo para tool calling (rama 3)
-curl -X POST http://localhost:3000/assistant \
-  -H "Content-Type: application/json" \  
-  -d @inputs/tool-calling/test-product-comparison.json
 ```
 
 ### 3. **Testing Workflow**
@@ -55,6 +63,10 @@ curl -X POST http://localhost:3000/assistant \
 - `test-features.json` - Características del sistema
 - `test-costs.json` - Información de costos
 - `test-404.json` - Manejo de rutas no encontradas
+- `test-chat.json` - Chat básico con GPT-4o-mini
+- `test-query-voice-to-text.json` - Transcripción de voz con sugerencias de productos
+- `test-query-text-to-voice.json` - Síntesis de voz mejorada
+- `test-analyze-image.json` - Análisis de imagen (archivo o URL)
 
 ### RAG (Rama 2)  
 - `test-product-search.json` - Búsqueda semántica de productos

@@ -1,0 +1,30 @@
+{
+  "instructions": "POST to /query-text-to-voice - Enhanced text-to-speech",
+  "endpoint": "http://localhost:3000/query-text-to-voice",
+  "method": "POST",
+  "description": "Convert text to speech with AI enhancement for better product assistance responses",
+  "content_type": "application/json",
+  "body": {
+    "text": "Hola, estoy buscando unos auriculares para trabajar desde casa",
+    "voice": "nova"
+  },
+  "expected_response": {
+    "type": "audio/mpeg",
+    "description": "MP3 audio file with enhanced synthesized speech"
+  },
+  "response_headers": {
+    "Content-Type": "audio/mpeg",
+    "Content-Disposition": "inline; filename=\"speech.mp3\"",
+    "X-Voice-Used": "STRING - Voice model used",
+    "X-Audio-Length": "STRING - Audio file size",
+    "X-Processing-Time": "ISO_DATE_STRING"
+  },
+  "curl_example": "curl -X POST http://localhost:3000/query-text-to-voice -H \"Content-Type: application/json\" -d '{\"text\":\"Hola, busco zapatos\",\"voice\":\"nova\"}' --output speech.mp3",
+  "available_from": "branch-1-initial-project",
+  "notes": "Available voices: alloy, echo, fable, onyx, nova, shimmer. Text gets enhanced by GPT-4o-mini for better conversational responses (max 30 tokens). Default voice is nova.",
+  "test_texts": [
+    "Busco algo específico para ejercicio",
+    "Necesito recomendaciones de productos",
+    "Quiero comparar diferentes opciones"
+  ]
+}
