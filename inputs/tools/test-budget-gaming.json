@@ -1,0 +1,5 @@
+{
+  "message": "Tengo un presupuesto de $500 para un setup de gaming. ¿Qué me recomiendas?",
+  "max_tokens": 400,
+  "include_tool_details": false
+}

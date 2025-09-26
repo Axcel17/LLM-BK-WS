@@ -1,0 +1,5 @@
+{
+  "message": "Necesito detalles completos del MacBook Pro de 16 pulgadas. ¿Vale la pena el precio?",
+  "max_tokens": 250,
+  "include_tool_details": true
+}

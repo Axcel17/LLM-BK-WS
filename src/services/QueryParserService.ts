@@ -19,26 +19,34 @@ export class QueryParserService {
   private static readonly SYSTEM_PROMPT = `Eres un experto analizando consultas de productos para extraer filtros de búsqueda.
 
 CATEGORÍAS DISPONIBLES:
-- electronics (smartphones, auriculares, laptops, tablets)
-- clothing (ropa deportiva, zapatos, accesorios)  
-- home (cocina, baño, limpieza, decoración)
-- sports (equipamiento deportivo, fitness)
+- electronics (smartphones, laptops, tablets, auriculares, monitores, teclados, webcams)
+- clothing (zapatillas, chaquetas, leggings, camisas, ropa deportiva)
+- home (aspiradoras, purificadores, humidificadores, lámparas, organizadores)
+- kitchen (freidoras, licuadoras, sartenes, procesadores, cafeteras, cuchillos)
+- sports (mancuernas, bicicletas, kettlebells, caminadoras, pelotas, colchonetas)
+- education (cursos, kits, libros, materiales educativos)
+- accessories (mochilas, powerbanks, relojes, botellas)
+- beauty (cepillos faciales, secadores, productos spa, cuidado personal)
 
 MARCAS COMUNES:
-Apple, Samsung, Sony, Nike, Adidas, LG, HP, Dell
+Apple, Samsung, Sony, Nike, Adidas, Dell, LG, HP, ChefMaster, BrewMaster, PowerFlex, 
+GameZone, TechView, MechPro, CleanBot, AirPure, FlexFit, BusinessElite, CodeAcademy, 
+FitCycle, IronFit, RunMaster, AirChef, NutriBlend, GlowSkin, ProDry, SecurePack
 
 RANGOS DE PRECIO:
 - economic: < $100
-- mid-range: $100-$300  
-- premium: > $300
+- mid-range: $100-$500  
+- premium: > $500
 
 Extrae SOLO la información explícita o claramente implícita. Si no hay información sobre un campo, no lo incluyas.
 
 EJEMPLOS:
 "Necesito auriculares baratos" → {"category": "electronics", "priceRange": "economic"}
-"Smartphone Samsung de gama alta" → {"category": "electronics", "brand": "Samsung", "priceRange": "premium"}
-"Algo para cocinar, no muy caro, máximo 50 dólares" → {"category": "home", "maxPrice": 50}
+"Smartphone Samsung de gama alta para fotos" → {"category": "electronics", "brand": "Samsung", "priceRange": "premium"}
+"Algo para cocinar, no muy caro, máximo 50 dólares" → {"category": "kitchen", "maxPrice": 50}
 "Ropa Nike para entrenar" → {"category": "clothing", "brand": "Nike"}
+"Quiero un curso de programación" → {"category": "education"}
+"Productos para limpiar la casa" → {"category": "home"}
 
 Responde SOLO con JSON válido, sin explicaciones.`;
 
@@ -103,10 +111,10 @@ Responde SOLO con JSON válido, sin explicaciones.`;
           break;
         case 'mid-range':
           filters.minPrice = filters.minPrice || 100;
-          filters.maxPrice = filters.maxPrice || 300;
+          filters.maxPrice = filters.maxPrice || 500;
           break;
         case 'premium':
-          filters.minPrice = filters.minPrice || 300;
+          filters.minPrice = filters.minPrice || 500;
           break;
       }
     }

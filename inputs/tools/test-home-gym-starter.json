@@ -1,0 +1,5 @@
+{
+  "message": "Quiero empezar a hacer ejercicio en casa. ¿Qué equipos básicos necesito por menos de $300?",
+  "max_tokens": 350,
+  "include_tool_details": true
+}

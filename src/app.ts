@@ -3,6 +3,7 @@ import { config } from "./config";
 import { Logger } from "./utils/logger";
 import basicsRoutes from "./routes/basics";
 import ragRoutes from "./routes/rag";
+import toolsRoutes from "./routes/tools";
 
 const app = express();
 
@@ -23,23 +24,24 @@ app.get("/health", (req, res) => {
 // Welcome endpoint - Introduction to the workshop
 app.get("/", (req, res) => {
   res.json({
-    message: "🛍️ Product Semantic Search Workshop v2 - OpenAI API Practitioner",
+    message: "🛍️ Product Semantic Search Workshop v3 - OpenAI API Practitioner",
     description:
       "Progressive multimodal AI system: Setup → RAG → Tool Calling → Fine-tuning → Production",
-    currentBranch: "2-rag-implementation",
+    currentBranch: "3-tool-calling",
     objective:
-      "Build an intelligent product search system that understands voice, text, and images",
+      "Intelligent assistant with semantic search and automated tool calling",
     nextStep:
-      "Test the RAG endpoints: /rag/search, /rag/categories, /rag/browse/:category",
+      "Try conversational search: POST /tools/chat with natural language",
     documentation: "/docs",
     health: "/health",
-    demo: "Ready for semantic product search with RAG! 🔍",
+    demo: "Ready for intelligent tool-powered conversations! 🤖",
   });
 });
 
 // Mount route modules
 app.use("/", basicsRoutes);
 app.use("/rag", ragRoutes);
+app.use("/tools", toolsRoutes);
 
 // Docs endpoint
 app.get("/docs", (req, res) => {
@@ -64,10 +66,10 @@ app.get("/docs", (req, res) => {
         description: "Semantic search with embeddings and vector store",
         features: [
           "text-embedding-3-small (cost-optimized)",
-          "Product catalog with 12 items",
-          "Vector similarity search",
+          "Product catalog with 42 items across 8 categories",
+          "Vector similarity search with caching",
           "Brand and price filtering",
-          "Contextual AI responses",
+          "Natural language query processing",
         ],
         duration: "50 minutes",
         endpoints: [
@@ -80,15 +82,21 @@ app.get("/docs", (req, res) => {
       },
       "3-tool-calling": {
         description:
-          "Intelligent tools for search, comparison, and recommendations",
+          "Intelligent conversation with automated tool selection",
         features: [
-          "search_products tool",
-          "compare_products tool",
-          "get_product_details tool",
-          "GPT-4o-mini optimization",
-          "Cost-efficient implementation",
+          "search_products - Smart product discovery",
+          "compare_products - Structured comparisons",
+          "get_product_details - Deep product insights",
+          "Budget-aware recommendations",
+          "Context preservation across tool calls",
         ],
         duration: "50 minutes",
+        endpoints: [
+          "POST /tools/chat - Conversational AI with tools",
+          "GET /tools/available - List available tools",
+          "GET /tools/health - Tool service status",
+        ],
+        testFiles: "inputs/tools/*.json",
       },
       "4-fine-tuning": {
         description: "Specialized model for commercial intent understanding",
@@ -134,25 +142,26 @@ app.get("/docs", (req, res) => {
 // Workshop progress endpoint
 app.get("/progress", (req, res) => {
   res.json({
-    currentBranch: "2-rag-implementation",
+    currentBranch: "3-tool-calling",
     completed: [
       "✅ Project setup",
       "✅ OpenAI configuration",
       "✅ Multimodal endpoints (chat, voice, image)",
-      "✅ Product catalog with embeddings",
-      "✅ Vector similarity search",
+      "✅ Product catalog with embeddings (42 products)",
+      "✅ Vector similarity search with caching",
       "✅ RAG service implementation",
+      "✅ Tool calling with 3 smart tools",
+      "✅ Natural language query processing",
     ],
-    inProgress: ["🔄 Testing semantic search functionality"],
+    inProgress: ["🔄 Testing intelligent tool conversations"],
     upcoming: [
-      "⏳ Intelligent tool calling",
       "⏳ Fine-tuned intent recognition",
       "⏳ Production deployment",
     ],
     demoReady: true,
-    nextMilestone: "Test semantic search: POST /rag/search with filters",
+    nextMilestone: "Test intelligent conversations: POST /tools/chat",
     workshopGoal:
-      "Intelligent product assistant with semantic search capabilities",
+      "Intelligent product assistant with advanced tool calling",
   });
 });
 
