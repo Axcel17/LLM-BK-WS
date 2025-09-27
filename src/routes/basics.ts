@@ -179,10 +179,11 @@ router.post("/query-text-to-voice", async (req, res) => {
     Logger.info(`Enhanced text: ${enhancedText}`);
 
     const speech = await openai.audio.speech.create({
-      model: "tts-1",
+      model: "gpt-4o-mini-tts",
       voice: voice,
       input: enhancedText || text,
       response_format: "mp3",
+      instructions: "Responde en español de manera clara y concisa. Suena natural y amigable.",
     });
 
     const audioBuffer = Buffer.from(await speech.arrayBuffer());

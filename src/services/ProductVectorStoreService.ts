@@ -116,10 +116,10 @@ export class ProductVectorStoreService {
 
 
     Logger.debug(
-      "🏆 Top 3 most similar products:",
+      `🏆 Top ${limit} most similar products:`,
       similarities
         .sort((a, b) => b.similarity - a.similarity)
-        .slice(0, 3)
+        .slice(0, limit)
         .map((result) => ({
           id: result.item.id,
           name: result.item.title,
@@ -132,10 +132,6 @@ export class ProductVectorStoreService {
       .filter((result) => result.similarity >= threshold)
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, limit);
-
-    Logger.debug(
-      `📊 Found ${results.length} relevant products (threshold: ${threshold})`
-    );
 
     return results;
   }
