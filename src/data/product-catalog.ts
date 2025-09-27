@@ -8,7 +8,7 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   {
     id: 'prod-001',
     title: 'iPhone 15 Pro',
-    content: 'iPhone 15 Pro smartphone premium Apple. Chip A17 Pro, cámara de 48MP, pantalla Super Retina XDR 6.1 pulgadas, construcción titanio. Ideal fotografía profesional, gaming, productividad avanzada. Características: 5G, carga inalámbrica, resistente agua, Face ID, cámara premium.',
+    content: 'iPhone 15 Pro smartphone premium Apple. Chip A17 Pro procesamiento avanzado, cámara profesional 48MP sistema triple lente, pantalla Super Retina XDR 6.1 pulgadas brillante, construcción titanio resistente durable. Perfecto trabajo remoto productividad oficina móvil, fotografía profesional content creator influencer, gaming móvil videojuegos, comunicación empresarial videollamadas. Ideal profesionales creativos artistas digitales, estudiantes universitarios tecnología, ejecutivos movilidad, regalo premium tecnología. Características: conectividad 5G ultra rápida, carga inalámbrica MagSafe conveniente, resistente agua IP68, Face ID seguridad biométrica, cámara cinematográfica 4K, batería larga duración.',
     category: 'electronics',
     price: 999,
     brand: 'Apple',
@@ -26,7 +26,7 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   {
     id: 'prod-003',
     title: 'MacBook Air M3',
-    content: 'MacBook Air M3 laptop ultraligera Apple. Chip M3, pantalla Liquid Retina 13.6 pulgadas, 18 horas batería. Ideal estudiantes, profesionales creativos, trabajo remoto. Características: ultraligero, batería larga duración, pantalla retina, operación silenciosa.',
+    content: 'MacBook Air M3 laptop ultraligera premium Apple. Chip M3 rendimiento excepcional eficiencia energética, pantalla Liquid Retina 13.6 pulgadas colores vibrantes precisos, batería increíble 18 horas productividad sin interrupciones. Perfecto estudiantes universitarios tesis investigación programación, profesionales creativos diseño gráfico video fotografía, trabajo remoto home office nómadas digitales, escritores redactores bloggers contenido, programadores desarrolladores código. Ideal regalo graduación universidad, profesional emprendedor startup, freelancer independiente. Características: ultraligero portátil viajes, batería excepcional larga duración, pantalla retina nítida, operación completamente silenciosa, macOS optimizado productividad.',
     category: 'electronics',
     price: 1199,
     brand: 'Apple',
@@ -35,7 +35,7 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   {
     id: 'prod-004',
     title: 'Bandas Elásticas Premium Set',
-    content: 'Bandas elásticas premium set 5 bandas resistencia FitPro. Diferentes niveles, manijas ergonómicas, guía ejercicios. Perfecto entrenamiento casa, fisioterapia, ejercicio funcional. Características: portátil, versátil, ahorro espacio, resistencia múltiple, ejercicio hogar.',
+    content: 'Bandas elásticas premium set completo 5 bandas resistencia diferentes FitPro. Niveles resistencia progresivos principiantes avanzados, manijas ergonómicas cómodas antideslizantes, guía ejercicios detallada rutinas completas. Perfecto entrenamiento casa gym hogar sin equipos costosos, fisioterapia rehabilitación lesiones, ejercicio funcional fuerza resistencia, adultos mayores ejercicio suave, viajeros fitness portátil. Ideal regalo fitness motivación salud, principiantes empezar ejercicio, personas ocupadas sin tiempo gym, presupuesto económico fitness efectivo. Características: completamente portátil maleta viaje, versátil cuerpo completo, ahorro espacio departamentos pequeños, resistencias múltiples progresión, ejercicio hogar conveniente.',
     category: 'sports',
     price: 29.99,
     brand: 'FitPro',
@@ -53,7 +53,7 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   {
     id: 'prod-006',
     title: 'Set Cuchillos Profesional',
-    content: 'Set cuchillos chef profesional ChefMaster acero inoxidable. 8 cuchillos alta calidad bloque madera. Incluye cuchillo chef, santoku, deshuesador, chaira. Perfecto cocineros profesionales aficionados. Características: grado profesional, acero inoxidable, filo afilado, ergonómico.',
+    content: 'Set cuchillos chef profesional completo ChefMaster acero inoxidable alemán superior. 8 cuchillos especializados alta calidad bloque madera elegante bambú. Incluye cuchillo chef versátil 8 pulgadas, santoku japonés precisión, deshuesador fileteador, chaira afilador mantenimiento. Perfecto cocineros profesionales chef restaurante, aficionados cocina gourmet casera, estudiantes artes culinarias, madres cocinar familia. Ideal regalo bodas nueva casa, día madre amante cocina, chef principiante profesional, cumpleaños cocinero. Características: grado profesional resistente, acero inoxidable alemán premium, filo excepcionalmente afilado duradero, diseño ergonómico cómodo, bloque organizador seguro.',
     category: 'kitchen',
     price: 189,
     brand: 'ChefMaster',
@@ -62,7 +62,7 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   {
     id: 'prod-007',
     title: 'Cafetera Espresso Automática',
-    content: 'Cafetera espresso automática BrewMaster molinillo integrado. 15 bares presión, sistema espuma automático. Prepara café, cappuccino, latte un toque. Ideal amantes café. Características: automática, molinillo integrado, espumador leche, programable, calidad profesional.',
+    content: 'Cafetera espresso automática profesional BrewMaster molinillo integrado café granos frescos. Presión perfecta 15 bares calidad barista, sistema espuma automático cremosa perfecta. Prepara café espresso intenso, cappuccino cremoso, latte artesanal un solo toque botones programables. Perfecta amantes café exigentes calidad gourmet, oficina ejecutiva impresionar clientes, hogar familia café perfecto diario, profesionales madrugadores energía. Ideal regalo día padre café lover, bodas nueva casa, cumpleaños amante café, jefe oficina barista hogar. Características: completamente automática fácil uso, molinillo integrado granos frescos, espumador leche automático, programable personalizable, calidad profesional barista.',
     category: 'kitchen',
     price: 599,
     brand: 'BrewMaster',
@@ -71,7 +71,7 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   {
     id: 'prod-008',
     title: 'Reloj Inteligente Deportivo',
-    content: 'Smartwatch deportivo SportTech GPS, monitor cardíaco, seguimiento sueño. Resistente agua 50m, más 100 modos deportivos, 7 días batería. Características: GPS, monitor ritmo cardíaco, resistente agua, batería larga, modos deportivos.',
+    content: 'Smartwatch deportivo avanzado SportTech GPS preciso ubicación, monitor ritmo cardíaco continuo salud, seguimiento sueño profundo recuperación. Resistente agua 50 metros natación deportes acuáticos, más 100 modos deportivos especializados, batería increíble 7 días uso intensivo. Perfecto atletas deportistas serios, runners corredores principiantes expertos, nadadores deportes acuáticos, ciclistas mountain bike, escaladores senderismo montaña. Ideal regalo motivación fitness salud, cumpleaños deportista, graduación estudiante activo, padre día fitness. Características: GPS integrado preciso rutas, monitor cardíaco 24/7 salud, resistente agua deportes extremos, batería excepcional larga duración, modos deportivos completos profesionales.',
     category: 'accessories',
     price: 249,
     brand: 'SportTech',
@@ -80,7 +80,7 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   {
     id: 'prod-009',
     title: 'Set Spa Casa Aromaterapia',
-    content: 'Set spa casa completo RelaxSpa aceites esenciales, velas aromáticas, sales baño, mascarillas faciales, guía relajación. Regalo perfecto bienestar autocuidado. Características: aromaterapia, ingredientes naturales, set completo, relajante, listo regalo.',
+    content: 'Set spa casa completo lujo RelaxSpa aceites esenciales puros terapéuticos, velas aromáticas relajantes ambiente, sales baño minerales desintoxicantes, mascarillas faciales naturales rejuvenecedoras, guía completa relajación meditación. Experiencia spa profesional hogar privacidad comodidad, bienestar mental físico estrés ansiedad, autocuidado self-care rutina diaria, relajación profunda descanso reparador. Regalo perfecto día madre bienestar, San Valentín esposa novia, cumpleaños amiga especial, navidad familia relajación, graduación estudiante estrés. Características: aromaterapia profesional aceites puros, ingredientes completamente naturales orgánicos, set completo experiencia spa, ambiente relajante terapéutico, presentación elegante lista regalo.',
     category: 'beauty',
     price: 79,
     brand: 'RelaxSpa',
@@ -89,7 +89,7 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   {
     id: 'prod-010',
     title: 'Botella Agua Térmica',
-    content: 'Botella térmica HydroLife acero inoxidable. Mantiene bebidas frías 24h calientes 12h. Diseño ergonómico, libre BPA, tapa anti-goteo. Perfecta oficina, gym, viajes. Características: aislamiento térmico, libre BPA, anti-goteo, ergonómica, duradera.',
+    content: 'Botella térmica premium HydroLife acero inoxidable grado alimenticio resistente. Tecnología aislamiento avanzada mantiene bebidas heladas frías 24 horas completas, bebidas calientes té café 12 horas temperatura perfecta. Diseño ergonómico cómodo mano, libre BPA completamente seguro salud, tapa anti-goteo hermetica transporte. Perfecta oficina trabajo hidratación productividad, gym fitness deportes entrenamientos intensos, viajes aventuras outdoor senderismo, estudiantes universidad campus, conductores viajes largos. Ideal regalo práctico útil diario, compañeros trabajo equipo, estudiantes graduación, deportistas fitness, viajeros aventureros. Características: aislamiento térmico superior tecnología, libre BPA materiales seguros, tapa anti-goteo prueba derrames, diseño ergonómico cómodo, construcción duradera resistente.',
     category: 'accessories',
     price: 24.99,
     brand: 'HydroLife',
@@ -147,7 +147,7 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   {
     id: 'prod-016',
     title: 'iPad Pro 12.9 M2',
-    content: 'iPad Pro 12.9 M2 tablet profesional Apple. Chip M2, pantalla Liquid Retina XDR, soporte Apple Pencil Magic Keyboard. Ideal artistas digitales, profesionales, estudiantes. Características: chip M2 potente, pantalla XDR, versatilidad, Apple Pencil.',
+    content: 'iPad Pro 12.9 M2 tablet profesional Apple. Chip M2, pantalla Liquid Retina XDR, soporte Apple Pencil Magic Keyboard. Perfecto para escritura digital, tomar notas, dibujo, reemplazar cuadernos tradicionales. Ideal artistas digitales, profesionales, estudiantes que buscan escribir digitalmente. Características: chip M2 potente, pantalla XDR, versatilidad, Apple Pencil para escritura natural, alternativa moderna a cuadernos.',
     category: 'electronics',
     price: 1099,
     brand: 'Apple',
@@ -165,7 +165,7 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   {
     id: 'prod-018',
     title: 'Teclado Mecánico RGB',
-    content: 'Teclado mecánico gaming MechPro switches Cherry MX Blue. Iluminación RGB personalizable, construcción aluminio, anti-ghosting. Perfecto gaming, programación, escritura. Características: switches mecánicos, RGB personalizable, duradero, táctil.',
+    content: 'Teclado mecánico gaming MechPro switches Cherry MX Blue. Iluminación RGB personalizable, construcción aluminio, anti-ghosting. Perfecto gaming, programación, escritura profesional, escritores, reemplazar escritura manual. Excelente para escribir largos textos, alternativa cómoda para quien no quiere escribir a mano. Características: switches mecánicos táctiles, RGB personalizable, duradero, cómodo para escribir por horas.',
     category: 'electronics',
     price: 159,
     brand: 'MechPro',

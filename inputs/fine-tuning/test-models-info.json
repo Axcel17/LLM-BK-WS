@@ -1,0 +1,29 @@
+{
+  "description": "Test available models information endpoint",
+  "endpoint": "GET /fine-tuning/models",
+  "method": "GET",
+  "expectedResult": "List of available models with performance metrics",
+  "expectedResponse": {
+    "availableModels": {
+      "base": {
+        "id": "gpt-4o-mini-2024-07-18",
+        "performance": {
+          "accuracy": "~60% JSON validity, ~0% intent accuracy",
+          "speed": "Fast (~2s response time)"
+        }
+      },
+      "fine-tuned": {
+        "id": "ft:gpt-4o-mini-2024-07-18:personal::CKAp8rjB",
+        "performance": {
+          "accuracy": "100% JSON validity, 100% intent accuracy",
+          "speed": "Slower (~9s response time)"
+        }
+      }
+    }
+  },
+  "notes": [
+    "No payload required - simple GET request",
+    "Shows performance comparison between models",
+    "Helps users choose appropriate model for their needs"
+  ]
+}

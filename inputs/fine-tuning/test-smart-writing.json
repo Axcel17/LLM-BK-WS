@@ -1,0 +1,15 @@
+{
+  "query": "alternativa cuadernos escribir",
+  "useFineTuned": true,
+  "maxProducts": 3,
+  "_metadata": {
+    "description": "Test case for writing alternatives - should now find iPad Pro and mechanical keyboard",
+    "expectedResults": [
+      "iPad Pro 12.9 M2 (with Apple Pencil for digital writing)",
+      "Teclado Mecánico RGB (for comfortable typing)",
+      "MacBook Air M3 (for writers and content creators)"
+    ],
+    "previousIssue": "RAG search failed to find relevant products for writing",
+    "improvement": "Enhanced product content + AI query enhancement"
+  }
+}

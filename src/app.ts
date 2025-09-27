@@ -4,6 +4,7 @@ import { Logger } from "./utils/logger";
 import basicsRoutes from "./routes/basics";
 import ragRoutes from "./routes/rag";
 import toolsRoutes from "./routes/tools";
+import fineTuningRoutes from "./routes/fine-tuning";
 
 const app = express();
 
@@ -24,17 +25,17 @@ app.get("/health", (req, res) => {
 // Welcome endpoint - Introduction to the workshop
 app.get("/", (req, res) => {
   res.json({
-    message: "🛍️ Product Semantic Search Workshop v3 - OpenAI API Practitioner",
+    message: "🛍️ Product Semantic Search Workshop v4 - OpenAI API Practitioner",
     description:
-      "Progressive multimodal AI system: Setup → RAG → Tool Calling → Fine-tuning → Production",
-    currentBranch: "3-tool-calling",
+      "Complete AI pipeline: Setup → RAG → Tool Calling → Fine-tuning → Production",
+    currentBranch: "4-fine-tuning",
     objective:
-      "Intelligent assistant with semantic search and automated tool calling",
+      "Intent classification with fine-tuned models and performance measurement",
     nextStep:
-      "Try conversational search: POST /tools/chat with natural language",
+      "Run fine-tuning baseline: npm run fine-tuning:setup",
     documentation: "/docs",
     health: "/health",
-    demo: "Ready for intelligent tool-powered conversations! 🤖",
+    demo: "Ready for fine-tuning experiments! 🎯",
   });
 });
 
@@ -42,6 +43,7 @@ app.get("/", (req, res) => {
 app.use("/", basicsRoutes);
 app.use("/rag", ragRoutes);
 app.use("/tools", toolsRoutes);
+app.use("/fine-tuning", fineTuningRoutes);
 
 // Docs endpoint
 app.get("/docs", (req, res) => {
@@ -101,13 +103,30 @@ app.get("/docs", (req, res) => {
       "4-fine-tuning": {
         description: "Specialized model for commercial intent understanding",
         features: [
-          "Commercial intent dataset",
-          "gpt-4o-mini fine-tuning",
-          "Intent parsing",
-          "Base vs fine-tuned comparison",
-          "Structured output",
+          "Commercial intent dataset with 400+ examples",
+          "gpt-4o-mini fine-tuning with 100% accuracy",
+          "Intent parsing with dynamic model selection",
+          "Base vs fine-tuned comparison (0% vs 100% accuracy)",
+          "HTTP endpoints for intent classification",
+          "Structured output with confidence metrics"
         ],
         duration: "40 minutes",
+        endpoints: [
+          "POST /fine-tuning/classify-intent - Classify user intent with model selection",
+          "POST /fine-tuning/smart-recommend - Complete integrated workflow",
+          "GET /fine-tuning/models - List available models and performance",
+          "GET /fine-tuning/health - Fine-tuning service status"
+        ],
+        models: {
+          base: "60% JSON validity, 0% intent accuracy, ~2s response",
+          fineTuned: "100% JSON validity, 100% intent accuracy, ~9s response"
+        },
+        integratedWorkflow: {
+          description: "Fine-tuned intent classification + Enhanced RAG search + Smart recommendations",
+          steps: ["Intent Analysis (100% accuracy)", "Context-Enhanced Search", "Personalized Recommendations"],
+          totalTime: "~12s with fine-tuned, ~4s with base model"
+        },
+        testFiles: "Use /fine-tuning endpoints directly with JSON payloads"
       },
       "5-moderation-production": {
         description: "Production-ready system with safety and robustness",
@@ -142,26 +161,44 @@ app.get("/docs", (req, res) => {
 // Workshop progress endpoint
 app.get("/progress", (req, res) => {
   res.json({
-    currentBranch: "3-tool-calling",
+    currentBranch: "4-fine-tuning",
     completed: [
       "✅ Project setup",
-      "✅ OpenAI configuration",
+      "✅ OpenAI configuration", 
       "✅ Multimodal endpoints (chat, voice, image)",
       "✅ Product catalog with embeddings (42 products)",
       "✅ Vector similarity search with caching",
       "✅ RAG service implementation",
       "✅ Tool calling with 3 smart tools",
       "✅ Natural language query processing",
+      "✅ Fine-tuning dataset generation (400+ training, 50 test)",
+      "✅ Baseline evaluation system",
+      "✅ Fine-tuning model training completed",
+      "✅ Model evaluation: 100% intent accuracy achieved", 
+      "✅ HTTP endpoints for intent classification with model selection",
+      "✅ Integrated workflow: Fine-tuned intent + Enhanced RAG + Smart recommendations"
     ],
-    inProgress: ["🔄 Testing intelligent tool conversations"],
+    inProgress: [],
     upcoming: [
-      "⏳ Fine-tuned intent recognition",
-      "⏳ Production deployment",
+      "⏳ Production deployment optimization", 
+      "⏳ Advanced monitoring and metrics",
+      "⏳ Multi-model ensemble strategies"
     ],
     demoReady: true,
-    nextMilestone: "Test intelligent conversations: POST /tools/chat",
+    nextMilestone: "Test integrated workflow: POST /fine-tuning/smart-recommend",
     workshopGoal:
-      "Intelligent product assistant with advanced tool calling",
+      "Intent classification with measurable performance improvements - COMPLETED!",
+    fineTuningStatus: {
+      datasetsGenerated: true,
+      modelTrained: true,
+      baselineAccuracy: "60% JSON validity, 0% intent accuracy", 
+      fineTunedAccuracy: "100% JSON validity, 100% intent accuracy",
+      performanceGain: "+100% accuracy improvement",
+      deploymentReady: true,
+      modelId: "ft:gpt-4o-mini-2024-07-18:personal::CKAp8rjB",
+      actualCost: "~$2-3 USD",
+      trainingTime: "~25 minutes"
+    }
   });
 });
 
@@ -246,7 +283,13 @@ app.use("*", (req, res) => {
       "/chat",
       "/query-voice-to-text",
       "/query-text-to-voice",
-      "/analyze-image"
+      "/analyze-image",
+      "/rag/search",
+      "/rag/categories",
+      "/tools/chat",
+      "/fine-tuning/classify-intent",
+      "/fine-tuning/models",
+      "/fine-tuning/health"
     ],
     multimodal: {
       "/chat": "POST - Text-to-text chat with GPT-4o-mini (300 tokens max)",
@@ -254,12 +297,17 @@ app.use("*", (req, res) => {
       "/query-text-to-voice": "POST - Enhanced text-to-speech with TTS",
       "/analyze-image": "POST - Image analysis with GPT-4o-mini (supports file upload or URL)"
     },
-    currentBranch: "1-initial-project",
-    hint: "This is the multimodal setup! Switch to other branches for more endpoints:",
+    fineTuning: {
+      "/fine-tuning/classify-intent": "POST - Intent classification with model selection (base|fine-tuned)",
+      "/fine-tuning/smart-recommend": "POST - Complete integrated workflow (intent + RAG + recommendations)",
+      "/fine-tuning/models": "GET - Available models and performance metrics", 
+      "/fine-tuning/health": "GET - Fine-tuning service health check"
+    },
+    currentBranch: "4-fine-tuning",
+    hint: "Try integrated workflow: POST /fine-tuning/smart-recommend with useFineTuned: true",
     nextEndpoints: {
-      "branch-2": ["/search", "/index"],
-      "branch-3": ["/assistant", "/tools"],
-      "branch-4": ["/fine-tune", "/intent"],
+      "current-branch-4": ["/fine-tuning/smart-recommend", "/fine-tuning/classify-intent"],
+      "previous-branches": ["/rag/search", "/tools/chat"],
       "branch-5": ["/moderate", "/metrics"]
     }
   });

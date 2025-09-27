@@ -7,7 +7,11 @@
     "build": "tsc && tsc-alias && ts-add-js-extension --dir=dist",
     "dev": "ts-node src/app.ts",
     "start": "node dist/app.ts",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "fine-tuning:generate": "ts-node data/fine-tuning/dataset-generator.ts",
+    "fine-tuning:setup": "ts-node data/fine-tuning/setup-baseline.ts",
+    "fine-tuning:start": "ts-node data/fine-tuning/fine-tuning-manager.ts",
+    "fine-tuning:compare": "ts-node -e \"import { compareModelsDetailed } from './data/fine-tuning/evaluator'; compareModelsDetailed('gpt-4o-mini-2024-07-18', process.argv[2], './data/fine-tuning/test_data.jsonl');\""
   },
   "keywords": [
     "openai",

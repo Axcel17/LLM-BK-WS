@@ -1,0 +1,86 @@
+{
+  "description": "Test cases when RAG finds NO matching products",
+  "endpoint": "POST /fine-tuning/smart-recommend",
+  "purpose": "Demonstrate how the system handles empty search results gracefully",
+  "testCases": [
+    {
+      "name": "Luxury jewelry - outside catalog scope",
+      "payload": {
+        "query": "collar de diamantes para mi esposa, presupuesto $5000",
+        "useFineTuned": true,
+        "maxProducts": 3
+      },
+      "expectedBehavior": {
+        "step1": "Fine-tuned classifies as GIFT, premium budget, recipient: spouse",
+        "step2": "RAG search returns empty results (no jewelry in catalog)",
+        "step3": "Base model provides honest response: 'No tenemos productos exactos para joyería de lujo, pero puedes considerar...'"
+      },
+      "expectedResponse": {
+        "classification": {
+          "intent_type": "GIFT",
+          "budget_tier": "premium",
+          "recipient": "spouse"
+        },
+        "searchResults": {
+          "found": 0,
+          "products": []
+        },
+        "recommendation": "Should acknowledge the specific need and suggest alternatives or explain catalog limitations"
+      }
+    },
+    {
+      "name": "Garden supplies - non-existent category",
+      "payload": {
+        "query": "semillas de tomate para mi jardín, algo económico",
+        "useFineTuned": true,
+        "maxProducts": 3
+      },
+      "expectedBehavior": {
+        "step1": "Classifies as PERSONAL_USE, economic budget, garden category",
+        "step2": "RAG returns empty (no garden supplies in electronics/home catalog)",
+        "step3": "Honest response about catalog limitations, suggest where to find garden supplies"
+      }
+    },
+    {
+      "name": "Unrealistic budget constraint",
+      "payload": {
+        "query": "iPhone para mi hijo, presupuesto máximo $50",
+        "useFineTuned": true,
+        "maxProducts": 3
+      },
+      "expectedBehavior": {
+        "step1": "Classifies as GIFT/PERSONAL_USE, economic budget, electronics",
+        "step2": "RAG may find iPhones but budget filter eliminates them",
+        "step3": "Explain budget reality, suggest alternatives (refurbished, older models, different brands)"
+      }
+    }
+  ],
+  "improvedSystemBehavior": [
+    "✅ Honest about catalog limitations - doesn't invent non-existent products",
+    "✅ Uses intent classification to provide relevant alternative suggestions",
+    "✅ Maintains helpful tone even when can't fulfill exact request", 
+    "✅ Provides constructive guidance (other stores, budget adjustments, alternatives)",
+    "✅ Different system messages for empty vs populated results"
+  ],
+  "beforeImprovement": {
+    "problems": [
+      "❌ Could hallucinate products not in catalog",
+      "❌ Generic unhelpful responses when no products found",
+      "❌ No distinction between 'no products' and 'found products' scenarios"
+    ]
+  },
+  "afterImprovement": {
+    "benefits": [
+      "✅ Graceful degradation when no products match",
+      "✅ Intent-aware alternative suggestions",
+      "✅ Honest and helpful even in edge cases",
+      "✅ Better user experience for out-of-scope requests"
+    ]
+  },
+  "notes": [
+    "These test cases demonstrate the system's robustness",
+    "Fine-tuned intent classification still provides value even when RAG fails",
+    "The system should never pretend to have products it doesn't have",
+    "Good fallback behavior is crucial for user trust"
+  ]
+}
