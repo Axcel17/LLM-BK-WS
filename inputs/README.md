@@ -70,9 +70,8 @@ curl -X POST http://localhost:3000/rag/search-natural-language \
 - `test-natural-headphones.json` - Búsquea natural de productos electrónicos
 - `test-natural-nike.json` - Búsqueda natural de productos de ropa deportiva
 - `test-search-cooking.json` - Búsqueda por filtros de productos de cocina 
-- `test-search-headphones.json` - Filtros por filtros de productos electrónicos
-- `test-search-samsung.json` - Filtros por filtros de productos electrónicos
-- `test-search-nike.json` - Filtros por filtros de productos de ropa deporti
+- `test-search-headphones.json` - Búsqueda por filtros de productos electrónicos
+- `test-search-sportswear.json` - Búsqueda por filtros de productos de ropa deportiva
 
 ## ⚡ Tips de Uso
 

@@ -1,8 +1,0 @@
-{
-  "query": "Busco un smartphone Samsung con buena cámara para fotografía",
-  "filters": {
-    "brand": "Samsung",
-    "category": "electronics",
-    "limit": 3
-  }
-}
