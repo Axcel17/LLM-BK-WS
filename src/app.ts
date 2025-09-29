@@ -2,6 +2,8 @@ import express from "express";
 import { config } from "./config";
 import { Logger } from "./utils/logger";
 import basicsRoutes from "./routes/basics";
+import ragRoutes from "./routes/rag";
+import toolsRoutes from "./routes/tools";
 
 const app = express();
 
@@ -22,22 +24,24 @@ app.get("/health", (req, res) => {
 // Welcome endpoint - Introduction to the workshop
 app.get("/", (req, res) => {
   res.json({
-    message: "🛍️ Product Semantic Search Workshop v2 - OpenAI API Practitioner",
+    message: "🛍️ Product Semantic Search Workshop v3 - OpenAI API Practitioner",
     description:
       "Progressive multimodal AI system: Setup → RAG → Tool Calling → Fine-tuning → Production",
-    currentBranch: "1-initial-project",
+    currentBranch: "3-tool-calling",
     objective:
-      "Build an intelligent product search system that understands voice, text, and images",
+      "Intelligent assistant with semantic search and automated tool calling",
     nextStep:
-      "Switch to branch 2-rag-implementation to start building the semantic search",
+      "Try conversational search: POST /tools/chat with natural language",
     documentation: "/docs",
     health: "/health",
-    demo: "Ready for multimodal product recommendations! 🎯",
+    demo: "Ready for intelligent tool-powered conversations! 🤖",
   });
 });
 
-// Mount multimodal AI routes
+// Mount route modules
 app.use("/", basicsRoutes);
+app.use("/rag", ragRoutes);
+app.use("/tools", toolsRoutes);
 
 // Docs endpoint
 app.get("/docs", (req, res) => {
@@ -61,25 +65,38 @@ app.get("/docs", (req, res) => {
       "2-rag-implementation": {
         description: "Semantic search with embeddings and vector store",
         features: [
-          "text-embedding-3-large",
-          "Product catalog indexing",
-          "Hybrid search (text + image)",
-          "Similarity scoring",
-          "Smart filtering",
+          "text-embedding-3-small (cost-optimized)",
+          "Product catalog with 42 items across 8 categories",
+          "Vector similarity search with caching",
+          "Brand and price filtering",
+          "Natural language query processing",
         ],
         duration: "50 minutes",
+        endpoints: [
+          "POST /rag/search - Semantic product search",
+          "GET /rag/categories - Available filters",
+          "GET /rag/browse/:category - Browse by category",
+          "GET /rag/health - Service status",
+        ],
+        testFiles: "inputs/rag/*.json",
       },
       "3-tool-calling": {
         description:
-          "Intelligent tools for search, comparison, and recommendations",
+          "Intelligent conversation with automated tool selection",
         features: [
-          "search_products tool",
-          "compare_products tool",
-          "get_product_details tool",
-          "GPT-4o-mini optimization",
-          "Cost-efficient implementation",
+          "search_products - Smart product discovery",
+          "compare_products - Structured comparisons",
+          "get_product_details - Deep product insights",
+          "Budget-aware recommendations",
+          "Context preservation across tool calls",
         ],
         duration: "50 minutes",
+        endpoints: [
+          "POST /tools/chat - Conversational AI with tools",
+          "GET /tools/available - List available tools",
+          "GET /tools/health - Tool service status",
+        ],
+        testFiles: "inputs/tools/*.json",
       },
       "4-fine-tuning": {
         description: "Specialized model for commercial intent understanding",
@@ -122,29 +139,6 @@ app.get("/docs", (req, res) => {
   });
 });
 
-// Workshop progress endpoint
-app.get("/progress", (req, res) => {
-  res.json({
-    currentBranch: "1-initial-project",
-    completed: [
-      "✅ Project setup",
-      "✅ OpenAI configuration",
-      "✅ Basic server",
-    ],
-    inProgress: ["🔄 Multimodal capabilities"],
-    upcoming: [
-      "⏳ RAG with product embeddings",
-      "⏳ Intelligent tool calling",
-      "⏳ Fine-tuned intent recognition",
-      "⏳ Production deployment",
-    ],
-    demoReady: false,
-    nextMilestone: "Complete multimodal setup to unlock product search",
-    workshopGoal:
-      "Intelligent product assistant that understands voice, text, and images",
-  });
-});
-
 // Features showcase endpoint
 app.get("/features", (req, res) => {
   res.json({
@@ -162,9 +156,9 @@ app.get("/features", (req, res) => {
       personalized: "Learns from user preferences and context",
     },
     technical: {
-      embedding: "text-embedding-3-large for semantic similarity",
-      models: "GPT-4o-mini for efficiency, GPT-4o for vision",
-      tools: "Specialized functions for search, compare, detail",
+      embedding: "text-embedding-3-small for cost optimization",
+      models: "GPT-4o-mini for efficiency, GPT-4o Vision for images",
+      vectorStore: "In-memory cosine similarity with filtering",
       safety: "Content moderation and production-grade error handling",
     },
     useCases: [
@@ -172,41 +166,6 @@ app.get("/features", (req, res) => {
       '📷 Photo of shoes → "Find similar products"',
       '💭 "Regalo $100 para mamá" → Personalized recommendations',
       '⚖️ "Compare iPhone vs Samsung" → Intelligent comparison',
-    ],
-  });
-});
-
-// Cost optimization info
-app.get("/costs", (req, res) => {
-  res.json({
-    title: "Workshop Cost Optimization Strategy",
-    estimated: "Total workshop cost: ~$0.10 for complete demo",
-    optimizations: {
-      model: "GPT-4o-mini for most tasks (100x cheaper than GPT-4o)",
-      tokens: "Max 300-400 tokens per response for cost efficiency",
-      limits: "Max 3 products per search, 2 tools per query",
-      caching: "Smart embedding reuse and response caching",
-      efficiency: "Optimized token usage and concise responses",
-    },
-    breakdown: {
-      "setup + basic chat": "$0.01",
-      "RAG implementation": "$0.03",
-      "Tool calling demos": "$0.04",
-      "Fine-tuning": "$0.01",
-      "Production testing": "$0.01",
-    },
-    tokenLimits: {
-      "/chat": "300 tokens max",
-      "/analyze-image": "50 tokens max (cost optimized)",
-      "/query-voice-to-text": "Audio length based (Whisper) + 150 tokens for suggestions",
-      "/query-text-to-voice": "30 tokens for enhancement + TTS based on text length"
-    },
-    tips: [
-      "Use provided product catalog (no real API calls)",
-      "Limit demo queries during development",
-      "Test with short, focused queries",
-      "Use mock data for reviews and specs",
-      "Token limits ensure cost-effective responses",
     ],
   });
 });
@@ -219,9 +178,7 @@ app.use("*", (req, res) => {
       "/",
       "/health",
       "/docs",
-      "/progress",
       "/features",
-      "/costs",
       "/chat",
       "/query-voice-to-text",
       "/query-text-to-voice",
@@ -272,7 +229,6 @@ app.listen(config.server.port, () => {
   Logger.info(`🔗 Visit: http://localhost:${config.server.port}`);
   Logger.info(`📖 Documentation: http://localhost:${config.server.port}/docs`);
   Logger.info(`💡 Features: http://localhost:${config.server.port}/features`);
-  Logger.info(`💰 Costs: http://localhost:${config.server.port}/costs`);
   Logger.info(
     `⏭️  Next: Switch to branch 2-rag-implementation for semantic search`
   );
