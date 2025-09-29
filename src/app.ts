@@ -71,9 +71,8 @@ app.get("/docs", (req, res) => {
         ],
         duration: "50 minutes",
         endpoints: [
-          "POST /rag/search - Semantic product search",
-          "GET /rag/categories - Available filters",
-          "GET /rag/browse/:category - Browse by category",
+          "POST /rag/search-by-filters - Filtered product search",
+          "POST /rag/search-natural-language - Natural language search with filter extraction",
           "GET /rag/health - Service status",
         ],
         testFiles: "inputs/rag/*.json",
