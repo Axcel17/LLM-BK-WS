@@ -4,7 +4,8 @@ import {
   VectorEmbedItem,
   VectorStoreQuery,
   VectorSearchResult,
-} from '../types/rag';
+} from '../types/search';
+import { ProductFilters, ProductSearchFilters, FilteredProductsResult } from '../types/product';
 import { config } from '../config';
 import { Logger } from '../utils/logger';
 import { EmbeddingCacheService } from '../cache/EmbeddingCacheService';
@@ -236,6 +237,95 @@ export class ProductVectorStoreService {
         max: priceRange[priceRange.length - 1] || 0,
       },
       isInitialized: this.isInitialized
+    };
+  }
+
+  /**
+   * Apply filters to product search results with detailed analysis
+   * Returns both matching and non-matching products with reasons
+   */
+  applyFiltersToProducts(
+    products: VectorSearchResult[], 
+    filters: ProductSearchFilters,
+  ): FilteredProductsResult {
+    Logger.info('🎯 Applying filters:', filters);
+
+    const matching: Array<{
+      id: string;
+      title: string;
+      price: number;
+      category: string;
+      brand?: string;
+      description: string;
+      similarity: number;
+    }> = [];
+
+    const nonMatching: Array<{
+      id: string;
+      title: string;
+      price: number;
+      category: string;
+      brand?: string;
+      description: string;
+      reason: string;
+      similarity: number;
+    }> = [];
+
+    products.forEach(searchResult => {
+      const product = searchResult.item;
+      const failureReasons: string[] = [];
+      let productMatches = true;
+
+      // Check category filter
+      if (filters.category && product.category !== filters.category) {
+        failureReasons.push(`categoría es ${product.category}, no ${filters.category}`);
+        productMatches = false;
+      }
+
+      // Check brand filter
+      if (filters.brand && product.brand !== filters.brand) {
+        failureReasons.push(`marca es ${product.brand}, no ${filters.brand}`);
+        productMatches = false;
+      }
+
+      // Check max price filter
+      if (filters.maxPrice && product.price && product.price > filters.maxPrice) {
+        failureReasons.push(`precio es $${product.price}, excede presupuesto de $${filters.maxPrice}`);
+        productMatches = false;
+      }
+
+      // Check min price filter
+      if (filters.minPrice && product.price && product.price < filters.minPrice) {
+        failureReasons.push(`precio es $${product.price}, menor al mínimo de $${filters.minPrice}`);
+        productMatches = false;
+      }
+
+      // Convert to common product format
+      const productData = {
+        id: product.id,
+        title: product.title,
+        price: product.price || 0,
+        category: product.category,
+        brand: product.brand,
+        description: product.content,
+        similarity: searchResult.similarity
+      };
+
+      if (productMatches) {
+        matching.push(productData);
+      } else {
+        nonMatching.push({
+          ...productData,
+          reason: failureReasons.join(', ')
+        });
+      }
+    });
+
+    Logger.info(`🔍 Filter results: ${matching.length} matching, ${nonMatching.length} not matching`);
+
+    return {
+      matching,
+      nonMatching
     };
   }
 }
