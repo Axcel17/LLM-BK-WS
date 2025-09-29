@@ -2,7 +2,6 @@ import { VectorItem } from '../types/search';
 
 /**
  * Catálogo de Productos para RAG
- * Contenido optimizado para embeddings y búsqueda semántica
  */
 export const PRODUCTS_CATALOG: VectorItem[] = [
   // ============================================================================
@@ -357,11 +356,6 @@ export const getCatalogStats = () => {
 // Available categories
 export const AVAILABLE_CATEGORIES = [
   'electronics',
-  'sports',
-  'kitchen', 
   'home',
   'clothing',
-  'education',
-  'accessories',
-  'beauty'
 ] as const;
