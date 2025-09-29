@@ -2,10 +2,9 @@ import OpenAI from 'openai';
 import {
   VectorItem,
   VectorEmbedItem,
-  VectorStoreQuery,
   VectorSearchResult,
 } from '../types/search';
-import { ProductFilters, ProductSearchFilters, FilteredProductsResult } from '../types/product';
+import { ProductSearchFilters, FilteredProductsResult } from '../types/product';
 import { config } from '../config';
 import { Logger } from '../utils/logger';
 import { EmbeddingCacheService } from '../cache/EmbeddingCacheService';
@@ -138,53 +137,6 @@ export class ProductVectorStoreService {
   }
 
   /**
-   * Search products by category
-   */
-  async searchByCategory(category: string, limit: number = 10): Promise<VectorEmbedItem[]> {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
-
-    return this.items
-      .filter(item => item.category === category)
-      .slice(0, limit);
-  }
-
-  /**
-   * Search products by brand
-   */
-  async searchByBrand(brand: string, limit: number = 10): Promise<VectorEmbedItem[]> {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
-
-    return this.items
-      .filter(item => item.brand === brand)
-      .slice(0, limit);
-  }
-
-  /**
-   * Search products by price range
-   */
-  async searchByPriceRange(minPrice: number, maxPrice: number, limit: number = 10): Promise<VectorEmbedItem[]> {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
-
-    return this.items
-      .filter(item => item.price && item.price >= minPrice && item.price <= maxPrice)
-      .slice(0, limit);
-  }
-
-  /**
-   * Get random products (for "sorpréndeme" type queries)
-   */
-  getRandomProducts(limit: number = 3): VectorEmbedItem[] {
-    const shuffled = [...this.items].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, limit);
-  }
-
-  /**
    * Calculate cosine similarity between two vectors
    */
   private cosineSimilarity(vecA: number[], vecB: number[]): number {
@@ -201,20 +153,6 @@ export class ProductVectorStoreService {
     }
 
     return dotProduct / (magnitudeA * magnitudeB);
-  }
-
-  /**
-   * Get all products (for debugging)
-   */
-  getAllItems(): VectorEmbedItem[] {
-    return this.items;
-  }
-
-  /**
-   * Get product by ID
-   */
-  getItemById(id: string): VectorEmbedItem | undefined {
-    return this.items.find((item) => item.id === id);
   }
 
   /**

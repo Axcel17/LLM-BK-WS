@@ -1,0 +1,8 @@
+{
+  "query": "Ropa deportiva para entrenar en el gimnasio",
+  "filters": {
+    "category": "clothing",
+    "maxPrice": 100,
+    "limit": 4
+  }
+}

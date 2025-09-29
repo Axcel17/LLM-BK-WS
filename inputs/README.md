@@ -47,7 +47,7 @@ curl -X POST http://localhost:3000/rag/search-natural-language \
 ```
 
 ### 3. **Testing Workflow**
-1. **Empezar en rama correspondiente**: `git checkout 2-rag-implementation`
+1. **Empezar en rama correspondiente**: `git checkout 3-tool-calling`
 2. **Levantar servidor**: `npm run dev`
 3. **Probar endpoint**: Usar datos de `inputs/rag/`
 4. **Verificar respuesta**: Comparar con expected results
@@ -70,9 +70,8 @@ curl -X POST http://localhost:3000/rag/search-natural-language \
 - `test-natural-headphones.json` - Búsquea natural de productos electrónicos
 - `test-natural-nike.json` - Búsqueda natural de productos de ropa deportiva
 - `test-search-cooking.json` - Búsqueda por filtros de productos de cocina 
-- `test-search-headphones.json` - Filtros por filtros de productos electrónicos
-- `test-search-samsung.json` - Filtros por filtros de productos electrónicos
-- `test-search-nike.json` - Filtros por filtros de productos de ropa deporti
+- `test-search-headphones.json` - Búsqueda por filtros de productos electrónicos
+- `test-search-sportswear.json` - Búsqueda por filtros de productos de ropa deportiva
 
 ## ⚡ Tips de Uso
 

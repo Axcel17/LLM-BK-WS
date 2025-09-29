@@ -306,13 +306,6 @@ export const getProductsByBrand = (brand: string): VectorItem[] => {
   );
 };
 
-// Helper function to get random products (for recommendations)
-export const getRandomProducts = (count: number, excludeIds: string[] = []): VectorItem[] => {
-  const filtered = PRODUCTS_CATALOG.filter(product => !excludeIds.includes(product.id));
-  const shuffled = [...filtered].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
-};
-
 // Helper function to get products by price tier
 export const getProductsByPriceTier = (tier: 'budget' | 'mid-range' | 'premium'): VectorItem[] => {
   switch (tier) {

@@ -27,13 +27,6 @@ export const RAGQuerySchema = z.object({
   }).optional().default({}),
 });
 
-export const VectorStoreQuerySchema = z.object({
-  query: z.string(),
-  embedding: z.array(z.number()),
-  limit: z.number().optional(),
-  threshold: z.number().optional(),
-});
-
 export const VectorSearchResultSchema = z.object({
   item: VectorEmbedItemSchema,
   similarity: z.number(),
@@ -63,7 +56,6 @@ export const RAGResponseSchema = z.object({
 
 export type VectorItem = z.infer<typeof VectorItemSchema>;
 export type VectorEmbedItem = z.infer<typeof VectorEmbedItemSchema>;
-export type VectorStoreQuery = z.infer<typeof VectorStoreQuerySchema>;
 export type VectorSearchResult = z.infer<typeof VectorSearchResultSchema>;
 export type RAGQuery = z.infer<typeof RAGQuerySchema>;
 export type RAGResponse = z.infer<typeof RAGResponseSchema>;
