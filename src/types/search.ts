@@ -46,7 +46,7 @@ export const RAGResponseSchema = z.object({
   products: z.array(z.object({
     id: z.string(),
     title: z.string(),
-    similarity: z.number(),
+    similarity: z.number().optional(),
     price: z.string().optional(),
     category: z.string(),
     brand: z.string().optional(),

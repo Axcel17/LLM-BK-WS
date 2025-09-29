@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { createHash } from 'crypto';
-import { VectorItem, VectorEmbedItem } from '../types/rag';
+import { VectorItem, VectorEmbedItem } from '../types/search';
 import { Logger } from '../utils/logger';
 
 interface CacheEntry {

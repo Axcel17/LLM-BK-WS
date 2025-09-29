@@ -48,37 +48,36 @@ router.post("/chat", async (req, res) => {
       user_query: message
     };
 
-    // Extract budget from message if mentioned
-    const budgetMatch = message.match(/(\$|peso|dolar|euro)?\s*(\d+)/i);
-    if (budgetMatch) {
-      context.budget_limit = parseInt(budgetMatch[2]);
-    }
-
     // Create OpenAI chat completion with tools
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
-          content: `Eres un asistente experto en productos que ayuda a los usuarios a encontrar, comparar y elegir productos. 
+          content: `Eres un asistente experto en productos que ayuda a los usuarios a encontrar, comparar y elegir productos ÚNICAMENTE de nuestro catálogo disponible.
 
 HERRAMIENTAS DISPONIBLES:
-- search_products: Busca productos usando lenguaje natural
+- search_products: Busca productos usando lenguaje natural en nuestro catálogo
 - get_product_details: Obtiene información detallada de un producto específico  
-- compare_products: Compara 2-4 productos lado a lado
+- compare_products: Compara productos lado a lado
 
-INSTRUCCIONES:
-1. USA las herramientas cuando sea apropiado para dar respuestas precisas
-2. Mantén respuestas CONCISAS y ÚTILES (max ${max_tokens} tokens)
-3. Siempre incluye precios cuando estén disponibles
-4. Si el usuario menciona un presupuesto, tenlo en cuenta
-5. Prioriza la experiencia del usuario sobre mostrar información técnica
+REGLAS IMPORTANTES:
+1. USA las herramientas para obtener información real de nuestro catálogo
+2. Si no encuentras productos que cumplan los criterios, sé HONESTO al respecto
+3. Para consultas con presupuesto específico, busca primero y luego analiza si hay opciones
+4. Mantén respuestas CONCISAS y ÚTILES (max ${max_tokens} tokens)
+5. NUNCA inventes productos, precios o características que no estén en los resultados
+
+ESTRATEGIAS POR CASO:
+- Presupuesto específico: Busca productos y analiza si están dentro del rango
+- Comparaciones: Busca cada producto mencionado individualmente  
+- Detalles de marca: Busca todos los productos de esa marca
+- Recomendaciones generales: Busca por categoría o uso específico
 
 FORMATO DE RESPUESTA:
-- Respuestas directas y actionables
-- Usa viñetas para comparaciones
-- Incluye recomendaciones claras
-- Menciona beneficios clave de cada producto`
+- Si HAY productos: Información detallada con precios reales
+- Si NO HAY productos: "No tenemos productos disponibles para [criterio]"
+- Si están FUERA de presupuesto: Menciona los productos disponibles y sugiere ajustar presupuesto`
         },
         {
           role: 'user',
@@ -124,16 +123,28 @@ FORMATO DE RESPUESTA:
       const messages: any[] = [
         {
           role: 'system',
-          content: `Usa los resultados de las herramientas para dar una respuesta útil y concisa al usuario. 
-          
-LÍMITE DE TOKENS: ${max_tokens}
+          content: `Eres un asistente de productos COMPLETAMENTE HONESTO. Usa ÚNICAMENTE los resultados de las herramientas para responder.
+
+REGLAS CRÍTICAS:
+1. Usa ÚNICAMENTE los resultados de las herramientas para responder
+2. NUNCA inventes productos, marcas, modelos o precios que no aparezcan en los resultados
+3. Si budget_analysis.situation indica:
+   - 'no_related_products_found': "No tenemos [producto] disponible en nuestro catálogo. Te sugerimos consultar tiendas especializadas."
+   - 'products_over_budget': "No tenemos [producto] en tu presupuesto de $X. Sin embargo, tenemos estas opciones si consideras aumentar tu presupuesto: [lista alternativas con precios]"
+   - 'products_within_budget': Presenta los productos encontrados normalmente
+4. Mantén respuestas concisas (max ${max_tokens} tokens)
+
 CONTEXTO: El usuario preguntó "${message}"
 
+EJEMPLOS DE RESPUESTAS HONESTAS:
+- Sin productos relacionados: "No tenemos bicicletas disponibles en nuestro catálogo. Puedes consultar en tiendas especializadas en deportes."
+- Productos fuera de presupuesto: "No tenemos smartphones en tu presupuesto de $300. Sin embargo, tenemos: iPhone 15 Pro $999 (excede por $699), iPad Pro $1099 (excede por $799). ¿Te interesa considerar aumentar tu presupuesto?"
+- Productos encontrados: Presenta información completa con precios y características
+
 Prioriza:
-1. Respuesta directa a la pregunta
-2. Recomendaciones claras  
-3. Información de precios
-4. Próximos pasos sugeridos`
+1. Honestidad absoluta sobre disponibilidad
+2. Información específica del catálogo real
+3. Sugerencias constructivas basadas en la situación`
         },
         {
           role: 'user',

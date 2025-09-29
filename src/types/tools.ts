@@ -130,12 +130,26 @@ export interface SearchProductsResult {
     category: string;
     price?: string;
     brand?: string;
-    similarity_score: number;
+    similarity?: number;
     summary: string;
   }>;
   total_found: number;
   search_query: string;
   filters_applied?: any;
+  budget_analysis?: {
+    user_budget: number | null;
+    within_budget: number;
+    has_related_products: boolean;
+    alternative_suggestions: Array<{
+      id: string;
+      title: string;
+      category: string;
+      price?: string;
+      brand?: string;
+      reason: string;
+    }>;
+    situation: 'products_within_budget' | 'products_over_budget' | 'products_found_no_budget_constraint' | 'no_related_products_found';
+  };
 }
 
 export interface ProductDetailsResult {

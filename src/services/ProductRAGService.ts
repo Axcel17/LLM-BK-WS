@@ -1,7 +1,8 @@
 import OpenAI from 'openai';
 import { ProductVectorStoreService } from '../services/ProductVectorStoreService';
 import { QueryParserService } from '../services/QueryParserService';
-import { VectorItem } from '../types/rag';
+import { VectorItem, VectorSearchResult } from '../types/search';
+import { FilteredProductsResult, SmartRecommendationInput, ProductRecommendation, ProductFilters } from '../types/product';
 import { config, openai } from '../config';
 import { Logger } from '../utils/logger';
 
@@ -9,9 +10,11 @@ export class ProductRAGService {
   private openai: OpenAI;
   private vectorStore: ProductVectorStoreService;
   private queryParser: QueryParserService;
+  private items: VectorItem[];
 
   constructor(items: VectorItem[]) {
     this.openai = openai;
+    this.items = items;
     this.vectorStore = new ProductVectorStoreService(items);
     this.queryParser = new QueryParserService();
   }
@@ -27,154 +30,234 @@ export class ProductRAGService {
 
   /**
    * Search products using natural language (with automatic filter extraction)
+   * Now uses functional utilities pipeline
    */
-  async searchProductsNatural(query: string, limit: number = 5): Promise<{
+  async searchProductsNaturalLanguage(query: string, limit: number = 5): Promise<{
     answer: string;
     products: Array<{
       id: string;
       title: string;
-      similarity: number;
+      similarity?: number;
       price?: string;
       category: string;
       brand?: string;
     }>;
     tokensUsed: number;
-    extractedFilters?: any;
-    cleanedQuery?: string;
+    filters?: any;
   }> {
-    Logger.info('🤖 Processing natural language search:', query);
+    Logger.info('🚀 Processing natural language search with smart pipeline:', query);
 
     try {
-      // Parse query to extract filters automatically
-      const { cleanedQuery, extractedFilters, searchFilters } = await this.queryParser.parseQuery(query);
+      // 1. Extract filters using improved QueryParserService (hybrid approach)
+      const extractedFilters = await this.queryParser.extractFilters(query);
       
-      Logger.info(`🔍 Using cleaned query: "${cleanedQuery}"`);
-      Logger.info('🎯 Auto-extracted filters:', searchFilters);
+      Logger.info('🎯 Auto-extracted filters:', extractedFilters);
 
-      // Use the existing search with auto-extracted filters
-      const result = await this.searchProducts(cleanedQuery, { ...searchFilters, limit });
+      // 2. Search products with extracted filters
+      return await this.searchProducts(query, {
+        ...extractedFilters && { limit }
+      });
+
+    } catch (error) {
+      Logger.error('❌ Error during natural language search:', error);
+
+      // Fallback to basic search without filters
+      return await this.searchProducts(query);
+    }
+  }
+
+  async searchProducts(query: string, filters?: ProductFilters & { limit?: number }): Promise<{
+    answer: string;
+    products: Array<{
+      id: string;
+      title: string;
+      price?: string;
+      category: string;
+      brand?: string;
+      similarity?: number;
+    }>;
+    tokensUsed: number;
+    filters?: {}
+  }> {
+    Logger.info('🔍 Processing product search:', query);
+    Logger.info('🎯 With filters:', filters);
+
+    const limit = filters?.limit || 5;
+
+    try {
+
+      // 1. Search products using vector similarity  
+      const searchResults = await this.searchProductsByVector(query, limit * 2);
+
+      // 2. Apply extracted filters to products (with budget analysis)
+      let { matching, nonMatching } = this.vectorStore.applyFiltersToProducts(searchResults, filters || {});
+
+      matching = matching.slice(0, limit); // Limit matching results to 'limit'
+
+      Logger.info(`🔍 Limited to top ${limit} matching products`);
+
+      // 3. Generate AI recommendation with budget awareness
+      const { answer, tokensUsed } = await this.generateProductRecommendation({
+        query,
+        filteredProducts: { matching, nonMatching },
+        filters
+      });
 
       return {
-        ...result,
-        extractedFilters,
-        cleanedQuery
+        answer,
+        products: matching.map(product => ({
+          id: product.id,
+          title: product.title,
+          price: product.price ? `$${product.price}` : undefined,
+          category: product.category,
+          brand: product.brand,
+          similarity: product.similarity,
+        })),
+        tokensUsed,
+        filters
       };
       
     } catch (error) {
-      Logger.error('❌ Natural language search failed:', error);
-      // Fallback to original query without filters
-      return await this.searchProducts(query, { limit });
+      
+      // Fallback to simple vector search without filters
+      const searchResults = await this.searchProductsByVector(query, limit);
+      const simpleFilteredResults = {
+        matching: searchResults.map(result => ({
+          id: result.item.id,
+          title: result.item.title,
+          price: result.item.price || 0,
+          category: result.item.category,
+          brand: result.item.brand,
+          description: result.item.content,
+          similarity: result.similarity,
+        })),
+        nonMatching: []
+      };
+      const { answer, tokensUsed } = await this.generateProductRecommendation({
+        query,
+        filteredProducts: simpleFilteredResults
+      });
+
+      return {
+        answer,
+        products: simpleFilteredResults.matching.map(product => ({
+          id: product.id,
+          title: product.title,
+          category: product.category,
+          brand: product.brand,
+          price: product.price ? `$${product.price}` : undefined,
+          similarity: product.similarity,
+        })),
+        tokensUsed,
+        filters
+      };
     }
   }
-  async searchProducts(query: string, filters?: {
-    category?: string;
-    maxPrice?: number;
-    brand?: string;
-    limit?: number;
-  }): Promise<{
-    answer: string;
-    products: Array<{
-      id: string;
-      title: string;
-      similarity: number;
-      price?: string;
-      category: string;
-      brand?: string;
-    }>;
-    tokensUsed: number;
-  }> {
-    Logger.info('🔍 Processing product search:', query);
+  /**
+   * Search products using vector similarity (internal method)
+   */
+  private async searchProductsByVector(
+    query: string, 
+    limit: number = 5,
+    threshold: number = 0.3
+  ): Promise<VectorSearchResult[]> {
+    Logger.info('🔍 Performing internal vector search:', query);
 
-    const limit = filters?.limit || 3;
-    const threshold = 0.4; // Más preciso para productos
-
-    // 1. Search for relevant products
-    let searchResults = await this.vectorStore.searchSimilar(query, limit, threshold);
-
-    // 2. Apply filters if provided
-    if (filters?.category) {
-      searchResults = searchResults.filter(result => 
-        result.item.category === filters.category
-      );
-    }
-
-    if (filters?.maxPrice) {
-      searchResults = searchResults.filter(result => 
-        !result.item.price || result.item.price <= filters.maxPrice!
-      );
-    }
-
-    if (filters?.brand) {
-      searchResults = searchResults.filter(result => 
-        result.item.brand === filters.brand
-      );
-    }
-
-    // Limit final results
-    searchResults = searchResults.slice(0, limit);
+    // Use our vector store to search for similar products
+    const searchResults = await this.vectorStore.searchSimilar(query, limit, threshold);
 
     if (searchResults.length === 0) {
-      Logger.warn('⚠️ No relevant products found for query');
+      Logger.warn('⚠️ No products found above similarity threshold');
+      return [];
+    }
+
+    Logger.success(`✅ Found ${searchResults.length} relevant products`);
+    return searchResults;
+  }
+
+  /**
+   * Generate AI recommendation based on filtered products (internal method)
+   */
+  private async generateProductRecommendation(input: SmartRecommendationInput): Promise<{
+    answer: string;
+    tokensUsed: number;
+  }> {
+    Logger.info('🤖 Generating smart AI recommendation with budget analysis');
+
+    const { filteredProducts, query, filters } = input;
+
+    if (filteredProducts.matching.length === 0 && filteredProducts.nonMatching.length === 0) {
       return {
         answer: 'Lo siento, no encontré productos que coincidan con tu búsqueda. ¿Podrías ser más específico o probar con otros términos?',
-        products: [],
-        tokensUsed: 0,
+        tokensUsed: 0
       };
     }
 
-    // 3. Build context from relevant products
-    const productsContext = searchResults
-      .map((result, index) =>
-        `${index + 1}. **${result.item.title}** (Relevancia: ${(
-          result.similarity * 100
-        ).toFixed(1)}%)\n${result.item.content}\nPrecio: $${result.item.price || 'No disponible'}\nMarca: ${result.item.brand || 'N/A'}`
-      )
-      .join('\n\n');
+    // Build context for matching products
+    let contextsContent = '';
 
-    // 4. Generate contextualized response
-    const systemPrompt = `Eres un experto asistente de compras. Tu trabajo es recomendar productos basándote ÚNICAMENTE en la información proporcionada.
+    if (filteredProducts.matching.length > 0) {
+      const matchingContext = filteredProducts.matching
+        .map((product, index) =>
+          `${index + 1}. **${product.title}** ✅ DENTRO DE CRITERIOS\nPrecio: $${product.price || 'No disponible'}\nMarca: ${product.brand || 'N/A'}\nDescripción: ${product.description.substring(0, 100)}...`
+        )
+        .join('\n\n');
+      contextsContent += `PRODUCTOS QUE CUMPLEN TUS CRITERIOS:\n${matchingContext}\n\n`;
+    }
+
+    if (filteredProducts.nonMatching.length > 0 && filters?.maxPrice) {
+      const notMatchingContext = filteredProducts.nonMatching
+        .slice(0, 3) // Limitar a los 3 más relevantes
+        .map((product, index) => {
+          return `${index + 1}. **${product.title}** ⚠️ FUERA DE PRESUPUESTO\nPrecio: $${product.price || 'No disponible'} (excede $${filters.maxPrice})\nMarca: ${product.brand || 'N/A'}\nMotivo: ${product.reason}`;
+        })
+        .join('\n\n');
+      contextsContent += `PRODUCTOS FUERA DE TU PRESUPUESTO PERO RELEVANTES:\n${notMatchingContext}`;
+    }
+
+    const systemPrompt = `Eres un experto asistente de compras. Tu trabajo es dar recomendaciones inteligentes basándote en el presupuesto del usuario.
 
 INSTRUCCIONES:
-1. Responde de forma amigable y útil
-2. Menciona los productos más relevantes por nombre
-3. Explica brevemente por qué cada producto es una buena opción
-4. Incluye información de precios cuando sea relevante
-5. Si la consulta no está bien cubierta, sugiere alternativas
-6. Mantén un tono conversacional pero profesional
+1. Si hay productos DENTRO de criterios: recomiéndalos con entusiasmo
+2. Si NO hay productos dentro del presupuesto: explica la situación de forma empática y ofrece las mejores alternativas
+3. Menciona precios específicos para ayudar en la decisión
+4. Mantén un tono amigable y profesional
+5. Si sugiere productos fuera del presupuesto, explica el beneficio extra que obtendrían
 
-PRODUCTOS ENCONTRADOS:
-${productsContext}
+CONTEXTO DE PRODUCTOS:
+${contextsContent}
 
-Responde como si fueras un vendedor experto recomendando estos productos específicos.`;
+Genera una respuesta útil que ayude al usuario a tomar la mejor decisión.`;
 
-    const completion = await this.openai.chat.completions.create({
-      model: config.openai.model,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: query },
-      ],
-      temperature: 0.4, // Un poco más creativo para recomendaciones
-      max_tokens: 200,
-    });
+    try {
+      const completion = await this.openai.chat.completions.create({
+        model: config.openai.model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: query },
+        ],
+        temperature: 0.4,
+        max_tokens: 250, // Más tokens para respuestas más detalladas
+      });
 
-    const answer = completion.choices[0].message.content || 
-      'No se pudo generar una recomendación.';
-    const tokensUsed = completion.usage?.total_tokens || 0;
+      const answer = completion.choices[0].message.content || 
+        'No se pudo generar una recomendación.';
+      const tokensUsed = completion.usage?.total_tokens || 0;
 
-    Logger.success(`✅ Product search processed (${tokensUsed} tokens used)`);
+      Logger.success(`✅ Smart recommendation generated (${tokensUsed} tokens used)`);
 
-    return {
-      answer,
-      products: searchResults.map((result) => ({
-        id: result.item.id,
-        title: result.item.title,
-        similarity: result.similarity,
-        category: result.item.category,
-        brand: result.item.brand,
-        price: result.item.price ? `$${result.item.price}` : undefined,
-      })),
-      tokensUsed,
-    };
+      return {
+        answer,
+        tokensUsed
+      };
+
+    } catch (error) {
+      Logger.error('❌ Failed to generate recommendation:', error);
+      return {
+        answer: 'Lo siento, no pude generar una recomendación en este momento.',
+        tokensUsed: 0
+      };
+    }
   }
 
   /**

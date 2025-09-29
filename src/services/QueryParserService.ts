@@ -1,66 +1,48 @@
 import { openai } from '../config';
 import { Logger } from '../utils/logger';
-import { z } from 'zod';
-
-// Schema for extracted filters
-const ExtractedFiltersSchema = z.object({
-  category: z.string().optional(),
-  brand: z.string().optional(),
-  minPrice: z.number().optional(),
-  maxPrice: z.number().optional(),
-  priceRange: z.enum(['economic', 'mid-range', 'premium']).optional(),
-  occasion: z.string().optional(),
-  targetUser: z.string().optional(),
-});
-
-type ExtractedFilters = z.infer<typeof ExtractedFiltersSchema>;
+import { ProductFilters, ProductFiltersSchema } from '../types/product';
+import { QUERY_PARSER_SYSTEM_PROMPT } from '../constants/query-parser';
 
 export class QueryParserService {
-  private static readonly SYSTEM_PROMPT = `Eres un experto analizando consultas de productos para extraer filtros de búsqueda.
-
-CATEGORÍAS DISPONIBLES:
-- electronics (smartphones, laptops, tablets, auriculares, monitores, teclados, webcams)
-- clothing (zapatillas, chaquetas, leggings, camisas, ropa deportiva)
-- home (aspiradoras, purificadores, humidificadores, lámparas, organizadores)
-- kitchen (freidoras, licuadoras, sartenes, procesadores, cafeteras, cuchillos)
-- sports (mancuernas, bicicletas, kettlebells, caminadoras, pelotas, colchonetas)
-- education (cursos, kits, libros, materiales educativos)
-- accessories (mochilas, powerbanks, relojes, botellas)
-- beauty (cepillos faciales, secadores, productos spa, cuidado personal)
-
-MARCAS COMUNES:
-Apple, Samsung, Sony, Nike, Adidas, Dell, LG, HP, ChefMaster, BrewMaster, PowerFlex, 
-GameZone, TechView, MechPro, CleanBot, AirPure, FlexFit, BusinessElite, CodeAcademy, 
-FitCycle, IronFit, RunMaster, AirChef, NutriBlend, GlowSkin, ProDry, SecurePack
-
-RANGOS DE PRECIO:
-- economic: < $100
-- mid-range: $100-$500  
-- premium: > $500
-
-Extrae SOLO la información explícita o claramente implícita. Si no hay información sobre un campo, no lo incluyas.
-
-EJEMPLOS:
-"Necesito auriculares baratos" → {"category": "electronics", "priceRange": "economic"}
-"Smartphone Samsung de gama alta para fotos" → {"category": "electronics", "brand": "Samsung", "priceRange": "premium"}
-"Algo para cocinar, no muy caro, máximo 50 dólares" → {"category": "kitchen", "maxPrice": 50}
-"Ropa Nike para entrenar" → {"category": "clothing", "brand": "Nike"}
-"Quiero un curso de programación" → {"category": "education"}
-"Productos para limpiar la casa" → {"category": "home"}
-
-Responde SOLO con JSON válido, sin explicaciones.`;
-
   /**
    * Extract structured filters from natural language query
+   * Uses hybrid approach: regex for budget + OpenAI for intelligent parsing
    */
-  async extractFilters(query: string): Promise<ExtractedFilters> {
+  async extractFilters(query: string): Promise<ProductFilters> {
+    let regexMaxPrice: number | undefined;
+    
     try {
-      Logger.info('🔍 Parsing query for filters:', query);
+      Logger.info('🔍 Parsing query for filters with hybrid approach:', query);
 
+      // 1. REGEX APPROACH: Extract budget (more reliable for numbers)
+      const budgetPatterns = [
+        /\$(\d+)/i,                           // $300
+        /(\d+)\s*dolar/i,                     // 300 dólares  
+        /(\d+)\s*peso/i,                      // 300 pesos
+        /tengo\s*(\d+)/i,                     // tengo 300
+        /presupuesto\s*de?\s*(\d+)/i,         // presupuesto de 300
+        /hasta\s*(\d+)/i,                     // hasta 300
+        /máximo\s*(\d+)/i,                    // máximo 300
+        /no\s*más\s*de\s*(\d+)/i             // no más de 300
+      ];
+
+      for (const pattern of budgetPatterns) {
+        const match = query.match(pattern);
+        if (match) {
+          regexMaxPrice = parseInt(match[1]);
+          Logger.info(`💰 Regex found budget: $${regexMaxPrice}`);
+          break;
+        }
+      }
+
+      // 2. OPENAI APPROACH: Intelligent extraction with context
       const completion = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: QueryParserService.SYSTEM_PROMPT },
+          { 
+            role: 'system', 
+            content: QUERY_PARSER_SYSTEM_PROMPT 
+          },
           { role: 'user', content: query }
         ],
         temperature: 0.1,
@@ -70,26 +52,52 @@ Responde SOLO con JSON válido, sin explicaciones.`;
 
       const content = completion.choices[0]?.message?.content;
       if (!content) {
-        Logger.warn('⚠️ No filters extracted from query');
-        return {};
+        Logger.warn('⚠️ No content from OpenAI, using regex fallback');
+        return regexMaxPrice ? { maxPrice: regexMaxPrice } : {};
       }
 
-      const parsed = JSON.parse(content);
-      const validated = ExtractedFiltersSchema.parse(parsed);
+      let parsed = JSON.parse(content);
+      Logger.info('📝 OpenAI extracted:', parsed);
+
+      // 3. HYBRID VERIFICATION: Use regex budget if more reliable
+      let finalMaxPrice = parsed.maxPrice || regexMaxPrice;
       
-      Logger.success('✅ Extracted filters:', validated);
+      // Prefer regex if both found and they're different (regex is more reliable for numbers)
+      if (regexMaxPrice && parsed.maxPrice && regexMaxPrice !== parsed.maxPrice) {
+        Logger.info(`🔧 Budget mismatch - Regex: $${regexMaxPrice}, OpenAI: $${parsed.maxPrice}. Using regex.`);
+        finalMaxPrice = regexMaxPrice;
+      } else if (regexMaxPrice && !parsed.maxPrice) {
+        Logger.info(`🔧 Adding regex budget to result: $${regexMaxPrice}`);
+        finalMaxPrice = regexMaxPrice;
+      }
+
+      // Build final result
+      const result = {
+        ...parsed,
+        maxPrice: finalMaxPrice
+      };
+      
+      const validated = ProductFiltersSchema.parse(result);
+      Logger.success('✅ Final extracted filters:', validated);
       return validated;
 
     } catch (error) {
       Logger.error('❌ Failed to extract filters:', error);
-      return {}; // Return empty filters on error, don't break search
+      
+      // Fallback: at least try regex for budget
+      if (regexMaxPrice) {
+        Logger.info(`🔧 Fallback using regex budget: $${regexMaxPrice}`);
+        return { maxPrice: regexMaxPrice };
+      }
+
+      return {};
     }
   }
 
   /**
    * Convert extracted filters to search filters format
    */
-  convertToSearchFilters(extracted: ExtractedFilters): {
+  convertToSearchFilters(extracted: ProductFilters): {
     category?: string;
     brand?: string;
     minPrice?: number;
@@ -125,9 +133,9 @@ Responde SOLO con JSON válido, sin explicaciones.`;
   /**
    * Parse complete query and return both cleaned query and filters
    */
-  async parseQuery(originalQuery: string): Promise<{
+  async parseQuery(originalQuery: string, contextBudget?: number): Promise<{
     cleanedQuery: string;
-    extractedFilters: ExtractedFilters;
+    extractedFilters: ProductFilters;
     searchFilters: {
       category?: string;
       brand?: string;
@@ -135,30 +143,27 @@ Responde SOLO con JSON válido, sin explicaciones.`;
       maxPrice?: number;
     };
   }> {
+    // Extract all filters in one go
     const extractedFilters = await this.extractFilters(originalQuery);
+    
+    // Override with context budget if available and not already extracted
+    if (contextBudget && !extractedFilters.maxPrice) {
+      extractedFilters.maxPrice = contextBudget;
+      Logger.info(`🔧 Using context budget: $${contextBudget}`);
+    }
+    
     const searchFilters = this.convertToSearchFilters(extractedFilters);
     
-    // Clean query by removing price/brand mentions that are now in filters
-    let cleanedQuery = originalQuery;
+    // Use original query for semantic search - don't over-clean it
+    const cleanedQuery = originalQuery;
     
-    // Remove common price indicators
-    cleanedQuery = cleanedQuery.replace(/(barato|económico|caro|premium|gama alta|gama baja)/gi, '');
-    
-    // Remove explicit price mentions if captured
-    if (extractedFilters.maxPrice || extractedFilters.minPrice) {
-      cleanedQuery = cleanedQuery.replace(/(\$?\d+\s*(dólares?|usd|pesos?))/gi, '');
-      cleanedQuery = cleanedQuery.replace(/(hasta|máximo|menos de|mayor a|más de)\s*\$?\d+/gi, '');
-    }
-    
-    // Remove brand name if captured
-    if (extractedFilters.brand) {
-      cleanedQuery = cleanedQuery.replace(new RegExp(extractedFilters.brand, 'gi'), '');
-    }
-    
-    // Clean up extra spaces
-    cleanedQuery = cleanedQuery.replace(/\s+/g, ' ').trim();
-    
-    Logger.info(`🔄 Query transformation: "${originalQuery}" → "${cleanedQuery}"`);
+    Logger.info(`✅ Final parsing result:`, {
+      originalQuery,
+      cleanedQuery,
+      extractedFilters,
+      searchFilters,
+      contextBudget
+    });
     
     return {
       cleanedQuery,
