@@ -131,31 +131,6 @@ app.get("/docs", (req, res) => {
   });
 });
 
-// Workshop progress endpoint
-app.get("/progress", (req, res) => {
-  res.json({
-    currentBranch: "2-rag-implementation",
-    completed: [
-      "✅ Project setup",
-      "✅ OpenAI configuration",
-      "✅ Multimodal endpoints (chat, voice, image)",
-      "✅ Product catalog with embeddings",
-      "✅ Vector similarity search",
-      "✅ RAG service implementation",
-    ],
-    inProgress: ["🔄 Testing semantic search functionality"],
-    upcoming: [
-      "⏳ Intelligent tool calling",
-      "⏳ Fine-tuned intent recognition",
-      "⏳ Production deployment",
-    ],
-    demoReady: true,
-    nextMilestone: "Test semantic search: POST /rag/search with filters",
-    workshopGoal:
-      "Intelligent product assistant with semantic search capabilities",
-  });
-});
-
 // Features showcase endpoint
 app.get("/features", (req, res) => {
   res.json({
@@ -187,42 +162,6 @@ app.get("/features", (req, res) => {
   });
 });
 
-// Cost optimization info
-app.get("/costs", (req, res) => {
-  res.json({
-    title: "Workshop Cost Optimization Strategy",
-    estimated: "Total workshop cost: ~$0.10 for complete demo",
-    optimizations: {
-      model: "GPT-4o-mini for most tasks (100x cheaper than GPT-4o)",
-      tokens: "Max 300-400 tokens per response for cost efficiency",
-      limits: "Max 3 products per search, 2 tools per query",
-      caching: "Smart embedding reuse and response caching",
-      efficiency: "Optimized token usage and concise responses",
-    },
-    breakdown: {
-      "setup + basic chat": "$0.01",
-      "RAG implementation": "$0.03",
-      "Tool calling demos": "$0.04",
-      "Fine-tuning": "$0.01",
-      "Production testing": "$0.01",
-    },
-    tokenLimits: {
-      "/chat": "300 tokens max",
-      "/analyze-image": "50 tokens max (cost optimized)",
-      "/query-voice-to-text": "Audio length based (Whisper) + 150 tokens for suggestions",
-      "/query-text-to-voice": "30 tokens for enhancement + TTS based on text length",
-      "/rag/search": "RAG context + 200 tokens for AI response"
-    },
-    tips: [
-      "Use provided product catalog (no real API calls)",
-      "Limit demo queries during development",
-      "Test with short, focused queries",
-      "Use mock data for reviews and specs",
-      "Token limits ensure cost-effective responses",
-    ],
-  });
-});
-
 // 404 handler
 app.use("*", (req, res) => {
   res.status(404).json({
@@ -231,9 +170,7 @@ app.use("*", (req, res) => {
       "/",
       "/health",
       "/docs",
-      "/progress",
       "/features",
-      "/costs",
       "/chat",
       "/query-voice-to-text",
       "/query-text-to-voice",
@@ -284,7 +221,6 @@ app.listen(config.server.port, () => {
   Logger.info(`🔗 Visit: http://localhost:${config.server.port}`);
   Logger.info(`📖 Documentation: http://localhost:${config.server.port}/docs`);
   Logger.info(`💡 Features: http://localhost:${config.server.port}/features`);
-  Logger.info(`💰 Costs: http://localhost:${config.server.port}/costs`);
   Logger.info(
     `⏭️  Next: Switch to branch 2-rag-implementation for semantic search`
   );
