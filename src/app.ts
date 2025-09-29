@@ -172,14 +172,9 @@ app.use("*", (req, res) => {
   res.status(404).json({
     error: "Endpoint not found",
     available: [
-      "/",
-      "/health",
-      "/docs",
-      "/features",
-      "/chat",
-      "/query-voice-to-text",
-      "/query-text-to-voice",
-      "/analyze-image"
+      "/rag/search-by-filters",
+      "/rag/search-natural-language",
+      "/rag/health"
     ],
     multimodal: {
       "/chat": "POST - Text-to-text chat with GPT-4o-mini (300 tokens max)",
@@ -187,10 +182,9 @@ app.use("*", (req, res) => {
       "/query-text-to-voice": "POST - Enhanced text-to-speech with TTS",
       "/analyze-image": "POST - Image analysis with GPT-4o-mini (supports file upload or URL)"
     },
-    currentBranch: "1-initial-project",
-    hint: "This is the multimodal setup! Switch to other branches for more endpoints:",
+    currentBranch: "2-rag-implementation",
+    hint: "This is a RAG implementation branch! Switch to other branches for more endpoints:",
     nextEndpoints: {
-      "branch-2": ["/search", "/index"],
       "branch-3": ["/assistant", "/tools"],
       "branch-4": ["/fine-tune", "/intent"],
       "branch-5": ["/moderate", "/metrics"]
@@ -221,11 +215,13 @@ app.listen(config.server.port, () => {
   Logger.success(
     `🛍️ Product Semantic Search Workshop v2 running on port ${config.server.port}`
   );
-  Logger.info(`📚 Workshop branch: 1-initial-project`);
+  Logger.info(`📚 Workshop branch: 2-rag-implementation`);
   Logger.info(`🎯 Objective: Build intelligent multimodal product assistant`);
-  Logger.info(`🔗 Visit: http://localhost:${config.server.port}`);
-  Logger.info(`📖 Documentation: http://localhost:${config.server.port}/docs`);
-  Logger.info(`💡 Features: http://localhost:${config.server.port}/features`);
+  Logger.info(`🔗 Documentation: http://localhost:${config.server.port}/docs`);
+  Logger.info(`🚀 Try it out: http://localhost:${config.server.port}/rag/search-by-filters`)
+  Logger.info(`🧪 Test files: inputs/rag/test-*.json`);
+  Logger.info(`💡 Try it out: curl -X POST -H "Content-Type: application/json" -d @inputs/rag/test-search-by-filters.json http://localhost:${config.server.port}/rag/search-by-filters`);
+
   Logger.info(
     `⏭️  Next: Switch to branch 2-rag-implementation for semantic search`
   );

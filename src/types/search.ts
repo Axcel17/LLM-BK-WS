@@ -63,7 +63,7 @@ export const RAGResponseSchema = z.object({
 
 export type VectorItem = z.infer<typeof VectorItemSchema>;
 export type VectorEmbedItem = z.infer<typeof VectorEmbedItemSchema>;
-export type RAGQuery = z.infer<typeof RAGQuerySchema>;
 export type VectorStoreQuery = z.infer<typeof VectorStoreQuerySchema>;
 export type VectorSearchResult = z.infer<typeof VectorSearchResultSchema>;
+export type RAGQuery = z.infer<typeof RAGQuerySchema>;
 export type RAGResponse = z.infer<typeof RAGResponseSchema>;
