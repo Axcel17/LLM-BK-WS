@@ -41,9 +41,9 @@ curl -X POST http://localhost:3000/analyze-image \
   -F "image=@path/to/image.jpg"
 
 # Ejemplo para búsqueda semántica (rama 2)
-curl -X POST http://localhost:3000/search \
+curl -X POST http://localhost:3000/rag/search-natural-language \
   -H "Content-Type: application/json" \
-  -d @inputs/rag/test-product-search.json
+  -d @inputs/rag/test-natural-cooking.json
 ```
 
 ### 3. **Testing Workflow**
@@ -66,28 +66,13 @@ curl -X POST http://localhost:3000/search \
 - `test-analyze-image.json` - Análisis de imagen (archivo o URL)
 
 ### RAG (Rama 2)  
-- `test-product-search.json` - Búsqueda semántica de productos
-- `test-image-search.json` - Búsqueda por imagen
-- `test-voice-search.json` - Búsqueda por voz
-- `test-hybrid-search.json` - Búsqueda híbrida (texto + imagen)
-
-### Tool Calling (Rama 3)
-- `test-product-comparison.json` - Comparación inteligente de productos
-- `test-search-products.json` - Tool para búsqueda de productos
-- `test-get-details.json` - Detalles específicos de productos
-- `test-assistant-chat.json` - Chat con asistente inteligente
-
-### Fine-tuning (Rama 4)
-- `test-intent-recognition.json` - Reconocimiento de intención comercial
-- `test-base-vs-finetuned.json` - Comparación de modelos
-- `test-commercial-queries.json` - Consultas comerciales específicas
-- `test-structured-output.json` - Salida estructurada
-
-### Moderation (Rama 5)
-- `test-safe-content.json` - Contenido seguro de productos
-- `test-flagged-content.json` - Contenido potencialmente problemático
-- `test-rate-limiting.json` - Pruebas de limitación de velocidad
-- `test-error-handling.json` - Manejo de errores
+- `test-natural-cooking.json` - Búsqueda natural de productos de cocina
+- `test-natural-headphones.json` - Búsquea natural de productos electrónicos
+- `test-natural-nike.json` - Búsqueda natural de productos de ropa deportiva
+- `test-search-cooking.json` - Búsqueda por filtros de productos de cocina 
+- `test-search-headphones.json` - Filtros por filtros de productos electrónicos
+- `test-search-samsung.json` - Filtros por filtros de productos electrónicos
+- `test-search-nike.json` - Filtros por filtros de productos de ropa deporti
 
 ## ⚡ Tips de Uso
 
