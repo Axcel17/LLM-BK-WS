@@ -32,7 +32,7 @@ export class ProductRAGService {
    * Search products using natural language (with automatic filter extraction)
    * Now uses functional utilities pipeline
    */
-  async searchProductsNaturalLanguage(query: string, limit: number = 5): Promise<{
+  async searchProductsNaturalLanguage(query: string, limit: number = 3): Promise<{
     answer: string;
     products: Array<{
       id: string;
@@ -159,7 +159,7 @@ export class ProductRAGService {
   private async searchProductsByVector(
     query: string, 
     limit: number = 5,
-    threshold: number = 0.3
+    threshold: number = 0.4
   ): Promise<VectorSearchResult[]> {
     Logger.info('🔍 Performing internal vector search:', query);
 

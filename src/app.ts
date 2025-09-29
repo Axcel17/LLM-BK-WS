@@ -3,7 +3,6 @@ import { config } from "./config";
 import { Logger } from "./utils/logger";
 import basicsRoutes from "./routes/basics";
 import ragRoutes from "./routes/rag";
-import toolsRoutes from "./routes/tools";
 
 const app = express();
 
@@ -41,7 +40,6 @@ app.get("/", (req, res) => {
 // Mount route modules
 app.use("/", basicsRoutes);
 app.use("/rag", ragRoutes);
-app.use("/tools", toolsRoutes);
 
 // Docs endpoint
 app.get("/docs", (req, res) => {
