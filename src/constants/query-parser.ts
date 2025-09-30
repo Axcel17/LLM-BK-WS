@@ -38,11 +38,6 @@ REGLAS DE CLASIFICACIÓN DE PRECIOS:
 - mid-range: productos $100-500 (mencionan "calidad-precio", "intermedio")  
 - premium: productos $500+ (mencionan "premium", "gama alta", "profesional", "flagship")
 
-DETECCIÓN DE CARACTERÍSTICAS ESPECIALES:
-- Palabras clave para features: "resistente agua", "gaming", "profesional", "inalámbrico", "smart", "4K"
-- Colores: negro, blanco, azul, rojo, gris, etc.
-- Tamaños: pequeño, grande, XL, 13 pulgadas, etc.
-
 FORMATO JSON RESPONSE OBLIGATORIO:
 {
   "category": "electronics" | "clothing" | "home" | null,
@@ -50,10 +45,6 @@ FORMATO JSON RESPONSE OBLIGATORIO:
   "maxPrice": number | null,
   "minPrice": number | null,
   "priceRange": "economic" | "mid-range" | "premium" | null,
-  "features": ["water-resistant", "wireless", "4K", "gaming"] | null,
-  "color": "black" | "white" | "blue" | etc. | null,
-  "size": "small" | "large" | "13-inch" | etc. | null,
-  "keywords": ["smartphone", "professional", "durable"] | null
 }
 
 EJEMPLOS DE EXTRACCIÓN COMPLETA:
@@ -63,8 +54,6 @@ Output: {
   "category": "electronics",
   "brand": "Sony", 
   "maxPrice": 200,
-  "features": ["wireless"],
-  "keywords": ["auriculares", "inalámbricos"]
 }
 
 Input: "Smartphone Samsung gaming negro barato"
@@ -72,9 +61,6 @@ Output: {
   "category": "electronics",
   "brand": "Samsung",
   "priceRange": "economic", 
-  "features": ["gaming"],
-  "color": "black",
-  "keywords": ["smartphone", "gaming"]
 }
 
 Input: "Zapatillas Nike running profesionales premium"
@@ -82,16 +68,12 @@ Output: {
   "category": "clothing",
   "brand": "Nike",
   "priceRange": "premium",
-  "features": ["professional", "running"],
-  "keywords": ["zapatillas", "running", "profesionales"]
 }
 
 Input: "Aspiradora robot para mascotas con presupuesto 400"
 Output: {
   "category": "home", 
   "maxPrice": 400,
-  "features": ["robot", "pet-friendly"],
-  "keywords": ["aspiradora", "robot", "mascotas"]
 }
 
 Input: "Muebles sala baratos IKEA"
@@ -99,7 +81,6 @@ Output: {
   "category": "home",
   "brand": "IKEA", 
   "priceRange": "economic",
-  "keywords": ["muebles", "sala"]
 }
 
 INSTRUCCIONES CRÍTICAS:

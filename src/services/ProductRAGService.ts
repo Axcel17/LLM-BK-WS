@@ -51,12 +51,8 @@ export class ProductRAGService {
       // 1. Extract filters using improved QueryParserService (hybrid approach)
       const extractedFilters = await this.queryParser.extractFilters(query);
       
-      Logger.info('🎯 Auto-extracted filters:', extractedFilters);
-
       // 2. Search products with extracted filters
-      return await this.searchProducts(query, {
-        ...extractedFilters && { limit }
-      });
+      return await this.searchProducts(query, extractedFilters, limit);
 
     } catch (error) {
       Logger.error('❌ Error during natural language search:', error);
@@ -66,7 +62,7 @@ export class ProductRAGService {
     }
   }
 
-  async searchProducts(query: string, filters?: ProductFilters & { limit?: number }): Promise<{
+  async searchProducts(query: string, filters?: ProductFilters, limit: number = 5): Promise<{
     answer: string;
     products: Array<{
       id: string;
@@ -77,22 +73,20 @@ export class ProductRAGService {
       similarity?: number;
     }>;
     tokensUsed: number;
-    filters?: {}
+    filters?: ProductFilters;
   }> {
     Logger.info('🔍 Processing product search:', query);
     Logger.info('🎯 With filters:', filters);
-
-    const limit = filters?.limit || 5;
 
     try {
 
       // 1. Search products using vector similarity  
       const searchResults = await this.searchProductsByVector(query, limit * 2);
 
-      // 2. Apply extracted filters to products (with budget analysis)
-      let { matching, nonMatching } = this.vectorStore.applyFiltersToProducts(searchResults, filters || {});
+      // 2. Apply extracted filters to products
+      let { matching, nonMatching } = this.vectorStore.applyFiltersToProducts(searchResults, filters);
 
-      matching = matching.slice(0, limit); // Limit matching results to 'limit'
+      matching = matching.slice(0, limit);
 
       Logger.info(`🔍 Limited to top ${limit} matching products`);
 
@@ -159,7 +153,7 @@ export class ProductRAGService {
   private async searchProductsByVector(
     query: string, 
     limit: number = 5,
-    threshold: number = 0.4
+    threshold: number = 0.35
   ): Promise<VectorSearchResult[]> {
     Logger.info('🔍 Performing internal vector search:', query);
 
@@ -182,7 +176,7 @@ export class ProductRAGService {
     answer: string;
     tokensUsed: number;
   }> {
-    Logger.info('🤖 Generating smart AI recommendation with budget analysis');
+    Logger.info('🤖 Generating smart AI recommendation');
 
     const { filteredProducts, query, filters } = input;
 
@@ -215,14 +209,16 @@ export class ProductRAGService {
       contextsContent += `PRODUCTOS FUERA DE TU PRESUPUESTO PERO RELEVANTES:\n${notMatchingContext}`;
     }
 
-    const systemPrompt = `Eres un experto asistente de compras. Tu trabajo es dar recomendaciones inteligentes basándote en el presupuesto del usuario.
+    const systemPrompt = `Eres un experto asistente de compras. 
+Tu trabajo es dar recomendaciones inteligentes de nuestros productos. 
+Te pasaremos una listado de productos QUE CUMPLEN CON SU INTENCION DE COMPRA y otros que están FUERA DEL PRESUPUESTO pero relevantes, en caso de que aplique. 
+Usa esta información para ayudar al usuario a tomar la mejor decisión de compra.
 
 INSTRUCCIONES:
 1. Si hay productos DENTRO de criterios: recomiéndalos con entusiasmo
 2. Si NO hay productos dentro del presupuesto: explica la situación de forma empática y ofrece las mejores alternativas
 3. Menciona precios específicos para ayudar en la decisión
-4. Mantén un tono amigable y profesional
-5. Si sugiere productos fuera del presupuesto, explica el beneficio extra que obtendrían
+4. Si sugiere productos fuera del presupuesto, explica el beneficio extra que obtendrían
 
 CONTEXTO DE PRODUCTOS:
 ${contextsContent}
@@ -230,6 +226,7 @@ ${contextsContent}
 Genera una respuesta útil que ayude al usuario a tomar la mejor decisión.`;
 
     try {
+
       const completion = await this.openai.chat.completions.create({
         model: config.openai.model,
         messages: [
