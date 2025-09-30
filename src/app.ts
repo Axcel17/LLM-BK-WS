@@ -103,30 +103,13 @@ app.get("/docs", (req, res) => {
       "4-fine-tuning": {
         description: "Specialized model for commercial intent understanding",
         features: [
-          "Commercial intent dataset with 400+ examples",
-          "gpt-4o-mini fine-tuning with 100% accuracy",
-          "Intent parsing with dynamic model selection",
-          "Base vs fine-tuned comparison (0% vs 100% accuracy)",
-          "HTTP endpoints for intent classification",
-          "Structured output with confidence metrics"
+          "Commercial intent dataset",
+          "gpt-4o-mini fine-tuning",
+          "Intent parsing",
+          "Base vs fine-tuned comparison",
+          "Structured output",
         ],
         duration: "40 minutes",
-        endpoints: [
-          "POST /fine-tuning/classify-intent - Classify user intent with model selection",
-          "POST /fine-tuning/smart-recommend - Complete integrated workflow",
-          "GET /fine-tuning/models - List available models and performance",
-          "GET /fine-tuning/health - Fine-tuning service status"
-        ],
-        models: {
-          base: "60% JSON validity, 0% intent accuracy, ~2s response",
-          fineTuned: "100% JSON validity, 100% intent accuracy, ~9s response"
-        },
-        integratedWorkflow: {
-          description: "Fine-tuned intent classification + Enhanced RAG search + Smart recommendations",
-          steps: ["Intent Analysis (100% accuracy)", "Context-Enhanced Search", "Personalized Recommendations"],
-          totalTime: "~12s with fine-tuned, ~4s with base model"
-        },
-        testFiles: "Use /fine-tuning endpoints directly with JSON payloads"
       },
       "5-moderation-production": {
         description: "Production-ready system with safety and robustness",
@@ -155,50 +138,6 @@ app.get("/docs", (req, res) => {
       "Commercial intent understanding",
       "Production-grade safety",
     ],
-  });
-});
-
-// Workshop progress endpoint
-app.get("/progress", (req, res) => {
-  res.json({
-    currentBranch: "4-fine-tuning",
-    completed: [
-      "✅ Project setup",
-      "✅ OpenAI configuration", 
-      "✅ Multimodal endpoints (chat, voice, image)",
-      "✅ Product catalog with embeddings (42 products)",
-      "✅ Vector similarity search with caching",
-      "✅ RAG service implementation",
-      "✅ Tool calling with 3 smart tools",
-      "✅ Natural language query processing",
-      "✅ Fine-tuning dataset generation (400+ training, 50 test)",
-      "✅ Baseline evaluation system",
-      "✅ Fine-tuning model training completed",
-      "✅ Model evaluation: 100% intent accuracy achieved", 
-      "✅ HTTP endpoints for intent classification with model selection",
-      "✅ Integrated workflow: Fine-tuned intent + Enhanced RAG + Smart recommendations"
-    ],
-    inProgress: [],
-    upcoming: [
-      "⏳ Production deployment optimization", 
-      "⏳ Advanced monitoring and metrics",
-      "⏳ Multi-model ensemble strategies"
-    ],
-    demoReady: true,
-    nextMilestone: "Test integrated workflow: POST /fine-tuning/smart-recommend",
-    workshopGoal:
-      "Intent classification with measurable performance improvements - COMPLETED!",
-    fineTuningStatus: {
-      datasetsGenerated: true,
-      modelTrained: true,
-      baselineAccuracy: "60% JSON validity, 0% intent accuracy", 
-      fineTunedAccuracy: "100% JSON validity, 100% intent accuracy",
-      performanceGain: "+100% accuracy improvement",
-      deploymentReady: true,
-      modelId: "ft:gpt-4o-mini-2024-07-18:personal::CKAp8rjB",
-      actualCost: "~$2-3 USD",
-      trainingTime: "~25 minutes"
-    }
   });
 });
 
@@ -233,42 +172,6 @@ app.get("/features", (req, res) => {
   });
 });
 
-// Cost optimization info
-app.get("/costs", (req, res) => {
-  res.json({
-    title: "Workshop Cost Optimization Strategy",
-    estimated: "Total workshop cost: ~$0.10 for complete demo",
-    optimizations: {
-      model: "GPT-4o-mini for most tasks (100x cheaper than GPT-4o)",
-      tokens: "Max 300-400 tokens per response for cost efficiency",
-      limits: "Max 3 products per search, 2 tools per query",
-      caching: "Smart embedding reuse and response caching",
-      efficiency: "Optimized token usage and concise responses",
-    },
-    breakdown: {
-      "setup + basic chat": "$0.01",
-      "RAG implementation": "$0.03",
-      "Tool calling demos": "$0.04",
-      "Fine-tuning": "$0.01",
-      "Production testing": "$0.01",
-    },
-    tokenLimits: {
-      "/chat": "300 tokens max",
-      "/analyze-image": "50 tokens max (cost optimized)",
-      "/query-voice-to-text": "Audio length based (Whisper) + 150 tokens for suggestions",
-      "/query-text-to-voice": "30 tokens for enhancement + TTS based on text length",
-      "/rag/search": "RAG context + 200 tokens for AI response"
-    },
-    tips: [
-      "Use provided product catalog (no real API calls)",
-      "Limit demo queries during development",
-      "Test with short, focused queries",
-      "Use mock data for reviews and specs",
-      "Token limits ensure cost-effective responses",
-    ],
-  });
-});
-
 // 404 handler
 app.use("*", (req, res) => {
   res.status(404).json({
@@ -277,17 +180,18 @@ app.use("*", (req, res) => {
       "/",
       "/health",
       "/docs",
-      "/progress",
       "/features",
-      "/costs",
       "/chat",
       "/query-voice-to-text",
       "/query-text-to-voice",
       "/analyze-image",
+      "/rag/search-natural-language",
       "/rag/search",
-      "/rag/categories",
       "/tools/chat",
+      "/tools/available",
+      "/tools/health",
       "/fine-tuning/classify-intent",
+      "/fine-tuning/smart-recommend",
       "/fine-tuning/models",
       "/fine-tuning/health"
     ],
@@ -295,7 +199,10 @@ app.use("*", (req, res) => {
       "/chat": "POST - Text-to-text chat with GPT-4o-mini (300 tokens max)",
       "/query-voice-to-text": "POST - Speech-to-text with Whisper + product suggestions (multipart/form-data)",
       "/query-text-to-voice": "POST - Enhanced text-to-speech with TTS",
-      "/analyze-image": "POST - Image analysis with GPT-4o-mini (supports file upload or URL)"
+      "/analyze-image": "POST - Image analysis with GPT-4o-mini (supports file upload or URL)",
+      "/rag/search-natural-language": "POST - Semantic product search with natural language",
+      "/tools/chat": "POST - Intelligent conversation with automated tool calling",
+      "/tools/available": "GET - List available tools (search_products, get_purchase_policies)"
     },
     fineTuning: {
       "/fine-tuning/classify-intent": "POST - Intent classification with model selection (base|fine-tuned)",
@@ -307,7 +214,7 @@ app.use("*", (req, res) => {
     hint: "Try integrated workflow: POST /fine-tuning/smart-recommend with useFineTuned: true",
     nextEndpoints: {
       "current-branch-4": ["/fine-tuning/smart-recommend", "/fine-tuning/classify-intent"],
-      "previous-branches": ["/rag/search", "/tools/chat"],
+      "previous-branches": ["/tools/chat", "/tools/available"],
       "branch-5": ["/moderate", "/metrics"]
     }
   });
@@ -334,16 +241,15 @@ app.use(
 // Start server
 app.listen(config.server.port, () => {
   Logger.success(
-    `🛍️ Product Semantic Search Workshop v2 running on port ${config.server.port}`
+    `🛍️ Product Semantic Search Workshop running on port ${config.server.port}`
   );
-  Logger.info(`📚 Workshop branch: 1-initial-project`);
+  Logger.info(`📚 Workshop branch: 4-fine-tuning`);
   Logger.info(`🎯 Objective: Build intelligent multimodal product assistant`);
   Logger.info(`🔗 Visit: http://localhost:${config.server.port}`);
   Logger.info(`📖 Documentation: http://localhost:${config.server.port}/docs`);
   Logger.info(`💡 Features: http://localhost:${config.server.port}/features`);
-  Logger.info(`💰 Costs: http://localhost:${config.server.port}/costs`);
   Logger.info(
-    `⏭️  Next: Switch to branch 2-rag-implementation for semantic search`
+    `⏭️  Next: Switch to branch 5-moderation for moderation and production hardening`
   );
   Logger.info(`🎓 Goal: OpenAI API Practitioner Certification Ready!`);
 });

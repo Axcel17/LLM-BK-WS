@@ -1,8 +1,0 @@
-{
-  "query": "Productos de la marca Apple para trabajo profesional",
-  "filters": {
-    "brand": "Apple",
-    "minPrice": 200,
-    "limit": 5
-  }
-}

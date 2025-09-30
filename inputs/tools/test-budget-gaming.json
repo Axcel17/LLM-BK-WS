@@ -1,5 +1,5 @@
 {
-  "message": "Tengo un presupuesto de $500 para un setup de gaming. ¿Qué me recomiendas?",
-  "max_tokens": 400,
-  "include_tool_details": false
+  "message": "Quiero armar un setup de gaming con $500. ¿Qué productos me recomiendas? ¿Puedo pagar en meses sin intereses?",
+  "max_tokens": 450,
+  "include_tool_details": true
 }
