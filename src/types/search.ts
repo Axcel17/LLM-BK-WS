@@ -25,13 +25,7 @@ export const RAGQuerySchema = z.object({
     brand: z.string().optional(),
     limit: z.number().int().min(1).max(20).default(5),
   }).optional().default({}),
-});
-
-export const VectorStoreQuerySchema = z.object({
-  query: z.string(),
-  embedding: z.array(z.number()),
-  limit: z.number().optional(),
-  threshold: z.number().optional(),
+  limit: z.number().int().min(1).max(20).default(5),
 });
 
 export const VectorSearchResultSchema = z.object({
@@ -46,7 +40,7 @@ export const RAGResponseSchema = z.object({
   products: z.array(z.object({
     id: z.string(),
     title: z.string(),
-    similarity: z.number(),
+    similarity: z.number().optional(),
     price: z.string().optional(),
     category: z.string(),
     brand: z.string().optional(),
@@ -63,7 +57,6 @@ export const RAGResponseSchema = z.object({
 
 export type VectorItem = z.infer<typeof VectorItemSchema>;
 export type VectorEmbedItem = z.infer<typeof VectorEmbedItemSchema>;
-export type RAGQuery = z.infer<typeof RAGQuerySchema>;
-export type VectorStoreQuery = z.infer<typeof VectorStoreQuerySchema>;
 export type VectorSearchResult = z.infer<typeof VectorSearchResultSchema>;
+export type RAGQuery = z.infer<typeof RAGQuerySchema>;
 export type RAGResponse = z.infer<typeof RAGResponseSchema>;

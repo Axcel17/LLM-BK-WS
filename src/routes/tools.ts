@@ -2,11 +2,7 @@ import { Router } from "express";
 import { openai } from "../config";
 import { Logger } from "../utils/logger";
 import { ToolService } from "../services/ToolService";
-import { 
-  ChatWithToolsSchema, 
-  ChatWithToolsRequest,
-  ToolCallContext 
-} from "../types/tools";
+import { ChatWithToolsSchema } from "../types/tools";
 import { z } from "zod";
 
 const router = Router();
@@ -42,43 +38,38 @@ router.post("/chat", async (req, res) => {
 
     Logger.info(`🤖 Processing chat with tools: "${message}"`);
 
-    // Build context for tool calls
-    const context: ToolCallContext = {
-      conversation_id,
-      user_query: message
-    };
-
-    // Extract budget from message if mentioned
-    const budgetMatch = message.match(/(\$|peso|dolar|euro)?\s*(\d+)/i);
-    if (budgetMatch) {
-      context.budget_limit = parseInt(budgetMatch[2]);
-    }
-
     // Create OpenAI chat completion with tools
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
-          content: `Eres un asistente experto en productos que ayuda a los usuarios a encontrar, comparar y elegir productos. 
+          content: `Eres un asistente experto en productos que ayuda a los usuarios a encontrar, comparar y elegir productos ÚNICAMENTE de nuestro catálogo disponible.
 
 HERRAMIENTAS DISPONIBLES:
-- search_products: Busca productos usando lenguaje natural
-- get_product_details: Obtiene información detallada de un producto específico  
-- compare_products: Compara 2-4 productos lado a lado
+- search_products: Extrae características de productos usando lenguaje natural en nuestro catálogo, incluyendo filtros como precio, marca, categoría, etc. Siempre proporciona una lista de productos con sus detalles.
+- get_purchase_policies: Busca políticas de compra, procedimientos, términos, devoluciones, envíos, garantías, descuentos y cualquier información corporativa. Usa cuando pregunten sobre políticas de la empresa.
 
-INSTRUCCIONES:
-1. USA las herramientas cuando sea apropiado para dar respuestas precisas
-2. Mantén respuestas CONCISAS y ÚTILES (max ${max_tokens} tokens)
-3. Siempre incluye precios cuando estén disponibles
-4. Si el usuario menciona un presupuesto, tenlo en cuenta
-5. Prioriza la experiencia del usuario sobre mostrar información técnica
+REGLAS IMPORTANTES:
+1. USA las herramientas para obtener información real de nuestro catálogo y políticas
+2. Si no encuentras productos que cumplan los criterios, sé HONESTO al respecto
+3. Para consultas con presupuesto específico, busca primero y luego analiza si hay opciones
+4. Para preguntas sobre políticas, devoluciones, envíos, etc. USA get_purchase_policies
+5. Mantén respuestas CONCISAS y ÚTILES (max ${max_tokens} tokens)
+6. NUNCA inventes productos, precios o políticas que no estén en los resultados
+
+ESTRATEGIAS POR CASO:
+- Búsqueda de productos: Usa search_products
+- Preguntas sobre políticas: Usa get_purchase_policies
+- Presupuesto específico: Busca productos y analiza si están dentro del rango
+- Comparaciones: Busca cada producto mencionado individualmente  
+- Detalles de marca: Busca todos los productos de esa marca
+- Recomendaciones generales: Busca por categoría o uso específico
 
 FORMATO DE RESPUESTA:
-- Respuestas directas y actionables
-- Usa viñetas para comparaciones
-- Incluye recomendaciones claras
-- Menciona beneficios clave de cada producto`
+- Si HAY productos: Información detallada con precios reales
+- Si NO HAY productos: "No tenemos productos disponibles para [criterio]"
+- Si están FUERA de presupuesto: Menciona los productos disponibles y sugiere ajustar presupuesto`
         },
         {
           role: 'user',
@@ -92,6 +83,8 @@ FORMATO DE RESPUESTA:
     });
 
     const choice = completion.choices[0];
+
+    Logger.info(`🛠️ Tool choice: ${JSON.stringify(choice)}`);
     let finalResponse = choice.message?.content || "";
     let toolResults: any[] = [];
     let totalTokens = completion.usage?.total_tokens || 0;
@@ -103,11 +96,11 @@ FORMATO DE RESPUESTA:
       for (const toolCall of choice.message.tool_calls) {
         const toolName = toolCall.function.name;
         const toolParams = JSON.parse(toolCall.function.arguments);
-        
+
         Logger.info(`⚙️ Executing: ${toolName}(${JSON.stringify(toolParams)})`);
 
         // Execute tool
-        const toolResult = await toolService.executeToolCall(toolName, toolParams, context);
+        const toolResult = await toolService.executeToolCall(toolName, toolParams);
         toolResults.push({
           tool_name: toolName,
           parameters: toolParams,
@@ -124,16 +117,24 @@ FORMATO DE RESPUESTA:
       const messages: any[] = [
         {
           role: 'system',
-          content: `Usa los resultados de las herramientas para dar una respuesta útil y concisa al usuario. 
-          
-LÍMITE DE TOKENS: ${max_tokens}
+          content: `Eres un asistente de productos COMPLETAMENTE HONESTO. Usa ÚNICAMENTE los resultados de las herramientas para responder.
+
+REGLAS CRÍTICAS:
+1. Usa ÚNICAMENTE los resultados de las herramientas para responder
+2. NUNCA inventes productos, marcas, modelos o precios que no aparezcan en los resultados
+3. Mantén respuestas concisas (max ${max_tokens} tokens)
+
 CONTEXTO: El usuario preguntó "${message}"
 
+EJEMPLOS DE RESPUESTAS HONESTAS:
+- Sin productos relacionados: "No tenemos bicicletas disponibles en nuestro catálogo. Puedes consultar en tiendas especializadas en deportes."
+- Productos fuera de presupuesto: "No tenemos smartphones en tu presupuesto de $300. Sin embargo, tenemos: iPhone 15 Pro $999 (excede por $699), iPad Pro $1099 (excede por $799). ¿Te interesa considerar aumentar tu presupuesto?"
+- Productos encontrados: Presenta información completa con precios y características
+
 Prioriza:
-1. Respuesta directa a la pregunta
-2. Recomendaciones claras  
-3. Información de precios
-4. Próximos pasos sugeridos`
+1. Honestidad absoluta sobre disponibilidad
+2. Información específica del catálogo real
+3. Sugerencias constructivas basadas en la situación`
         },
         {
           role: 'user',

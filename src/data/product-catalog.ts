@@ -1,10 +1,12 @@
-import { VectorItem } from '../types/rag';
+import { VectorItem } from '../types/search';
 
 /**
  * Catálogo de Productos para RAG
- * Contenido optimizado para embeddings y búsqueda semántica
  */
 export const PRODUCTS_CATALOG: VectorItem[] = [
+  // ============================================================================
+  // ELECTRONICS
+  // ============================================================================
   {
     id: 'prod-001',
     title: 'iPhone 15 Pro',
@@ -17,7 +19,7 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   {
     id: 'prod-002', 
     title: 'Samsung Galaxy Buds Pro 3',
-    content: 'Samsung Galaxy Buds Pro 3 auriculares inalámbricos. Cancelación activa ruido, audio espacial, batería 8 horas. Perfectos trabajo remoto, ejercicio, entretenimiento. Características: inalámbricos, cancelación ruido, resistentes sudor, carga rápida.',
+    content: 'Samsung Galaxy Buds Pro 3 auriculares inalámbricos premium cancelación activa ruido inteligente ANC. Drivers de 11mm audio espacial 360, tecnología Bluetooth 5.3 conexión estable, estuche carga inalámbrica Qi 30 horas batería total. Resistencia agua IPX7 ejercicio intenso sudor lluvia, micrófonos duales llamadas cristalinas cancelación eco viento. Controles táctiles personalizables reproducción volumen asistente, ajuste ergonómico 3 tamaños almohadillas incluidas comodidad prolongada. Perfecto trabajo remoto videollamadas nitidez, ejercicio running gym resistente sudor, entretenimiento música podcasts calidad audiófila, viajes cancelación ruido ambiente. Ideal profesionales calls frecuentes, atletas entrenamientos diarios, estudiantes concentración estudio, viajeros frecuentes transporte público. Compatibilidad universal Android iOS Windows, app Samsung Wearable personalización ecualizador, modo transparencia ambiente consciente. Características: cancelación ruido adaptativa inteligente, audio espacial inmersivo envolvente, resistente agua sudor IPX7, batería extendida 30h total, controles táctiles intuitivos.',
     category: 'electronics',
     price: 179,
     brand: 'Samsung',
@@ -33,90 +35,14 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
     date: '2024-01-12T09:15:00Z',
   },
   {
-    id: 'prod-004',
-    title: 'Bandas Elásticas Premium Set',
-    content: 'Bandas elásticas premium set completo 5 bandas resistencia diferentes FitPro. Niveles resistencia progresivos principiantes avanzados, manijas ergonómicas cómodas antideslizantes, guía ejercicios detallada rutinas completas. Perfecto entrenamiento casa gym hogar sin equipos costosos, fisioterapia rehabilitación lesiones, ejercicio funcional fuerza resistencia, adultos mayores ejercicio suave, viajeros fitness portátil. Ideal regalo fitness motivación salud, principiantes empezar ejercicio, personas ocupadas sin tiempo gym, presupuesto económico fitness efectivo. Características: completamente portátil maleta viaje, versátil cuerpo completo, ahorro espacio departamentos pequeños, resistencias múltiples progresión, ejercicio hogar conveniente.',
-    category: 'sports',
-    price: 29.99,
-    brand: 'FitPro',
-    date: '2024-01-08T14:20:00Z',
-  },
-  {
-    id: 'prod-005',
-    title: 'Colchoneta Yoga Antideslizante',
-    content: 'Colchoneta yoga premium ZenFit 6mm grosor. Material TPE ecológico, superficie antideslizante. Ideal yoga, pilates, estiramientos, meditación casa. Características: antideslizante, ecológico, acolchado grueso, portátil, fácil limpiar.',
-    category: 'sports',
-    price: 45,
-    brand: 'ZenFit',
-    date: '2024-01-05T11:45:00Z',
-  },
-  {
-    id: 'prod-006',
-    title: 'Set Cuchillos Profesional',
-    content: 'Set cuchillos chef profesional completo ChefMaster acero inoxidable alemán superior. 8 cuchillos especializados alta calidad bloque madera elegante bambú. Incluye cuchillo chef versátil 8 pulgadas, santoku japonés precisión, deshuesador fileteador, chaira afilador mantenimiento. Perfecto cocineros profesionales chef restaurante, aficionados cocina gourmet casera, estudiantes artes culinarias, madres cocinar familia. Ideal regalo bodas nueva casa, día madre amante cocina, chef principiante profesional, cumpleaños cocinero. Características: grado profesional resistente, acero inoxidable alemán premium, filo excepcionalmente afilado duradero, diseño ergonómico cómodo, bloque organizador seguro.',
-    category: 'kitchen',
-    price: 189,
-    brand: 'ChefMaster',
-    date: '2024-01-03T16:30:00Z',
-  },
-  {
-    id: 'prod-007',
-    title: 'Cafetera Espresso Automática',
-    content: 'Cafetera espresso automática profesional BrewMaster molinillo integrado café granos frescos. Presión perfecta 15 bares calidad barista, sistema espuma automático cremosa perfecta. Prepara café espresso intenso, cappuccino cremoso, latte artesanal un solo toque botones programables. Perfecta amantes café exigentes calidad gourmet, oficina ejecutiva impresionar clientes, hogar familia café perfecto diario, profesionales madrugadores energía. Ideal regalo día padre café lover, bodas nueva casa, cumpleaños amante café, jefe oficina barista hogar. Características: completamente automática fácil uso, molinillo integrado granos frescos, espumador leche automático, programable personalizable, calidad profesional barista.',
-    category: 'kitchen',
-    price: 599,
-    brand: 'BrewMaster',
-    date: '2024-01-01T08:00:00Z',
-  },
-  {
-    id: 'prod-008',
-    title: 'Reloj Inteligente Deportivo',
-    content: 'Smartwatch deportivo avanzado SportTech GPS preciso ubicación, monitor ritmo cardíaco continuo salud, seguimiento sueño profundo recuperación. Resistente agua 50 metros natación deportes acuáticos, más 100 modos deportivos especializados, batería increíble 7 días uso intensivo. Perfecto atletas deportistas serios, runners corredores principiantes expertos, nadadores deportes acuáticos, ciclistas mountain bike, escaladores senderismo montaña. Ideal regalo motivación fitness salud, cumpleaños deportista, graduación estudiante activo, padre día fitness. Características: GPS integrado preciso rutas, monitor cardíaco 24/7 salud, resistente agua deportes extremos, batería excepcional larga duración, modos deportivos completos profesionales.',
-    category: 'accessories',
-    price: 249,
-    brand: 'SportTech',
-    date: '2023-12-28T12:15:00Z',
-  },
-  {
-    id: 'prod-009',
-    title: 'Set Spa Casa Aromaterapia',
-    content: 'Set spa casa completo lujo RelaxSpa aceites esenciales puros terapéuticos, velas aromáticas relajantes ambiente, sales baño minerales desintoxicantes, mascarillas faciales naturales rejuvenecedoras, guía completa relajación meditación. Experiencia spa profesional hogar privacidad comodidad, bienestar mental físico estrés ansiedad, autocuidado self-care rutina diaria, relajación profunda descanso reparador. Regalo perfecto día madre bienestar, San Valentín esposa novia, cumpleaños amiga especial, navidad familia relajación, graduación estudiante estrés. Características: aromaterapia profesional aceites puros, ingredientes completamente naturales orgánicos, set completo experiencia spa, ambiente relajante terapéutico, presentación elegante lista regalo.',
-    category: 'beauty',
-    price: 79,
-    brand: 'RelaxSpa',
-    date: '2023-12-25T10:30:00Z',
-  },
-  {
-    id: 'prod-010',
-    title: 'Botella Agua Térmica',
-    content: 'Botella térmica premium HydroLife acero inoxidable grado alimenticio resistente. Tecnología aislamiento avanzada mantiene bebidas heladas frías 24 horas completas, bebidas calientes té café 12 horas temperatura perfecta. Diseño ergonómico cómodo mano, libre BPA completamente seguro salud, tapa anti-goteo hermetica transporte. Perfecta oficina trabajo hidratación productividad, gym fitness deportes entrenamientos intensos, viajes aventuras outdoor senderismo, estudiantes universidad campus, conductores viajes largos. Ideal regalo práctico útil diario, compañeros trabajo equipo, estudiantes graduación, deportistas fitness, viajeros aventureros. Características: aislamiento térmico superior tecnología, libre BPA materiales seguros, tapa anti-goteo prueba derrames, diseño ergonómico cómodo, construcción duradera resistente.',
-    category: 'accessories',
-    price: 24.99,
-    brand: 'HydroLife',
-    date: '2023-12-20T14:45:00Z',
-  },
-  {
     id: 'prod-011',
-    title: 'Auriculares Gaming RGB',
-    content: 'Auriculares gaming profesional GameZone RGB iluminación personalizable. Audio surround 7.1, micrófono cancelación ruido, almohadillas memoria. Perfecto gaming competitivo, streaming, comunicación online. Características: audio surround, micrófono profesional, RGB personalizable, cómodos.',
+    title: 'Auriculares Gaming RGB GameZone Pro',
+    content: 'Auriculares gaming profesionales GameZone RGB iluminación personalizable 16.8 millones colores sincronización. Audio surround virtual 7.1 drivers 50mm posicionamiento preciso enemigos, micrófono bidireccional cancelación ruido ambiental comunicación clara equipo. Almohadillas memory foam premium comodidad sesiones largas 8+ horas, diadema acolchada distribución peso equilibrado, construcción aluminio resistente. Controles volumen micrófono cable, compatible PC PlayStation Xbox Nintendo Switch móviles. Perfecto gaming competitivo FPS MOBA RTS, streaming Twitch YouTube calidad profesional, comunicación online Discord TeamSpeak, entretenimiento películas música inmersivo. Ideal gamers competitivos torneos, streamers content creators, estudiantes gaming universidad, regalo gamer enthusiast. Software personalización perfiles juegos, ecualizador avanzado frecuencias, efectos sonido envolvente teatro. Características: audio surround 7.1 posicionamiento preciso, micrófono profesional cancelación ruido, iluminación RGB 16.8M colores personalizable, almohadillas memory foam comodidad extrema, compatibilidad universal multiplataforma.',
     category: 'electronics',
     price: 89,
     brand: 'GameZone',
     date: '2024-01-20T16:45:00Z',
   },
-  {
-    id: 'prod-012',
-    title: 'Mancuernas Ajustables 20kg',
-    content: 'Mancuernas ajustables PowerFlex 5-20kg por mancuerna. Sistema cambio rápido, ahorra espacio, equivalente 10 pares mancuernas tradicionales. Ideal entrenamiento fuerza casa. Características: ajustables, ahorra espacio, cambio rápido, duraderas, versatiles.',
-    category: 'sports',
-    price: 159,
-    brand: 'PowerFlex',
-    date: '2024-01-18T09:30:00Z',
-  },
-
-  // ============================================================================
-  // ELECTRONICS - Expanded
-  // ============================================================================
   {
     id: 'prod-013',
     title: 'Samsung Galaxy S24 Ultra',
@@ -171,23 +97,14 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
     brand: 'MechPro',
     date: '2024-01-14T12:30:00Z',
   },
-  {
-    id: 'prod-019',
-    title: 'Webcam 4K Streaming',
-    content: 'Webcam StreamCam 4K Ultra HD autoenfoque, corrección luz automática, micrófono dual. Ideal streaming, videollamadas, creación contenido. Características: 4K calidad, autoenfoque rápido, micrófono integrado, plug-and-play.',
-    category: 'electronics',
-    price: 199,
-    brand: 'StreamCam',
-    date: '2024-01-12T16:45:00Z',
-  },
 
   // ============================================================================
-  // HOME & LIVING - New Category
+  // HOME
   // ============================================================================
   {
     id: 'prod-020',
-    title: 'Aspiradora Robot Inteligente',
-    content: 'Aspiradora robot CleanBot mapeo láser, navegación inteligente, succión 4000Pa. Programable app, auto-vaciado, limpieza húmeda. Ideal hogares ocupados, mascotas. Características: mapeo láser, app control, auto-vaciado, limpieza híbrida.',
+    title: 'Aspiradora Robot Inteligente CleanBot Pro',
+    content: 'Aspiradora robot CleanBot Pro mapeo láser LiDAR navegación inteligente, succión potente 4000Pa alfombras pisos duros. Programable app móvil horarios personalizados, estación auto-vaciado 60 días autonomía, función trapeado híbrido aspirado húmedo. Sensores anti-caída escaleras, detección obstáculos tiempo real, batería 5200mAh autonomía 180 minutos limpieza completa. Compatible Alexa Google Assistant control voz, mapas virtuales zonas restringidas limpieza dirigida, filtro HEPA captura alérgenos mascotas. Perfecto hogares ocupados familias, propietarios mascotas pelo constante, personas mayores movilidad limitada, profesionales tiempo limitado limpieza. Ideal regalo padres nuevos, moving house warming, personas alérgicas, trabajadores home office. Incluye accesorios repuesto cepillos laterales centrales, mopas microfibra lavables, manual instrucciones garantía 2 años. Características: mapeo láser precisión milimétrica, succión 4000Pa potente versátil, app control programación inteligente, auto-vaciado 60 días sin mantenimiento, limpieza híbrida aspirado trapeado.',
     category: 'home',
     price: 499,
     brand: 'CleanBot',
@@ -195,8 +112,8 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   },
   {
     id: 'prod-021',
-    title: 'Purificador Aire HEPA',
-    content: 'Purificador aire AirPure filtro HEPA H13, cobertura 50m², sensor calidad aire tiempo real. Elimina 99.97% partículas, alergenos, virus. Características: filtro HEPA H13, sensor inteligente, silencioso, cobertura amplia.',
+    title: 'Purificador Aire HEPA AirPure Max',
+    content: 'Purificador aire AirPure Max filtro HEPA H13 médico cobertura 50m² habitaciones grandes salas. Sensor calidad aire tiempo real PM2.5 PM10, display LED colores calidad, modo automático ajusta velocidad contaminación detectada. Elimina 99.97% partículas 0.3 micrones alérgenos polen ácaros, virus bacterias humo tabaco, olores cocina mascotas químicos VOC. 5 velocidades ventilador ultra-silencioso 23dB modo nocturno, temporizador 8 horas, indicador reemplazo filtro. Compatible app smartphone control remoto, Alexa Google Assistant integración smart home. Perfecto alérgicos asma respiración sensible, hogares mascotas caspa pelo, fumadores humo residual, cocinas olores persistentes, habitaciones bebés aire puro. Ideal regalo salud bienestar, personas enfermedades respiratorias, hogares urbanos contaminación, oficinas aire viciado. Incluye filtro HEPA repuesto, filtro carbón activado, manual usuario garantía 3 años. Características: filtro HEPA H13 grado médico, sensor calidad aire tiempo real, cobertura 50m² espacios grandes, ultra-silencioso 23dB nocturno, app control smart home integration.',
     category: 'home',
     price: 299,
     brand: 'AirPure',
@@ -204,8 +121,8 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   },
   {
     id: 'prod-022',
-    title: 'Humidificador Ultrasónico',
-    content: 'Humidificador ultrasónico MistMaker 6L capacidad, 24h autonomía, control remoto, aromaterapia. Mejora calidad aire, ideal climas secos, bebés. Características: ultrasónico silencioso, gran capacidad, aromaterapia, control remoto.',
+    title: 'Humidificador Ultrasónico MistMaker Elite',
+    content: 'Humidificador ultrasónico MistMaker Elite capacidad 6L tanque grande autonomía 24 horas continuas. Tecnología ultrasónica silenciosa vibración alta frecuencia, nebulización fina uniforme sin ruido molesto sueño. Control remoto inalámbrico todas funciones, display LED humedad temperatura ambiente, 3 velocidades nebulización ajustables según necesidad. Función aromaterapia compartimento aceites esenciales, auto-apagado seguridad tanque vacío, boquilla rotativa 360° distribución homogénea. Mejora calidad aire seco calefacción aire acondicionado, ideal climas secos invierno verano, habitaciones bebés piel sensible, oficinas ambiente controlado. Perfecto problemas respiratorios sequedad nasal, piel seca agrietada deshidratación, plantas interior humedad óptima, hogares calefacción central. Ideal regalo bienestar salud, padres recién nacidos, personas piel atópica, oficinas corporativas ambiente. Incluye cepillo limpieza, manual instrucciones, aceites esenciales muestra, garantía 2 años. Características: capacidad 6L autonomía 24h, tecnología ultrasónica ultra-silenciosa, control remoto funciones completas, aromaterapia aceites esenciales, auto-apagado seguridad tanque vacío.',
     category: 'home',
     price: 89,
     brand: 'MistMaker',
@@ -213,8 +130,8 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   },
   {
     id: 'prod-023',
-    title: 'Lámpara LED Escritorio',
-    content: 'Lámpara escritorio LightPro LED ajustable, 3 modos color, carga inalámbrica base, control táctil. Ideal estudio, trabajo, lectura nocturna. Características: LED ajustable, carga inalámbrica, control táctil, cuidado ojos.',
+    title: 'Lámpara LED Escritorio LightPro Smart',
+    content: 'Lámpara escritorio LightPro Smart LED regulable 3 temperaturas color blanco frío cálido neutro. Base carga inalámbrica Qi smartphones tablets, control táctil sensible intensidad temperatura, brazo articulado aluminio ajustable múltiples ángulos. Tecnología cuidado ojos sin parpadeo flicker-free, iluminación uniforme sin sombras molestas, memoria configuración anterior encendido automático. USB puerto carga adicional dispositivos, timer auto-apagado 1-4 horas, consumo energía eficiente LED larga vida 50000 horas. Perfecta estudio concentración lectura prolongada, trabajo escritorio oficina home office, lectura nocturna cama sin molestar pareja, tareas precisas costura artesanías. Ideal estudiantes universitarios examenes, profesionales trabajo nocturno, lectores ávidos bibliófílos, artistas trabajo detalle precision. Compatible carga inalámbrica iPhone Samsung Google Pixel, diseño minimalista moderno cualquier decoración. Características: LED regulable 3 temperaturas color, carga inalámbrica Qi integrada base, control táctil ajuste preciso, brazo articulado aluminio flexible, tecnología cuidado ojos flicker-free.',
     category: 'home',
     price: 79,
     brand: 'LightPro',
@@ -222,16 +139,61 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   },
   {
     id: 'prod-024',
-    title: 'Organizador Closet Modular',
-    content: 'Sistema organizador closet ModularSpace componentes ajustables, estantes, cajones, barras colgado. Maximiza espacio, fácil instalación. Características: modular ajustable, ahorra espacio, fácil montaje, versatil.',
+    title: 'Organizador Closet Modular ModularSpace Pro',
+    content: 'Sistema organizador closet ModularSpace Pro componentes modulares ajustables personalización total. Incluye estantes regulables altura, cajones deslizables suaves, barras colgado diferentes longitudes, divisores cajones ropa interior. Construcción metal resistente pintura polvo antioxidante, capacidad peso 50kg por estante, instalación herramientas incluidas sin taladro. Maximiza espacio vertical closets pequeños apartamentos, configuración personalizable necesidades específicas, cajones transparentes visibilidad completa contenido. Perfecto departamentos espacios reducidos, personas organizadas optimización, familias ropa abundante niños creciendo, mudanzas casas nuevas organización. Ideal regalo mudanza house warming, estudiantes universitarios dormitorios, minimalistas orden extremo, profesionales imagen personal. Incluye manual instrucciones ilustradas, etiquetas identificación, bolsas lavandería, garantía 5 años componentes. Características: sistema modular completamente personalizable, instalación sin herramientas taladro, cajones transparentes visibilidad total, construcción metal resistente durable, maximización espacio vertical eficiente.',
     category: 'home',
     price: 149,
     brand: 'ModularSpace',
     date: '2024-01-18T10:00:00Z',
   },
+  {
+    id: 'home-025',
+    title: 'Cafetera Espresso Automática BrewMaster Pro',
+    content: 'Cafetera espresso automática BrewMaster Pro molinillo integrado granos frescos, presión perfecta 15 bares extracción óptima. Sistema espuma leche automático cremosa perfecta cappuccinos lattes, pantalla táctil programable recetas personalizadas favoritas. Prepara espresso intenso, americano suave, cappuccino cremoso, latte artístico un toque botón, limpieza automática ciclo descalcificación. Depósito agua 1.8L removible fácil llenado, tolva granos 250g hermética frescura, bandeja goteo extraíble lavable lavavajillas. Perfecta amantes café exigentes calidad barista casero, oficinas ejecutivas impresionar clientes visitas, hogares familiares café perfecto diario rutina, profesionales madrugadores energía productividad. Ideal regalo día padre coffee lover entusiasta, bodas lista regalos nueva casa, cumpleaños jefe boss appreciation, navidad familia cafetera. Compatible granos cualquier tostado origen, configuración molienda 5 niveles, temperatura agua ajustable, modo eco ahorro energía. Características: molinillo integrado granos frescos diario, presión 15 bares calidad barista, espumador automático leche cremosa, pantalla táctil recetas programables, limpieza automática mantenimiento fácil.',
+    category: 'home',
+    price: 599,
+    brand: 'BrewMaster',
+    date: '2024-01-28T08:00:00Z',
+  },
+  {
+    id: 'home-026',
+    title: 'Difusor Aromas Ultrasónico ZenScent',
+    content: 'Difusor aromas ZenScent ultrasónico nebulización fina aceites esenciales terapéuticos, capacidad 300ml autonomía 10 horas continuas. 7 colores LED intercambiables ambiente relajante, timer automático 1-3-6 horas, 2 modos nebulización intermitente continua. Tecnología ultrasónica preserva propiedades aceites naturales, funcionamiento silencioso 35dB meditación sueño, auto-apagado seguridad agua agotada protección motor. Material BPA-free seguro salud, diseño elegante madera bambú decoración natural cualquier ambiente, fácil limpieza mantenimiento agua jabón. Perfecto relajación estrés ansiedad aromaterapia natural, meditación yoga ambiente tranquilo, habitaciones bebés sueño reparador, oficinas productividad concentración. Ideal regalo spa casa wellness, personas estrés trabajo, practicantes yoga meditación, madres relajación postparto. Compatible todos aceites esenciales puros naturales, incluye manual aromaterapia, recetas mezclas relajantes, garantía 1 año. Características: tecnología ultrasónica preserva aceites naturales, 7 colores LED ambiente personalizable, timer automático 1-6 horas, auto-apagado seguridad protección, diseño bambú elegante decorativo natural.',
+    category: 'home',
+    price: 45,
+    brand: 'ZenScent',
+    date: '2024-01-25T16:30:00Z',
+  },
+  {
+    id: 'home-027',
+    title: 'Termostato Inteligente SmartTemp WiFi',
+    content: 'Termostato inteligente SmartTemp WiFi control temperatura remoto smartphone, programación semanal automática, aprendizaje patrones uso ahorro energía hasta 23%. Pantalla táctil color meteorología, compatibilidad Alexa Google Assistant Siri control voz, geofencing detección presencia ajuste automático. Instalación fácil cables existentes sin electricista, configuración app intuitiva paso paso, alertas mantenimiento sistema HVAC. Monitoreo consumo energético tiempo real gráficos detallados, modo vacaciones temperatura económica, sensores múltiples habitaciones temperatura equilibrada. Perfecto hogares modernos automatización inteligente, personas conscientes ahorro energético, familias horarios variables trabajo, propietarios casas grandes control zonal. Ideal regalo tecnología práctica útil, nuevos propietarios eficiencia energética, personas mayores simplicidad uso, profesionales optimización costos. Compatible sistemas calefacción refrigeración gas eléctrico, actualizaciones firmware automáticas, soporte técnico 24/7, garantía 5 años. Características: control remoto WiFi smartphone app, programación inteligente aprendizaje automático, ahorro energía hasta 23% facturas, compatibilidad asistentes voz populares, instalación fácil cables existentes.',
+    category: 'home',
+    price: 179,
+    brand: 'SmartTemp',
+    date: '2024-01-23T11:45:00Z',
+  },
+  {
+    id: 'home-028',
+    title: 'Set Sartenes Antiadherentes CookMaster Pro',
+    content: 'Set sartenes antiadherentes CookMaster Pro 3 piezas tamaños 20-24-28cm, recubrimiento cerámico titanio ultra-resistente sin PFOA PTFE. Base aluminio forjado distribución calor uniforme, mango ergonómico acero inoxidable resistente calor 200°C horno. Compatible todas cocinas incluyendo inducción, limpieza fácil agua jabón sin esfuerzo, superficie lisa sin rayaduras espátulas metal. Cocción saludable sin aceite grasa excesiva, liberación fácil alimentos sin pegado, conserva nutrientes sabores naturales cocción uniforme. Perfectas cocina diaria familiar saludable, chefs caseros exigentes calidad, personas dieta control peso grasa, estudiantes apartamentos cocina básica. Ideal regalo bodas lista kitchen essentials, día madre cocinera familia, mudanza nueva casa equipamiento, navidad amantes cocina. Resistente lavavajillas aunque recomendada limpieza manual conservación, almacenamiento apilable ahorro espacio, manual recetas saludables incluido. Características: recubrimiento cerámico titanio antiadherente duradero, base aluminio forjado distribución calor perfecta, compatible todas cocinas incluyendo inducción, mangos ergonómicos resistentes calor horno, limpieza effortless sin pegado alimentos.',
+    category: 'home',
+    price: 129,
+    brand: 'CookMaster',
+    date: '2024-01-21T14:20:00Z',
+  },
+  {
+    id: 'home-029',
+    title: 'Báscula Cocina Digital SmartScale',
+    content: 'Báscula cocina digital SmartScale precisión 1g capacidad máxima 5kg, pantalla LCD grande números claros visibles cualquier ángulo. Función tara peso recipientes, conversión unidades automática gramos onzas libras ml, superficie vidrio templado resistente fácil limpieza. App móvil conectividad Bluetooth análisis nutricional alimentos, base datos 8000+ ingredientes información calories proteínas carbohidratos, recetas proporcionales escalado automático porciones. Auto-apagado ahorro batería, calibración automática precisión constante, superficie lisa sin rendijas acumulación suciedad bacteria. Perfecta cocina precisión repostería bread making, control porciones dietas weight watchers, meal prep preparación semanal, profesionales nutrición exact measurements. Ideal regalo cocineros meticulosos precisión, personas dietas específicas control, reposteros profesionales exact ratios, estudiantes nutrición dietética. Compatible iOS Android sincronización datos, historial pesajes tracking progress, alertas recordatorio meal times, backup cloud seguridad. Características: precisión profesional 1g hasta 5kg, app móvil análisis nutricional conectividad, conversión unidades automática múltiples, superficie vidrio templado fácil limpieza, función tara peso recipientes containers.',
+    category: 'home',
+    price: 39,
+    brand: 'SmartScale',
+    date: '2024-01-19T09:30:00Z',
+  },
 
   // ============================================================================
-  // CLOTHING - New Category
+  // CLOTHING
   // ============================================================================
   {
     id: 'prod-025',
@@ -269,228 +231,65 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
     brand: 'BusinessElite',
     date: '2024-01-22T14:00:00Z',
   },
-
-  // ============================================================================
-  // BOOKS & EDUCATION - New Category  
-  // ============================================================================
   {
-    id: 'prod-029',
-    title: 'Curso Online Programación',
-    content: 'Curso completo programación CodeAcademy JavaScript Python, proyectos reales, certificación, soporte instructores. Perfecto principiantes, cambio carrera. Características: proyectos reales, certificación reconocida, soporte personalizado, acceso lifetime.',
-    category: 'education',
-    price: 299,
-    brand: 'CodeAcademy',
-    date: '2024-01-30T10:00:00Z',
+    id: 'cloth-029',
+    title: 'Jeans Denim Clásico Azul Oscuro',
+    content: 'Jeans denim clásico azul oscuro DenimCraft 100% algodón premium mezclilla resistente. Corte straight fit tradicional favorecedor todas figuras, tiro medio cómodo sin restricción movimiento, 5 bolsillos funcionales diseño atemporal icónico. Lavado stone wash suave textura natural envejecimiento elegante, color azul oscuro versátil combinaciones infinitas formal casual, costuras dobles reforzadas resistencia uso diario intensivo lavados frecuentes. Perfecto guardarropa básico esencial masculino femenino, oficina casual Friday ambiente relajado profesional, salidas nocturnas elegante cómodo versátil, fines semana actividades casuales deportes ligeros, viajes durabilidad comodidad estilo. Ideal regalo cumpleaños estudiantes universitarios, profesionales jóvenes moderno atemporal, padres día practicidad durabilidad, back to school regreso clases básicos. Disponible tallas 28-42 cintura múltiples largos personalización, tratamiento pre-lavado anti-encogimiento sorpresas, botones metal YKK zippers calidad superior, etiqueta cuero genuino marca prestigio. Características: 100% algodón mezclilla premium calidad, corte straight clásico favorecedor atemporal, costuras dobles reforzadas máxima durabilidad, 5 bolsillos funcionales tradicionales prácticos, lavado stone wash textura suave natural.',
+    category: 'clothing',
+    price: 79.99,
+    brand: 'DenimCraft',
+    date: '2024-01-29T10:15:00Z',
   },
   {
-    id: 'prod-030',
-    title: 'Kit Arduino Principiantes',
-    content: 'Kit Arduino MakerKit componentes electrónicos, sensores, LEDs, resistencias, guía proyectos paso a paso. Ideal estudiantes, makers, hobbyists. Características: componentes variados, guía detallada, proyectos progresivos, educativo.',
-    category: 'education',
-    price: 59,
-    brand: 'MakerKit',
-    date: '2024-01-28T11:30:00Z',
+    id: 'cloth-030', 
+    title: 'Sudadera Capucha Gris Melange Unisex',
+    content: 'Sudadera hoodie capucha gris melange ComfortZone 80% algodón orgánico 20% poliéster reciclado mezcla sostenible perfecta. Interior fleece polar suave cálido protección temperaturas bajas, capucha amplia ajustable cordones planos resistentes, bolsillo canguro frontal espacioso manos objetos personales teléfono llaves. Puños costillas elásticos ajuste perfecto muñecas sin aflojamiento, dobladillo inferior elástico silueta favorecedora sin deformación, costuras reforzadas flatlock resistencia lavados uso intensivo. Perfecta clima frío otoño invierno primavera fresca, actividades outdoor casuales senderismo parques, hogar relajación comodidad máxima televisión lectura, ejercicio ligero yoga caminatas matutinas, campus universitario estudiantes estilo relajado. Ideal regalo navidad cumpleaños jóvenes adolescentes, estudiantes regreso clases universidad comodidad, trabajadores home office ambiente relajado, deportistas calentamiento post-entrenamiento recuperación. Disponible tallas XS-XXL unisex inclusivas, lavado máquina agua fría fácil cuidado, diseño minimalista versátil combinaciones múltiples, certificación GOTS algodón orgánico responsable. Características: mezcla algodón orgánico poliéster reciclado sostenible, interior fleece polar suave cálido, capucha ajustable cordones resistentes funcional, bolsillo canguro espacioso conveniente seguro, diseño unisex tallas inclusivas modernas.',
+    category: 'clothing',
+    price: 45.99,
+    brand: 'ComfortZone',
+    date: '2024-01-28T14:30:00Z',
   },
-
-  // ============================================================================
-  // SPORTS - Expanded
-  // ============================================================================
   {
-    id: 'prod-031',
-    title: 'Bicicleta Estática Plegable',
-    content: 'Bicicleta estática FitCycle plegable, 8 niveles resistencia, monitor LCD, soporte tablet, diseño compacto. Ideal cardio casa, espacios pequeños. Características: plegable, resistencia ajustable, monitor LCD, soporte dispositivos.',
-    category: 'sports',
-    price: 299,
-    brand: 'FitCycle',
+    id: 'cloth-031',
+    title: 'Vestido Casual Midi Flores Primavera',
+    content: 'Vestido casual midi estampado flores primavera FloralStyle 100% rayón viscosa fluida suave tacto sedoso natural. Largo midi elegante altura rodillas tobillos versátil, manga corta cómoda temperaturas cálidas verano, escote V favorecedor neckline femenino delicado, cintura elástica smocked ajustable favorecedora todas figuras corporales. Estampado floral romántico colores pastel suaves azules rosas blancos, diseño bohemio chic moderno vintage inspiración, forro interior parcial comodidad privacidad, botones frontales decorativos funcionales acceso fácil. Perfecto primavera verano ocasiones especiales eventos, oficina ambiente trabajo dress code business casual, brunch almuerzo amigas elegante femenino, citas románticas dinner dates encantador, vacaciones destinos cálidos playa resort tropical estilo. Ideal regalo día madre cumpleaños esposa novia, San Valentín romántico femenino delicado, graduación estudiante universitaria celebración, baby shower guest outfit elegante apropiado. Disponible tallas XS-XL sizing inclusivo curvas, lavado delicado máquina agua fría gentle cycle, plancha temperatura baja steam cuidado tejido, almacenamiento colgado evitar arrugas plegado. Características: rayón viscosa fluida cómoda fresca, estampado floral romántico primaveral delicado, largo midi versátil elegante apropiado, cintura elástica favorecedora ajustable cómoda, diseño bohemio chic moderno femenino.',
+    category: 'clothing',
+    price: 89.99,
+    brand: 'FloralStyle',
+    date: '2024-01-27T11:45:00Z',
+  },
+  {
+    id: 'cloth-032',
+    title: 'Chaqueta Cuero Sintético Negro Biker',
+    content: 'Chaqueta cuero sintético negro UrbanRider estilo biker motociclista diseño edgy moderno. Material PU leather premium tacto suave resistente desgaste, forro interior suave cómodo temperaturas medias, múltiples cremalleras funcionales decorativas estilo auténtico motociclista. Corte ajustado figura favorecedora cintura definida, solapas asimétricas diseño angular moderno, bolsillos exteriores interiores funcionalidad práctica, cremalleras YKK resistentes suaves deslizamiento. Perfecta look urbano moderno city style, salidas nocturnas eventos sociales concerts, motociclistas estilo auténtico protección ligera, transiciones estaciones otoño primavera versatilidad. Ideal regalo cumpleaños jóvenes adultos style conscious, amantes moda trends actuales, motociclistas urban riders estilo, estudiantes universitarios personal style. Disponible tallas S-XL fit ajustado favorecedor, limpieza profesional dry clean recomendada, almacenamiento colgado forma estructura, cuidado conditioning leather ocasional mantenimiento. Compatible múltiples estilos casual formal edgy, resistente viento protección ligera, diseño atemporal inversión wardrobe, calidad construcción durabilidad años uso. Características: PU leather premium tacto auténtico, diseño biker motociclista edgy moderno, múltiples cremalleras funcionales decorativas estilo, corte ajustado favorecedor figura definida, versatilidad styling múltiples ocasiones urbanas.',
+    category: 'clothing',
+    price: 129.99,
+    brand: 'UrbanRider',
     date: '2024-01-26T16:20:00Z',
   },
   {
-    id: 'prod-032',
-    title: 'Set Pesas Rusas Kettlebells',
-    content: 'Set kettlebells IronFit 8kg, 12kg, 16kg hierro fundido, agarre ergonómico, base estable. Perfecto entrenamiento funcional, fuerza, cardio. Características: hierro fundido, agarre cómodo, entrenamiento completo, durabilidad.',
-    category: 'sports',
-    price: 189,
-    brand: 'IronFit',
+    id: 'cloth-033',
+    title: 'Camiseta Básica Algodón Orgánico Blanca',
+    content: 'Camiseta básica premium EcoBasics 100% algodón orgánico certificado GOTS blanca unisex. Tejido suave transpirable alta calidad tacto sedoso natural piel, corte clásico favorecedor figuras diversas cómodo, peso medio 180gsm durabilidad excepcional uso diario múltiples lavados. Cuello redondo cómodo reforzado sin deformación estiramientos, manga corta versátil apropiada todas estaciones, costuras laterales eliminan torsión lavado mantienen forma original. Perfecta guardarrobe básico esencial todas edades géneros, layering base combinaciones infinitas outfits, trabajo oficina casual professional appropriate, ejercicio ligero yoga comfortable breathable, dormir ropa interior cómoda natural. Ideal regalo práctico útil uso diario, estudiantes universitarios presupuesto conscious básicos, profesionales múltiples camisetas rotation work, familias ropa básica calidad investment, minimalistas capsule wardrobe esenciales. Disponible tallas XS-XXL unisex sizing inclusivo, pre-encogido pre-shrunk sin sorpresas lavado, proceso fabricación sostenible eco-friendly responsable, empaque reciclable biodegradable packaging. Certificaciones GOTS organic cotton, Fair Trade comercio justo ético, carbon neutral shipping sostenible. Características: algodón orgánico certificado GOTS premium, corte unisex clásico favorecedor atemporal, peso medio 180gsm durabilidad excepcional, pre-encogido sin sorpresas dimensiones, certificación Fair Trade comercio justo.',
+    category: 'clothing',
+    price: 24.99,
+    brand: 'EcoBasics',
+    date: '2024-01-25T09:00:00Z',
+  },
+  {
+    id: 'cloth-034',
+    title: 'Blazer Formal Negro Slim Fit',
+    content: 'Blazer formal negro BusinessPro corte slim fit moderno profesional elegante. Tejido mezcla lana poliéster wrinkle-resistant anti-arrugas, forro interior suave deslizamiento fácil, construcción half-canvassed estructura professional shape retention. Solapa notched clásica atemporal, dos botones frontales proporción perfecta, bolsillos exteriores chest pocket funcionales, vents posteriores movilidad comfort sitting. Perfecto ambiente trabajo business formal professional, presentaciones meetings importantes client facing, eventos formales ceremonias graduaciones, interviews trabajo primera impresión positive. Ideal regalo profesionales career advancement, graduados universitarios job hunting, ejecutivos wardrobe upgrade investment, padres día success celebration. Disponible tallas 36-50 regular long short fitting, tailoring alterations available perfect fit, dry cleaning professional recommended care, hanging storage maintain structure shape. Compatible pantalones dress pants chinos, camisas dress shirts business casual, zapatos dress shoes professional footwear, accessories ties pocket squares finishing touches. Características: corte slim fit moderno favorecedor, mezcla lana anti-arrugas wrinkle-resistant, construcción half-canvassed estructura profesional, solapa notched clásica atemporal elegante, versatilidad business formal smart casual.',
+    category: 'clothing',
+    price: 199.99,
+    brand: 'BusinessPro',
     date: '2024-01-24T13:15:00Z',
   },
-  {
-    id: 'prod-033',
-    title: 'Caminadora Eléctrica',
-    content: 'Caminadora eléctrica RunMaster motor 2.5HP, velocidad 0.8-12km/h, inclinación automática, programas pre-configurados. Ideal cardio, pérdida peso. Características: motor potente, inclinación automática, programas variados, plegable.',
-    category: 'sports',
-    price: 899,
-    brand: 'RunMaster',
-    date: '2024-01-22T09:45:00Z',
-  },
-  {
-    id: 'prod-034',
-    title: 'Pelota Ejercicio Pilates',
-    content: 'Pelota ejercicio PilatesBall 65cm anti-burst, material PVC premium, inflador incluido, guía ejercicios. Ideal pilates, fisioterapia, core training. Características: anti-burst, tamaño profesional, material premium, guía incluida.',
-    category: 'sports',
-    price: 25,
-    brand: 'PilatesBall',
-    date: '2024-01-20T15:30:00Z',
-  },
-
-  // ============================================================================
-  // KITCHEN - Expanded
-  // ============================================================================
-  {
-    id: 'prod-035',
-    title: 'Freidora de Aire 5L',
-    content: 'Freidora aire AirChef 5L capacidad, tecnología circulación aire caliente, 8 programas pre-configurados, sin aceite. Cocina saludable, fácil limpieza. Características: sin aceite, cocción uniforme, programas automáticos, fácil limpiar.',
-    category: 'kitchen',
-    price: 129,
-    brand: 'AirChef',
-    date: '2024-01-25T14:20:00Z',
-  },
-  {
-    id: 'prod-036',
-    title: 'Licuadora Alta Potencia',
-    content: 'Licuadora NutriBlend 1500W, cuchillas acero inoxidable, jarra cristal 2L, función pulse, tritura hielo. Ideal smoothies, sopas, salsas. Características: alta potencia, cuchillas profesionales, jarra cristal, función pulse.',
-    category: 'kitchen',
-    price: 179,
-    brand: 'NutriBlend',
-    date: '2024-01-23T12:00:00Z',
-  },
-  {
-    id: 'prod-037',
-    title: 'Sartén Antiadherente Premium',
-    content: 'Sartén ChefPan 28cm recubrimiento cerámico antiadherente, base triple, apta inducción, mango ergonómico. Cocina saludable sin químicos. Características: cerámico antiadherente, apta inducción, base triple, mango cómodo.',
-    category: 'kitchen',
-    price: 69,
-    brand: 'ChefPan',
-    date: '2024-01-21T10:45:00Z',
-  },
-  {
-    id: 'prod-038',
-    title: 'Procesador Alimentos Multifunción',
-    content: 'Procesador alimentos FoodPro 12 funciones, motor 800W, 4 discos intercambiables, tazón 3L. Ideal preparación comidas, repostería. Características: multifunción, motor potente, accesorios variados, gran capacidad.',
-    category: 'kitchen',
-    price: 199,
-    brand: 'FoodPro',
-    date: '2024-01-19T16:15:00Z',
-  },
-
-  // ============================================================================
-  // BEAUTY & PERSONAL CARE - Expanded
-  // ============================================================================
-  {
-    id: 'prod-039',
-    title: 'Cepillo Facial Sónico',
-    content: 'Cepillo facial sónico GlowSkin limpieza profunda, 3 velocidades, resistente agua, batería recargable. Mejora textura piel, anti-edad. Características: tecnología sónica, resistente agua, batería larga, limpieza profunda.',
-    category: 'beauty',
-    price: 89,
-    brand: 'GlowSkin',
-    date: '2024-01-27T13:30:00Z',
-  },
-  {
-    id: 'prod-040',
-    title: 'Secador Iónico Profesional',
-    content: 'Secador cabello ProDry tecnología iónica, motor AC 2200W, 3 temperaturas, boquilla concentradora, difusor. Secado rápido sin daño. Características: tecnología iónica, motor profesional, accesorios incluidos, secado rápido.',
-    category: 'beauty',
-    price: 149,
-    brand: 'ProDry',
-    date: '2024-01-25T11:45:00Z',
-  },
-
-  // ============================================================================
-  // ACCESSORIES - Expanded
-  // ============================================================================
-  {
-    id: 'prod-041',
-    title: 'Mochila Laptop Antirrobo',
-    content: 'Mochila SecurePack laptop 15.6", puerto USB, cremalleras ocultas, material resistente agua, compartimento antirrobo. Ideal viajes, trabajo, universidad. Características: puerto USB, antirrobo, resistente agua, organizadores.',
-    category: 'accessories',
-    price: 59,
-    brand: 'SecurePack',
-    date: '2024-01-29T09:20:00Z',
-  },
-  {
-    id: 'prod-042',
-    title: 'Powerbank 20000mAh',
-    content: 'Powerbank ChargePro 20000mAh carga rápida QC 3.0, PD 18W, 3 puertos salida, pantalla LED, compatible todos dispositivos. Autonomía extendida viajes. Características: alta capacidad, carga rápida, múltiples puertos, pantalla LED.',
-    category: 'accessories',
-    price: 45,
-    brand: 'ChargePro',
-    date: '2024-01-27T14:50:00Z',
-  }
 ];
-
-// Helper function to get products by category
-export const getProductsByCategory = (category: string): VectorItem[] => {
-  return PRODUCTS_CATALOG.filter(product => product.category === category);
-};
-
-// Helper function to get products by price range
-export const getProductsByPriceRange = (minPrice: number, maxPrice: number): VectorItem[] => {
-  return PRODUCTS_CATALOG.filter(product => 
-    product.price && product.price >= minPrice && product.price <= maxPrice
-  );
-};
-
-// Helper function to get products by brand
-export const getProductsByBrand = (brand: string): VectorItem[] => {
-  return PRODUCTS_CATALOG.filter(product => 
-    product.brand?.toLowerCase() === brand.toLowerCase()
-  );
-};
-
-// Helper function to get random products (for recommendations)
-export const getRandomProducts = (count: number, excludeIds: string[] = []): VectorItem[] => {
-  const filtered = PRODUCTS_CATALOG.filter(product => !excludeIds.includes(product.id));
-  const shuffled = [...filtered].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
-};
-
-// Helper function to get products by price tier
-export const getProductsByPriceTier = (tier: 'budget' | 'mid-range' | 'premium'): VectorItem[] => {
-  switch (tier) {
-    case 'budget':
-      return getProductsByPriceRange(0, 100);
-    case 'mid-range':
-      return getProductsByPriceRange(100, 500);
-    case 'premium':
-      return getProductsByPriceRange(500, Infinity);
-    default:
-      return [];
-  }
-};
-
-// Get catalog statistics
-export const getCatalogStats = () => {
-  const totalProducts = PRODUCTS_CATALOG.length;
-  const categoryCounts = AVAILABLE_CATEGORIES.reduce((acc, category) => {
-    acc[category] = getProductsByCategory(category).length;
-    return acc;
-  }, {} as Record<string, number>);
-  
-  const prices = PRODUCTS_CATALOG.filter(p => p.price).map(p => p.price!);
-  const priceStats = prices.length > 0 ? {
-    min: Math.min(...prices),
-    max: Math.max(...prices),
-    average: Math.round(prices.reduce((a, b) => a + b, 0) / prices.length)
-  } : null;
-
-  const brands = [...new Set(PRODUCTS_CATALOG.map(p => p.brand).filter(Boolean))];
-
-  return {
-    totalProducts,
-    categoryCounts,
-    priceStats,
-    brands: brands.sort(),
-    totalBrands: brands.length
-  };
-};
 
 // Available categories
 export const AVAILABLE_CATEGORIES = [
   'electronics',
-  'sports',
-  'kitchen', 
   'home',
   'clothing',
-  'education',
-  'accessories',
-  'beauty'
 ] as const;
