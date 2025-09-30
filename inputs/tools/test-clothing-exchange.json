@@ -1,0 +1,5 @@
+{
+  "message": "Busco ropa deportiva Nike para correr, presupuesto $300. También quiero saber si puedo cambiar la talla si no me queda.",
+  "max_tokens": 400,
+  "include_tool_details": true
+}

@@ -8,7 +8,7 @@ Esta carpeta contiene datos de prueba para cada funcionalidad del workshop Produ
 inputs/
 ├── basic/              # Rama 1: Setup multimodal básico
 ├── rag/               # Rama 2: Búsqueda semántica con embeddings  
-├── tool-calling/      # Rama 3: Tool calling inteligente
+├── tools/             # Rama 3: Tool calling inteligente
 ├── fine-tuning/       # Rama 4: Fine-tuning para intención comercial
 └── moderation/        # Rama 5: Moderación y producción
 ```
@@ -44,10 +44,15 @@ curl -X POST http://localhost:3000/analyze-image \
 curl -X POST http://localhost:3000/rag/search-natural-language \
   -H "Content-Type: application/json" \
   -d @inputs/rag/test-natural-cooking.json
+
+# Ejemplo para tool calling inteligente (rama 3)
+curl -X POST http://localhost:3000/tools/chat \
+  -H "Content-Type: application/json" \
+  -d @inputs/tools/test-student-laptops.json
 ```
 
 ### 3. **Testing Workflow**
-1. **Empezar en rama correspondiente**: `git checkout 4-fine-tuning`
+1. **Empezar en rama correspondiente**: `git checkout 3-tool-calling`
 2. **Levantar servidor**: `npm run dev`
 3. **Probar endpoint**: Usar datos de `inputs/tools/`
 4. **Verificar respuesta**: Comparar con expected results
@@ -72,6 +77,13 @@ curl -X POST http://localhost:3000/rag/search-natural-language \
 - `test-search-cooking.json` - Búsqueda por filtros de productos de cocina 
 - `test-search-headphones.json` - Búsqueda por filtros de productos electrónicos
 - `test-search-sportswear.json` - Búsqueda por filtros de productos de ropa deportiva
+
+### Tools (Rama 3)
+- `test-student-laptops.json` - Laptops para estudiantes + descuentos estudiantiles
+- `test-search-headphones.json` - Auriculares para oficina + garantías
+- `test-budget-gaming.json` - Setup gaming con presupuesto + financiamiento
+- `test-return-policy.json` - Consulta política de devoluciones
+- `test-clothing-exchange.json` - Ropa deportiva + política de cambios
 
 ## ⚡ Tips de Uso
 

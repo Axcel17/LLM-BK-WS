@@ -84,10 +84,10 @@ app.get("/docs", (req, res) => {
         description:
           "Intelligent conversation with automated tool selection",
         features: [
-          "search_products - Smart product discovery",
-          "compare_products - Structured comparisons",
-          "get_product_details - Deep product insights",
+          "search_products - Smart product discovery with RAG",
+          "get_purchase_policies - Company policies and procedures",
           "Budget-aware recommendations",
+          "Semantic search with embeddings",
           "Context preservation across tool calls",
         ],
         duration: "50 minutes",
@@ -182,16 +182,24 @@ app.use("*", (req, res) => {
       "/chat",
       "/query-voice-to-text",
       "/query-text-to-voice",
-      "/analyze-image"
+      "/analyze-image",
+      "/rag/search-natural-language",
+      "/rag/search",
+      "/tools/chat",
+      "/tools/available",
+      "/tools/health"
     ],
     multimodal: {
       "/chat": "POST - Text-to-text chat with GPT-4o-mini (300 tokens max)",
       "/query-voice-to-text": "POST - Speech-to-text with Whisper + product suggestions (multipart/form-data)",
       "/query-text-to-voice": "POST - Enhanced text-to-speech with TTS",
-      "/analyze-image": "POST - Image analysis with GPT-4o-mini (supports file upload or URL)"
+      "/analyze-image": "POST - Image analysis with GPT-4o-mini (supports file upload or URL)",
+      "/rag/search-natural-language": "POST - Semantic product search with natural language",
+      "/tools/chat": "POST - Intelligent conversation with automated tool calling",
+      "/tools/available": "GET - List available tools (search_products, get_purchase_policies)"
     },
-    currentBranch: "1-initial-project",
-    hint: "This is the multimodal setup! Switch to other branches for more endpoints:",
+    currentBranch: "3-tool-calling",
+    hint: "This is the tool calling branch! Use /tools/chat for intelligent conversations:",
     nextEndpoints: {
       "branch-2": ["/search", "/index"],
       "branch-3": ["/assistant", "/tools"],
@@ -222,15 +230,15 @@ app.use(
 // Start server
 app.listen(config.server.port, () => {
   Logger.success(
-    `🛍️ Product Semantic Search Workshop v2 running on port ${config.server.port}`
+    `🛍️ Product Semantic Search Workshop running on port ${config.server.port}`
   );
-  Logger.info(`📚 Workshop branch: 1-initial-project`);
-  Logger.info(`🎯 Objective: Build intelligent multimodal product assistant`);
+  Logger.info(`📚 Workshop branch: 3-tool-calling`);
+  Logger.info(`🎯 Objective: Intelligent assistant with automated tool calling`);
   Logger.info(`🔗 Visit: http://localhost:${config.server.port}`);
   Logger.info(`📖 Documentation: http://localhost:${config.server.port}/docs`);
   Logger.info(`💡 Features: http://localhost:${config.server.port}/features`);
   Logger.info(
-    `⏭️  Next: Switch to branch 2-rag-implementation for semantic search`
+    `⏭️  Next: Try POST /tools/chat for conversational AI with tools`
   );
   Logger.info(`🎓 Goal: OpenAI API Practitioner Certification Ready!`);
 });

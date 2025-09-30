@@ -1,5 +1,5 @@
 {
-  "message": "Compara las mejores opciones de laptops para estudiantes. Priorizo portabilidad y batería.",
-  "max_tokens": 300,
-  "include_tool_details": false
+  "message": "Necesito una laptop para universidad, presupuesto máximo $800. Priorizo portabilidad para llevar a clases y buena batería. También quiero saber si hay descuentos estudiantiles.",
+  "max_tokens": 400,
+  "include_tool_details": true
 }

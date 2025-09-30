@@ -1,5 +1,5 @@
 {
-  "message": "Busco auriculares baratos para trabajar desde casa, que tengan buena calidad de sonido",
-  "max_tokens": 300,
+  "message": "Busco auriculares para home office, presupuesto $150. Necesito buena calidad de sonido y micrófono. ¿Qué garantía ofrecen?",
+  "max_tokens": 400,
   "include_tool_details": true
 }
