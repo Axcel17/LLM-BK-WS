@@ -2,7 +2,6 @@ import { VectorItem } from '../types/search';
 
 /**
  * Catálogo de Productos para RAG
- * Contenido optimizado para embeddings y búsqueda semántica
  */
 export const PRODUCTS_CATALOG: VectorItem[] = [
   // ============================================================================
@@ -288,80 +287,9 @@ export const PRODUCTS_CATALOG: VectorItem[] = [
   },
 ];
 
-// Helper function to get products by category
-export const getProductsByCategory = (category: string): VectorItem[] => {
-  return PRODUCTS_CATALOG.filter(product => product.category === category);
-};
-
-// Helper function to get products by price range
-export const getProductsByPriceRange = (minPrice: number, maxPrice: number): VectorItem[] => {
-  return PRODUCTS_CATALOG.filter(product => 
-    product.price && product.price >= minPrice && product.price <= maxPrice
-  );
-};
-
-// Helper function to get products by brand
-export const getProductsByBrand = (brand: string): VectorItem[] => {
-  return PRODUCTS_CATALOG.filter(product => 
-    product.brand?.toLowerCase() === brand.toLowerCase()
-  );
-};
-
-// Helper function to get random products (for recommendations)
-export const getRandomProducts = (count: number, excludeIds: string[] = []): VectorItem[] => {
-  const filtered = PRODUCTS_CATALOG.filter(product => !excludeIds.includes(product.id));
-  const shuffled = [...filtered].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
-};
-
-// Helper function to get products by price tier
-export const getProductsByPriceTier = (tier: 'budget' | 'mid-range' | 'premium'): VectorItem[] => {
-  switch (tier) {
-    case 'budget':
-      return getProductsByPriceRange(0, 100);
-    case 'mid-range':
-      return getProductsByPriceRange(100, 500);
-    case 'premium':
-      return getProductsByPriceRange(500, Infinity);
-    default:
-      return [];
-  }
-};
-
-// Get catalog statistics
-export const getCatalogStats = () => {
-  const totalProducts = PRODUCTS_CATALOG.length;
-  const categoryCounts = AVAILABLE_CATEGORIES.reduce((acc, category) => {
-    acc[category] = getProductsByCategory(category).length;
-    return acc;
-  }, {} as Record<string, number>);
-  
-  const prices = PRODUCTS_CATALOG.filter(p => p.price).map(p => p.price!);
-  const priceStats = prices.length > 0 ? {
-    min: Math.min(...prices),
-    max: Math.max(...prices),
-    average: Math.round(prices.reduce((a, b) => a + b, 0) / prices.length)
-  } : null;
-
-  const brands = [...new Set(PRODUCTS_CATALOG.map(p => p.brand).filter(Boolean))];
-
-  return {
-    totalProducts,
-    categoryCounts,
-    priceStats,
-    brands: brands.sort(),
-    totalBrands: brands.length
-  };
-};
-
 // Available categories
 export const AVAILABLE_CATEGORIES = [
   'electronics',
-  'sports',
-  'kitchen', 
   'home',
   'clothing',
-  'education',
-  'accessories',
-  'beauty'
 ] as const;

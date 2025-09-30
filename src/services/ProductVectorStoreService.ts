@@ -2,10 +2,9 @@ import OpenAI from 'openai';
 import {
   VectorItem,
   VectorEmbedItem,
-  VectorStoreQuery,
   VectorSearchResult,
 } from '../types/search';
-import { ProductFilters, ProductSearchFilters, FilteredProductsResult } from '../types/product';
+import { ProductFilters, FilteredProductsResult } from '../types/product';
 import { config } from '../config';
 import { Logger } from '../utils/logger';
 import { EmbeddingCacheService } from '../cache/EmbeddingCacheService';
@@ -98,7 +97,7 @@ export class ProductVectorStoreService {
   async searchSimilar(
     query: string,
     limit: number = 3,
-    threshold: number = 0.4 // Más permisivo para productos
+    threshold: number = 0.35 // Más permisivo para productos
   ): Promise<VectorSearchResult[]> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -125,6 +124,10 @@ export class ProductVectorStoreService {
           id: result.item.id,
           name: result.item.title,
           similarity: result.similarity,
+          price: result.item.price,
+          category: result.item.category,
+          brand: result.item.brand,
+
         }))
     );
 
@@ -135,53 +138,6 @@ export class ProductVectorStoreService {
       .slice(0, limit);
 
     return results;
-  }
-
-  /**
-   * Search products by category
-   */
-  async searchByCategory(category: string, limit: number = 10): Promise<VectorEmbedItem[]> {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
-
-    return this.items
-      .filter(item => item.category === category)
-      .slice(0, limit);
-  }
-
-  /**
-   * Search products by brand
-   */
-  async searchByBrand(brand: string, limit: number = 10): Promise<VectorEmbedItem[]> {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
-
-    return this.items
-      .filter(item => item.brand === brand)
-      .slice(0, limit);
-  }
-
-  /**
-   * Search products by price range
-   */
-  async searchByPriceRange(minPrice: number, maxPrice: number, limit: number = 10): Promise<VectorEmbedItem[]> {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
-
-    return this.items
-      .filter(item => item.price && item.price >= minPrice && item.price <= maxPrice)
-      .slice(0, limit);
-  }
-
-  /**
-   * Get random products (for "sorpréndeme" type queries)
-   */
-  getRandomProducts(limit: number = 3): VectorEmbedItem[] {
-    const shuffled = [...this.items].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, limit);
   }
 
   /**
@@ -201,20 +157,6 @@ export class ProductVectorStoreService {
     }
 
     return dotProduct / (magnitudeA * magnitudeB);
-  }
-
-  /**
-   * Get all products (for debugging)
-   */
-  getAllItems(): VectorEmbedItem[] {
-    return this.items;
-  }
-
-  /**
-   * Get product by ID
-   */
-  getItemById(id: string): VectorEmbedItem | undefined {
-    return this.items.find((item) => item.id === id);
   }
 
   /**
@@ -246,9 +188,11 @@ export class ProductVectorStoreService {
    */
   applyFiltersToProducts(
     products: VectorSearchResult[], 
-    filters: ProductSearchFilters,
+    filters?: ProductFilters,
   ): FilteredProductsResult {
     Logger.info('🎯 Applying filters:', filters);
+
+    // Use filters directly since QueryParserService already provides correct format
 
     const matching: Array<{
       id: string;
@@ -277,25 +221,25 @@ export class ProductVectorStoreService {
       let productMatches = true;
 
       // Check category filter
-      if (filters.category && product.category !== filters.category) {
+      if (filters?.category && product.category !== filters.category) {
         failureReasons.push(`categoría es ${product.category}, no ${filters.category}`);
         productMatches = false;
       }
 
       // Check brand filter
-      if (filters.brand && product.brand !== filters.brand) {
+      if (filters?.brand && product.brand !== filters.brand) {
         failureReasons.push(`marca es ${product.brand}, no ${filters.brand}`);
         productMatches = false;
       }
 
       // Check max price filter
-      if (filters.maxPrice && product.price && product.price > filters.maxPrice) {
+      if (filters?.maxPrice && product.price && product.price > filters.maxPrice) {
         failureReasons.push(`precio es $${product.price}, excede presupuesto de $${filters.maxPrice}`);
         productMatches = false;
       }
 
       // Check min price filter
-      if (filters.minPrice && product.price && product.price < filters.minPrice) {
+      if (filters?.minPrice && product.price && product.price < filters.minPrice) {
         failureReasons.push(`precio es $${product.price}, menor al mínimo de $${filters.minPrice}`);
         productMatches = false;
       }

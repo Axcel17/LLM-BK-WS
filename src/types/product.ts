@@ -18,24 +18,14 @@ export type Product = z.infer<typeof ProductSchema>;
 
 // Product filters for searches  
 export const ProductFiltersSchema = z.object({
-  category: z.string().optional(),
-  brand: z.string().optional(),
-  minPrice: z.number().optional(),
-  maxPrice: z.number().optional(),
-  priceRange: z.enum(['economic', 'mid-range', 'premium']).optional(),
-  occasion: z.string().optional(),
-  targetUser: z.string().optional()
+  category: z.string().optional().nullable(),
+  brand: z.string().optional().nullable(),
+  minPrice: z.number().optional().nullable(),
+  maxPrice: z.number().optional().nullable(),
+  priceRange: z.enum(['economic', 'mid-range', 'premium']).optional().nullable(),
 });
 
 export type ProductFilters = z.infer<typeof ProductFiltersSchema>;
-
-// Search filters for vector store operations
-export interface ProductSearchFilters {
-  category?: string;
-  brand?: string;
-  minPrice?: number;
-  maxPrice?: number;
-}
 
 // Product with similarity score (for search results)
 export interface ProductSearchResult {

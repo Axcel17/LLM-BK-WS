@@ -47,9 +47,9 @@ curl -X POST http://localhost:3000/rag/search-natural-language \
 ```
 
 ### 3. **Testing Workflow**
-1. **Empezar en rama correspondiente**: `git checkout 2-rag-implementation`
+1. **Empezar en rama correspondiente**: `git checkout 4-fine-tuning`
 2. **Levantar servidor**: `npm run dev`
-3. **Probar endpoint**: Usar datos de `inputs/rag/`
+3. **Probar endpoint**: Usar datos de `inputs/tools/`
 4. **Verificar respuesta**: Comparar con expected results
 5. **Avanzar a siguiente rama**: Repetir proceso
 

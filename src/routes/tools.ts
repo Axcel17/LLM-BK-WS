@@ -2,11 +2,7 @@ import { Router } from "express";
 import { openai } from "../config";
 import { Logger } from "../utils/logger";
 import { ToolService } from "../services/ToolService";
-import { 
-  ChatWithToolsSchema, 
-  ChatWithToolsRequest,
-  ToolCallContext 
-} from "../types/tools";
+import { ChatWithToolsSchema } from "../types/tools";
 import { z } from "zod";
 
 const router = Router();
@@ -42,12 +38,6 @@ router.post("/chat", async (req, res) => {
 
     Logger.info(`🤖 Processing chat with tools: "${message}"`);
 
-    // Build context for tool calls
-    const context: ToolCallContext = {
-      conversation_id,
-      user_query: message
-    };
-
     // Create OpenAI chat completion with tools
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -57,18 +47,20 @@ router.post("/chat", async (req, res) => {
           content: `Eres un asistente experto en productos que ayuda a los usuarios a encontrar, comparar y elegir productos ÚNICAMENTE de nuestro catálogo disponible.
 
 HERRAMIENTAS DISPONIBLES:
-- search_products: Busca productos usando lenguaje natural en nuestro catálogo
-- get_product_details: Obtiene información detallada de un producto específico  
-- compare_products: Compara productos lado a lado
+- search_products: Extrae características de productos usando lenguaje natural en nuestro catálogo, incluyendo filtros como precio, marca, categoría, etc. Siempre proporciona una lista de productos con sus detalles.
+- get_purchase_policies: Busca políticas de compra, procedimientos, términos, devoluciones, envíos, garantías, descuentos y cualquier información corporativa. Usa cuando pregunten sobre políticas de la empresa.
 
 REGLAS IMPORTANTES:
-1. USA las herramientas para obtener información real de nuestro catálogo
+1. USA las herramientas para obtener información real de nuestro catálogo y políticas
 2. Si no encuentras productos que cumplan los criterios, sé HONESTO al respecto
 3. Para consultas con presupuesto específico, busca primero y luego analiza si hay opciones
-4. Mantén respuestas CONCISAS y ÚTILES (max ${max_tokens} tokens)
-5. NUNCA inventes productos, precios o características que no estén en los resultados
+4. Para preguntas sobre políticas, devoluciones, envíos, etc. USA get_purchase_policies
+5. Mantén respuestas CONCISAS y ÚTILES (max ${max_tokens} tokens)
+6. NUNCA inventes productos, precios o políticas que no estén en los resultados
 
 ESTRATEGIAS POR CASO:
+- Búsqueda de productos: Usa search_products
+- Preguntas sobre políticas: Usa get_purchase_policies
 - Presupuesto específico: Busca productos y analiza si están dentro del rango
 - Comparaciones: Busca cada producto mencionado individualmente  
 - Detalles de marca: Busca todos los productos de esa marca
@@ -91,6 +83,8 @@ FORMATO DE RESPUESTA:
     });
 
     const choice = completion.choices[0];
+
+    Logger.info(`🛠️ Tool choice: ${JSON.stringify(choice)}`);
     let finalResponse = choice.message?.content || "";
     let toolResults: any[] = [];
     let totalTokens = completion.usage?.total_tokens || 0;
@@ -102,11 +96,11 @@ FORMATO DE RESPUESTA:
       for (const toolCall of choice.message.tool_calls) {
         const toolName = toolCall.function.name;
         const toolParams = JSON.parse(toolCall.function.arguments);
-        
+
         Logger.info(`⚙️ Executing: ${toolName}(${JSON.stringify(toolParams)})`);
 
         // Execute tool
-        const toolResult = await toolService.executeToolCall(toolName, toolParams, context);
+        const toolResult = await toolService.executeToolCall(toolName, toolParams);
         toolResults.push({
           tool_name: toolName,
           parameters: toolParams,
@@ -128,11 +122,7 @@ FORMATO DE RESPUESTA:
 REGLAS CRÍTICAS:
 1. Usa ÚNICAMENTE los resultados de las herramientas para responder
 2. NUNCA inventes productos, marcas, modelos o precios que no aparezcan en los resultados
-3. Si budget_analysis.situation indica:
-   - 'no_related_products_found': "No tenemos [producto] disponible en nuestro catálogo. Te sugerimos consultar tiendas especializadas."
-   - 'products_over_budget': "No tenemos [producto] en tu presupuesto de $X. Sin embargo, tenemos estas opciones si consideras aumentar tu presupuesto: [lista alternativas con precios]"
-   - 'products_within_budget': Presenta los productos encontrados normalmente
-4. Mantén respuestas concisas (max ${max_tokens} tokens)
+3. Mantén respuestas concisas (max ${max_tokens} tokens)
 
 CONTEXTO: El usuario preguntó "${message}"
 
