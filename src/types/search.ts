@@ -25,6 +25,7 @@ export const RAGQuerySchema = z.object({
     brand: z.string().optional(),
     limit: z.number().int().min(1).max(20).default(5),
   }).optional().default({}),
+  limit: z.number().int().min(1).max(20).default(5),
 });
 
 export const VectorSearchResultSchema = z.object({
