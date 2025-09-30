@@ -2,7 +2,7 @@ import { Router } from "express";
 import { config } from "../config";
 import { Logger } from "../utils/logger";
 import { ProductRAGService } from "../services/ProductRAGService";
-import { PRODUCTS_CATALOG, AVAILABLE_CATEGORIES } from "../data/product-catalog";
+import { PRODUCTS_CATALOG } from "../data/product-catalog";
 import { RAGQuerySchema, RAGResponseSchema } from "../types/search";
 import { z } from "zod";
 
@@ -26,7 +26,7 @@ router.post("/search-by-filters", async (req, res) => {
   try {
     // Validate input using Zod schema
     const validatedData = RAGQuerySchema.parse(req.body);
-    const { query, filters = {} } = validatedData;
+    const { query, filters = {}, limit = 5 } = validatedData;
 
     if (!ragService) {
       return res.status(503).json({
@@ -40,7 +40,7 @@ router.post("/search-by-filters", async (req, res) => {
     Logger.info(`🔍 Processing search query: "${query}"`);
 
     // Perform RAG search
-    const searchResult = await ragService.searchProducts(query, filters);
+    const searchResult = await ragService.searchProducts(query, filters, limit);
 
     // Build structured response
     const response: z.infer<typeof RAGResponseSchema> = {
