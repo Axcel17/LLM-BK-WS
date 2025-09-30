@@ -8,10 +8,10 @@
     "dev": "ts-node src/app.ts",
     "start": "node dist/app.ts",
     "clean": "rm -rf dist",
-    "fine-tuning:generate": "ts-node data/fine-tuning/dataset-generator.ts",
-    "fine-tuning:train": "ts-node data/fine-tuning/train-model.ts",
-    "fine-tuning:status": "ts-node data/fine-tuning/check-status.ts",
-    "fine-tuning:evaluate": "ts-node data/fine-tuning/evaluate-model.ts"
+    "fine-tuning:generate": "ts-node src/services/fine-tuning/dataset-generator.ts",
+    "fine-tuning:train": "ts-node src/services/fine-tuning/train-model.ts",
+    "fine-tuning:status": "ts-node src/services/fine-tuning/check-status.ts",
+    "fine-tuning:evaluate": "ts-node src/services/fine-tuning/evaluate-model.ts"
   },
   "keywords": [
     "openai",

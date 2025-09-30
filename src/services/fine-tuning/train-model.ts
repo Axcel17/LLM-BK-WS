@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { openai } from '../../src/config/index';
-import { Logger } from '../../src/utils/logger';
+import { openai } from '../../config/index';
+import { Logger } from '../../utils/logger';
 
 /**
  * Fine-tuning Training Manager
@@ -13,8 +13,8 @@ class TrainingManager {
   private readonly jobsFilePath: string;
 
   constructor() {
-    this.trainingDataPath = path.join(__dirname, 'training_data.jsonl');
-    this.jobsFilePath = path.join(__dirname, 'fine-tuning-jobs.json');
+    this.trainingDataPath = path.join(__dirname, '/data/training_data.jsonl');
+    this.jobsFilePath = path.join(__dirname, '/data/fine-tuning-jobs.json');
   }
 
   /**
@@ -102,6 +102,7 @@ class TrainingManager {
       // Step 1: Upload dataset
       const fileId = await this.uploadDataset();
 
+      
       // Step 2: Start fine-tuning
       const jobId = await this.startFineTuning(fileId);
 

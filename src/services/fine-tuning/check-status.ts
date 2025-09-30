@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { openai } from '../../src/config/index';
-import { Logger } from '../../src/utils/logger';
+import { openai } from '../../config/index';
+import { Logger } from '../../utils/logger';
 
 /**
  * Fine-tuning Status Checker
@@ -12,7 +12,7 @@ class StatusChecker {
   private readonly jobsFilePath: string;
 
   constructor() {
-    this.jobsFilePath = path.join(__dirname, 'fine-tuning-jobs.json');
+    this.jobsFilePath = path.join(__dirname, '/data/fine-tuning-jobs.json');
   }
 
   /**

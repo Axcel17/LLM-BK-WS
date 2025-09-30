@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { Logger } from '../../src/utils/logger';
-import { QUERY_PARSER_SYSTEM_PROMPT } from '../../src/constants/query-parser';
+import { Logger } from '../../../src/utils/logger';
+import { QUERY_PARSER_SYSTEM_PROMPT } from '../../../src/constants/query-parser';
 
 interface TrainingExample {
   messages: {
@@ -184,7 +184,7 @@ class DatasetGenerator {
         response: '{"category":"electronics","brand":"Apple","priceRange":"economic"}'
       },
       {
-        query: "Laptop Dell entre 800 y 1200 para trabajo",
+        query: "Laptop Dell entre $800-$1200 para trabajo",
         response: '{"category":"electronics","brand":"Dell","minPrice":800,"maxPrice":1200}'
       },
       {
@@ -192,7 +192,7 @@ class DatasetGenerator {
         response: '{"category":"electronics","brand":"Samsung","priceRange":"premium"}'
       },
       {
-        query: "Auriculares Beats económicos máximo 150",
+        query: "Auriculares Beats económicos a lo mucho 150 dólares",
         response: '{"category":"electronics","brand":"Beats","maxPrice":150,"priceRange":"economic"}'
       },
       {
@@ -202,8 +202,8 @@ class DatasetGenerator {
       
       // Clothing with various filters
       {
-        query: "Zapatos Nike para correr, presupuesto 200 dólares",
-        response: '{"category":"clothing","brand":"Nike","maxPrice":200}'
+        query: "Zapatos Nike para correr, presupuesto 50-200 dólares",
+        response: '{"category":"clothing","brand":"Nike","maxPrice":200,"minPrice":50}'
       },
       {
         query: "Jeans Levi's de gama media",
@@ -218,7 +218,7 @@ class DatasetGenerator {
         response: '{"category":"clothing","maxPrice":50,"priceRange":"economic"}'
       },
       {
-        query: "Vestido elegante marca Zara entre 80 y 150",
+        query: "Vestido elegante marca Zara entre 80 y 150 dólares",
         response: '{"category":"clothing","brand":"Zara","minPrice":80,"maxPrice":150}'
       },
       
@@ -232,11 +232,11 @@ class DatasetGenerator {
         response: '{"category":"home","brand":"Dyson","priceRange":"premium"}'
       },
       {
-        query: "Microondas económico hasta 100 dólares",
-        response: '{"category":"home","maxPrice":100,"priceRange":"economic"}'
+        query: "Microondas económico entre 100-150 dólares",
+        response: '{"category":"home","minPrice":100,"maxPrice":150,"priceRange":"economic"}'
       },
       {
-        query: "Muebles IKEA para sala, presupuesto 500",
+        query: "Muebles IKEA para sala, presupuesto 500 dólares",
         response: '{"category":"home","brand":"IKEA","maxPrice":500}'
       },
       {
@@ -250,7 +250,7 @@ class DatasetGenerator {
         response: '{"category":"electronics","brand":"Apple","priceRange":"economic"}'
       },
       {
-        query: "Electrodomésticos marca Bosch entre 300 y 800",
+        query: "Electrodomésticos marca Bosch entre $300 y $800",
         response: '{"category":"home","brand":"Bosch","minPrice":300,"maxPrice":800}'
       },
       {
@@ -280,7 +280,7 @@ class DatasetGenerator {
    * Save examples to JSONL format required by OpenAI fine-tuning
    */
   private saveToJsonl(examples: TrainingExample[], filename: string): void {
-    const outputPath = path.join(__dirname, filename);
+    const outputPath = path.join(__dirname + '/data/', filename);
     const jsonlContent = examples
       .map(example => JSON.stringify(example))
       .join('\n');
@@ -298,7 +298,7 @@ class DatasetGenerator {
       Logger.info('🎯 Workshop: Progressive Product Semantic Search - Branch 4');
       
       // Create output directory if it doesn't exist
-      const outputDir = __dirname;
+      const outputDir = __dirname + '/data/';
       if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
       }

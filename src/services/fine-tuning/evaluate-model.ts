@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import { openai } from '../../src/config/index';
-import { Logger } from '../../src/utils/logger';
-import { ProductFiltersSchema } from '../../src/types/product';
-import { QUERY_PARSER_SYSTEM_PROMPT } from '../../src/constants/query-parser';
+import { openai } from '../../config/index';
+import { Logger } from '../../utils/logger';
+import { ProductFiltersSchema } from '../../types/product';
+import { QUERY_PARSER_SYSTEM_PROMPT } from '../../constants/query-parser';
 
 interface EvaluationResult {
   query: string;
@@ -38,8 +38,8 @@ class ModelEvaluator {
   private readonly testDataPath: string;
 
   constructor() {
-    this.jobsFilePath = path.join(__dirname, 'fine-tuning-jobs.json');
-    this.testDataPath = path.join(__dirname, 'test_data.jsonl');
+    this.jobsFilePath = path.join(__dirname, '/data/fine-tuning-jobs.json');
+    this.testDataPath = path.join(__dirname, '/data/test_data.jsonl');
   }
 
   /**
@@ -238,7 +238,7 @@ class ModelEvaluator {
       }
 
       // Save detailed results
-      const resultsPath = path.join(__dirname, 'evaluation-results.json');
+      const resultsPath = path.join(__dirname, '/data/evaluation-results.json');
       fs.writeFileSync(resultsPath, JSON.stringify(results, null, 2));
       Logger.info(`📁 Detailed results saved to evaluation-results.json`);
 
