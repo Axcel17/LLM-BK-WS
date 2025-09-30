@@ -1,0 +1,5 @@
+{
+  "query": "busco laptop gaming barata marca Apple",
+  "modelId": "ft:gpt-4o-mini-2024-07-18:personal::abc123",
+  "note": "Replace abc123 with actual fine-tuned model ID from npm run fine-tuning:status"
+}

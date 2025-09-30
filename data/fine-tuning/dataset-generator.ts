@@ -1,335 +1,343 @@
-import { faker } from '@faker-js/faker';
-import { writeFileSync } from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
+import { Logger } from '../../src/utils/logger';
+import { QUERY_PARSER_SYSTEM_PROMPT } from '../../src/constants/query-parser';
 
-// ============================================================================
-// IMPROVED DATASET GENERATOR WITH FAKER
-// ============================================================================
-
-interface IntentExample {
-  query: string;
-  expected_intent: {
-    intent_type: 'GIFT' | 'PERSONAL_USE' | 'BUSINESS' | 'COMPARISON' | 'URGENT';
-    category?: string;
-    budget_tier: 'economic' | 'mid_range' | 'premium' | 'unspecified';
-    recipient?: string;
-    context_tags: string[];
-    priority_features: string[];
-  };
+interface TrainingExample {
+  messages: {
+    role: 'system' | 'user' | 'assistant';
+    content: string;
+  }[];
 }
 
-// Product categories and their characteristics
-const PRODUCT_CATEGORIES = {
-  electronics: {
-    items: ['laptop', 'smartphone', 'tablet', 'cámara', 'auriculares', 'smartwatch', 'televisor'],
-    contexts: ['work', 'gaming', 'photography', 'entertainment', 'productivity'],
-    features: ['high_performance', 'portable', 'battery_life', 'latest_technology', 'user_friendly']
-  },
-  sports: {
-    items: ['zapatillas deportivas', 'ropa deportiva', 'equipo de yoga', 'pesas', 'bicicleta'],
-    contexts: ['fitness', 'home_workout', 'outdoor', 'gym', 'wellness'],
-    features: ['comfort', 'durability', 'performance_boost', 'beginner_friendly', 'professional_grade']
-  },
-  home: {
-    items: ['muebles', 'decoración', 'electrodomésticos', 'iluminación', 'organización'],
-    contexts: ['new_home', 'renovation', 'comfort', 'smart_home', 'organization'],
-    features: ['space_optimization', 'style', 'functionality', 'smart_integration', 'durability']
-  },
-  kitchen: {
-    items: ['utensilios de cocina', 'electrodomésticos', 'vajilla', 'cuchillos', 'ollas'],
-    contexts: ['cooking', 'baking', 'professional_chef', 'home_cooking', 'entertaining'],
-    features: ['cooking_enhancement', 'professional_grade', 'easy_cleanup', 'durability', 'versatility']
-  },
-  beauty: {
-    items: ['productos de belleza', 'maquillaje', 'cuidado de la piel', 'perfumes', 'herramientas de belleza'],
-    contexts: ['daily_routine', 'special_occasion', 'professional', 'anti_aging', 'natural'],
-    features: ['quality_ingredients', 'long_lasting', 'skin_friendly', 'professional_results', 'easy_application']
-  }
-};
-
-const RECIPIENTS = ['mother', 'father', 'spouse', 'friend', 'colleague', 'boss', 'sibling', 'child', 'grandmother', 'grandfather'];
-const BUDGET_CONTEXTS = ['tight budget', 'mid range', 'premium', 'no limit', 'best value'];
-const URGENCY_CONTEXTS = ['urgent', 'last minute', 'emergency', 'replacement needed', 'immediate'];
-
-// ============================================================================
-// FAKER-POWERED DATASET GENERATION
-// ============================================================================
-
-export function generateGiftExamples(count: number): IntentExample[] {
-  const examples: IntentExample[] = [];
+/**
+ * Fine-tuning Dataset Generator
+ * Generates training and test data for improving filter extraction precision
+ * Part of Branch 4: Fine-tuning implementation
+ */
+class DatasetGenerator {
   
-  for (let i = 0; i < count; i++) {
-    const recipient = faker.helpers.arrayElement(RECIPIENTS);
-    const category = faker.helpers.arrayElement(Object.keys(PRODUCT_CATEGORIES));
-    const categoryData = PRODUCT_CATEGORIES[category as keyof typeof PRODUCT_CATEGORIES];
-    const item = faker.helpers.arrayElement(categoryData.items);
-    const occasion = faker.helpers.arrayElement([
-      'cumpleaños', 'aniversario', 'graduación', 'jubilación', 'día de la madre', 
-      'día del padre', 'navidad', 'boda', 'baby shower'
-    ]);
-    
-    const budgetHint = faker.helpers.arrayElement([
-      'algo especial', 'presupuesto limitado', 'sin límite de precio', 
-      'calidad premium', 'algo económico pero bonito'
-    ]);
-    
-    const query = `${budgetHint} para mi ${recipient} en su ${occasion}, busco ${item}`;
-    
-    examples.push({
-      query,
-      expected_intent: {
-        intent_type: 'GIFT',
-        category,
-        budget_tier: inferBudgetTier(budgetHint),
-        recipient,
-        context_tags: ['gift', occasion, category, budgetHint.includes('especial') ? 'special' : 'standard'],
-        priority_features: faker.helpers.arrayElements(categoryData.features, { min: 2, max: 4 })
+  /**
+   * Generate 30 training examples for fine-tuning
+   * Focus: Improve extraction of category, brand, minPrice, maxPrice, priceRange
+   */
+  private generateTrainingExamples(): TrainingExample[] {
+    const examples: TrainingExample[] = [];
+
+    // BATCH 1: Basic category + brand extraction (10 examples)
+    const batch1 = [
+      {
+        query: "Busco un smartphone Samsung económico",
+        response: '{"category":"electronics","brand":"Samsung","priceRange":"economic"}'
+      },
+      {
+        query: "Quiero una laptop Apple para diseño gráfico, presupuesto máximo 2000 dólares",
+        response: '{"category":"electronics","brand":"Apple","maxPrice":2000}'
+      },
+      {
+        query: "¿Tienen televisores premium?",
+        response: '{"category":"electronics","priceRange":"premium"}'
+      },
+      {
+        query: "Necesito una aspiradora para el hogar, que no pase de 300 dólares",
+        response: '{"category":"home","maxPrice":300}'
+      },
+      {
+        query: "Busco ropa deportiva Nike barata",
+        response: '{"category":"clothing","brand":"Nike","priceRange":"economic"}'
+      },
+      {
+        query: "Quiero una cafetera para mi cocina, máximo 150 dólares",
+        response: '{"category":"home","maxPrice":150}'
+      },
+      {
+        query: "¿Tienen tablets Samsung de gama media?",
+        response: '{"category":"electronics","brand":"Samsung","priceRange":"mid-range"}'
+      },
+      {
+        query: "Busco una camisa formal para hombre, presupuesto hasta 80 dólares",
+        response: '{"category":"clothing","maxPrice":80}'
+      },
+      {
+        query: "Necesito una licuadora económica para mi casa",
+        response: '{"category":"home","priceRange":"economic"}'
+      },
+      {
+        query: "Quiero unos audífonos Sony, no más de 120 dólares",
+        response: '{"category":"electronics","brand":"Sony","maxPrice":120}'
       }
-    });
-  }
-  
-  return examples;
-}
-
-export function generatePersonalUseExamples(count: number): IntentExample[] {
-  const examples: IntentExample[] = [];
-  
-  for (let i = 0; i < count; i++) {
-    const category = faker.helpers.arrayElement(Object.keys(PRODUCT_CATEGORIES));
-    const categoryData = PRODUCT_CATEGORIES[category as keyof typeof PRODUCT_CATEGORIES];
-    const item = faker.helpers.arrayElement(categoryData.items);
-    const context = faker.helpers.arrayElement(categoryData.contexts);
-    const budgetAmount = faker.helpers.arrayElement(['100', '300', '500', '1000', '2000']);
-    const currency = faker.helpers.arrayElement(['dólares', 'euros', 'pesos']);
-    
-    const queryTemplates = [
-      `Necesito ${item} para ${context}, presupuesto ${budgetAmount} ${currency}`,
-      `Busco ${item} de calidad, tengo ${budgetAmount} ${currency}`,
-      `Quiero empezar con ${context}, necesito ${item}`,
-      `${item} para uso personal, algo de ${context}`
     ];
-    
-    const query = faker.helpers.arrayElement(queryTemplates);
-    
-    examples.push({
-      query,
-      expected_intent: {
-        intent_type: 'PERSONAL_USE',
-        category,
-        budget_tier: inferBudgetTier(budgetAmount + ' ' + currency),
-        context_tags: ['personal', context, category],
-        priority_features: faker.helpers.arrayElements(categoryData.features, { min: 2, max: 3 })
-      }
-    });
-  }
-  
-  return examples;
-}
 
-export function generateBusinessExamples(count: number): IntentExample[] {
-  const examples: IntentExample[] = [];
-  
-  const businessTypes = [
-    'estudio de fotografía', 'consultora', 'startup tech', 'oficina legal',
-    'clínica médica', 'restaurante', 'tienda online', 'agencia de marketing'
-  ];
-  
-  for (let i = 0; i < count; i++) {
-    const businessType = faker.helpers.arrayElement(businessTypes);
-    const category = faker.helpers.arrayElement(['electronics', 'home']);
-    const categoryData = PRODUCT_CATEGORIES[category as keyof typeof PRODUCT_CATEGORIES];
-    const item = faker.helpers.arrayElement(categoryData.items);
-    
-    const query = `Equipo profesional para mi ${businessType}, necesito ${item} de grado comercial`;
-    
-    examples.push({
-      query,
-      expected_intent: {
-        intent_type: 'BUSINESS',
-        category,
-        budget_tier: 'premium', // Business usually requires premium
-        context_tags: ['business', 'professional', businessType.split(' ')[0], 'commercial_grade'],
-        priority_features: ['professional_grade', 'reliable', 'scalable', 'ROI_positive']
-      }
-    });
-  }
-  
-  return examples;
-}
-
-export function generateComparisonExamples(count: number): IntentExample[] {
-  const examples: IntentExample[] = [];
-  
-  const comparisons = [
-    { brands: ['Apple', 'Samsung'], category: 'electronics', item: 'smartphone' },
-    { brands: ['Canon', 'Sony'], category: 'electronics', item: 'cámara' },
-    { brands: ['Nike', 'Adidas'], category: 'sports', item: 'zapatillas' },
-    { brands: ['Bose', 'Sony'], category: 'electronics', item: 'auriculares' }
-  ];
-  
-  for (let i = 0; i < count; i++) {
-    const comp = faker.helpers.arrayElement(comparisons);
-    const query = `Compara ${comp.brands[0]} vs ${comp.brands[1]} en ${comp.item}, ¿cuál es mejor?`;
-    
-    examples.push({
-      query,
-      expected_intent: {
-        intent_type: 'COMPARISON',
-        category: comp.category,
-        budget_tier: 'premium',
-        context_tags: ['comparison', 'brand_comparison', comp.category],
-        priority_features: ['quality_comparison', 'feature_analysis', 'value_assessment']
-      }
-    });
-  }
-  
-  return examples;
-}
-
-export function generateUrgentExamples(count: number): IntentExample[] {
-  const examples: IntentExample[] = [];
-  
-  const urgentScenarios = [
-    { item: 'laptop', reason: 'presentación mañana', timeline: 'urgente' },
-    { item: 'traje', reason: 'entrevista hoy', timeline: 'inmediato' },
-    { item: 'regalo', reason: 'cumpleaños en 2 horas', timeline: 'último minuto' },
-    { item: 'cargador', reason: 'viaje mañana temprano', timeline: 'emergencia' }
-  ];
-  
-  for (let i = 0; i < count; i++) {
-    const scenario = faker.helpers.arrayElement(urgentScenarios);
-    const query = `Necesito ${scenario.item} ${scenario.timeline}, ${scenario.reason}`;
-    
-    examples.push({
-      query,
-      expected_intent: {
-        intent_type: 'URGENT',
-        budget_tier: 'unspecified',
-        context_tags: ['urgent', scenario.timeline, 'emergency', scenario.reason.split(' ')[0]],
-        priority_features: ['immediate_availability', 'quick_delivery', 'emergency_solution']
-      }
-    });
-  }
-  
-  return examples;
-}
-
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
-
-function inferBudgetTier(budgetHint: string): 'economic' | 'mid_range' | 'premium' | 'unspecified' {
-  const hint = budgetHint.toLowerCase();
-  
-  if (hint.includes('económico') || hint.includes('barato') || hint.includes('100')) return 'economic';
-  if (hint.includes('premium') || hint.includes('mejor') || hint.includes('2000') || hint.includes('sin límite')) return 'premium';
-  if (hint.includes('300') || hint.includes('500') || hint.includes('medio')) return 'mid_range';
-  
-  return 'unspecified';
-}
-
-// ============================================================================
-// ENHANCED DATASET GENERATION
-// ============================================================================
-
-export function generateEnhancedDatasets() {
-  console.log('🚀 Generating enhanced datasets with Faker...\n');
-  
-  // Training dataset (400 examples total)
-  const trainingExamples: IntentExample[] = [
-    ...generateGiftExamples(180),      // 45% - Most common in e-commerce
-    ...generatePersonalUseExamples(120), // 30% - Second most common
-    ...generateBusinessExamples(40),    // 10% - Professional segment
-    ...generateComparisonExamples(40),  // 10% - Shopping research
-    ...generateUrgentExamples(20)       // 5% - Emergency purchases
-  ];
-  
-  // Test dataset (50 high-quality examples)
-  const testExamples: IntentExample[] = [
-    ...generateGiftExamples(20),
-    ...generatePersonalUseExamples(15),
-    ...generateBusinessExamples(5),
-    ...generateComparisonExamples(5),
-    ...generateUrgentExamples(5)
-  ];
-  
-  // Convert to OpenAI format
-  const trainingData = trainingExamples.map(example => ({
-    messages: [
+    // BATCH 2: Complex price ranges and brand combinations (10 examples)
+    const batch2 = [
       {
-        role: "system" as const,
-        content: "Eres un experto clasificador de intenciones para un sistema de recomendación de productos. Analiza la consulta del usuario y extrae la intención, contexto y prioridades. Responde solo en formato JSON válido."
+        query: "iPhone entre 800 y 1200 dólares para mi trabajo",
+        response: '{"category":"electronics","brand":"Apple","minPrice":800,"maxPrice":1200}'
       },
       {
-        role: "user" as const,
-        content: example.query
+        query: "Zapatos deportivos Adidas de precio medio",
+        response: '{"category":"clothing","brand":"Adidas","priceRange":"mid-range"}'
       },
       {
-        role: "assistant" as const,
-        content: JSON.stringify(example.expected_intent)
+        query: "Televisor LG premium para mi sala",
+        response: '{"category":"electronics","brand":"LG","priceRange":"premium"}'
+      },
+      {
+        query: "Electrodomésticos baratos para cocina, hasta 200 dólares",
+        response: '{"category":"home","maxPrice":200,"priceRange":"economic"}'
+      },
+      {
+        query: "Ropa casual marca Levi's, presupuesto entre 50 y 150",
+        response: '{"category":"clothing","brand":"Levi\'s","minPrice":50,"maxPrice":150}'
+      },
+      {
+        query: "Laptop gaming HP de gama alta",
+        response: '{"category":"electronics","brand":"HP","priceRange":"premium"}'
+      },
+      {
+        query: "Muebles para oficina en casa, económicos",
+        response: '{"category":"home","priceRange":"economic"}'
+      },
+      {
+        query: "Smartwatch Apple Watch, máximo 500 dólares",
+        response: '{"category":"electronics","brand":"Apple","maxPrice":500}'
+      },
+      {
+        query: "Jeans marca Gap de precio accesible",
+        response: '{"category":"clothing","brand":"Gap","priceRange":"economic"}'
+      },
+      {
+        query: "Refrigerador Samsung entre 1000 y 1500 dólares",
+        response: '{"category":"home","brand":"Samsung","minPrice":1000,"maxPrice":1500}'
       }
-    ]
-  }));
-  
-  const testData = testExamples.map(example => ({
-    messages: [
+    ];
+
+    // BATCH 3: Mixed filters and edge cases (10 examples)
+    const batch3 = [
       {
-        role: "system" as const,
-        content: "Eres un experto clasificador de intenciones para un sistema de recomendación de productos. Analiza la consulta del usuario y extrae la intención, contexto y prioridades. Responde solo en formato JSON válido."
+        query: "Busco algo de tecnología Sony barato",
+        response: '{"category":"electronics","brand":"Sony","priceRange":"economic"}'
       },
       {
-        role: "user" as const,
-        content: example.query
+        query: "Ropa de marca para mujer, presupuesto flexible hasta 300",
+        response: '{"category":"clothing","maxPrice":300}'
       },
       {
-        role: "assistant" as const,
-        content: JSON.stringify(example.expected_intent)
+        query: "Necesito equipos para mi hogar, presupuesto mínimo 100 hasta 500",
+        response: '{"category":"home","minPrice":100,"maxPrice":500}'
+      },
+      {
+        query: "Tablet económica para estudios, cualquier marca",
+        response: '{"category":"electronics","priceRange":"economic"}'
+      },
+      {
+        query: "Zapatillas Nike para correr, gama media-alta",
+        response: '{"category":"clothing","brand":"Nike","priceRange":"mid-range"}'
+      },
+      {
+        query: "Electrodomésticos premium marca Bosch",
+        response: '{"category":"home","brand":"Bosch","priceRange":"premium"}'
+      },
+      {
+        query: "Celular económico para regalo, hasta 250 dólares",
+        response: '{"category":"electronics","maxPrice":250,"priceRange":"economic"}'
+      },
+      {
+        query: "Vestido elegante marca Zara, precio medio",
+        response: '{"category":"clothing","brand":"Zara","priceRange":"mid-range"}'
+      },
+      {
+        query: "Aspiradora robot de alta gama, presupuesto entre 400 y 800",
+        response: '{"category":"home","minPrice":400,"maxPrice":800,"priceRange":"premium"}'
+      },
+      {
+        query: "Audífonos inalámbricos marca Bose, los mejores",
+        response: '{"category":"electronics","brand":"Bose","priceRange":"premium"}'
       }
-    ]
-  }));
-  
-  // Save datasets
-  const trainingJsonl = trainingData.map(item => JSON.stringify(item)).join('\n');
-  const testJsonl = testData.map(item => JSON.stringify(item)).join('\n');
-  
-  writeFileSync(path.join(__dirname, 'training_data.jsonl'), trainingJsonl);
-  writeFileSync(path.join(__dirname, 'test_data.jsonl'), testJsonl);
-  
-  // Statistics
-  console.log('✅ ENHANCED DATASETS GENERATED');
-  console.log('=' .repeat(50));
-  console.log(`Training examples: ${trainingData.length}`);
-  console.log(`Test examples: ${testData.length}`);
-  console.log(`Total examples: ${trainingData.length + testData.length}`);
-  
-  // Intent distribution
-  const intentCounts = trainingExamples.reduce((acc, example) => {
-    const intent = example.expected_intent.intent_type;
-    acc[intent] = (acc[intent] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-  
-  console.log('\n📊 Intent Distribution:');
-  Object.entries(intentCounts).forEach(([intent, count]) => {
-    const percentage = ((count / trainingData.length) * 100).toFixed(1);
-    console.log(`  ${intent}: ${count} examples (${percentage}%)`);
-  });
-  
-  console.log('\n💡 Sample queries generated:');
-  testExamples.slice(0, 3).forEach((example, i) => {
-    console.log(`  ${i + 1}. "${example.query}"`);
-    console.log(`     → ${example.expected_intent.intent_type} (${example.expected_intent.budget_tier})`);
-  });
-  
-  return {
-    trainingExamples: trainingData.length,
-    testExamples: testData.length,
-    trainingPath: path.join(__dirname, 'training_data.jsonl'),
-    testPath: path.join(__dirname, 'test_data.jsonl')
-  };
+    ];
+
+    // Convert all batches to training format
+    [batch1, batch2, batch3].forEach((batch, index) => {
+      batch.forEach(example => {
+        examples.push({
+          messages: [
+            { role: 'system', content: QUERY_PARSER_SYSTEM_PROMPT },
+            { role: 'user', content: example.query },
+            { role: 'assistant', content: example.response }
+          ]
+        });
+      });
+      Logger.info(`✅ Generated batch ${index + 1}: ${batch.length} examples`);
+    });
+
+    return examples;
+  }
+
+  /**
+   * Generate 20 test examples for comprehensive evaluation
+   */
+  private generateTestExamples(): TrainingExample[] {
+    const testExamples = [
+      // Electronics with brands and prices
+      {
+        query: "iPhone 15 Pro barato para estudiante",
+        response: '{"category":"electronics","brand":"Apple","priceRange":"economic"}'
+      },
+      {
+        query: "Laptop Dell entre 800 y 1200 para trabajo",
+        response: '{"category":"electronics","brand":"Dell","minPrice":800,"maxPrice":1200}'
+      },
+      {
+        query: "Smart TV Samsung premium 65 pulgadas",
+        response: '{"category":"electronics","brand":"Samsung","priceRange":"premium"}'
+      },
+      {
+        query: "Auriculares Beats económicos máximo 150",
+        response: '{"category":"electronics","brand":"Beats","maxPrice":150,"priceRange":"economic"}'
+      },
+      {
+        query: "Tablet para niños, precio accesible",
+        response: '{"category":"electronics","priceRange":"economic"}'
+      },
+      
+      // Clothing with various filters
+      {
+        query: "Zapatos Nike para correr, presupuesto 200 dólares",
+        response: '{"category":"clothing","brand":"Nike","maxPrice":200}'
+      },
+      {
+        query: "Jeans Levi's de gama media",
+        response: '{"category":"clothing","brand":"Levi\'s","priceRange":"mid-range"}'
+      },
+      {
+        query: "Ropa deportiva Adidas premium",
+        response: '{"category":"clothing","brand":"Adidas","priceRange":"premium"}'
+      },
+      {
+        query: "Camisa formal barata hasta 50 dólares",
+        response: '{"category":"clothing","maxPrice":50,"priceRange":"economic"}'
+      },
+      {
+        query: "Vestido elegante marca Zara entre 80 y 150",
+        response: '{"category":"clothing","brand":"Zara","minPrice":80,"maxPrice":150}'
+      },
+      
+      // Home products with diverse scenarios
+      {
+        query: "Refrigerador premium para mi cocina nueva",
+        response: '{"category":"home","priceRange":"premium"}'
+      },
+      {
+        query: "Aspiradora Dyson de alta calidad",
+        response: '{"category":"home","brand":"Dyson","priceRange":"premium"}'
+      },
+      {
+        query: "Microondas económico hasta 100 dólares",
+        response: '{"category":"home","maxPrice":100,"priceRange":"economic"}'
+      },
+      {
+        query: "Muebles IKEA para sala, presupuesto 500",
+        response: '{"category":"home","brand":"IKEA","maxPrice":500}'
+      },
+      {
+        query: "Cafetera Nespresso gama media",
+        response: '{"category":"home","brand":"Nespresso","priceRange":"mid-range"}'
+      },
+      
+      // Mixed and complex scenarios
+      {
+        query: "Productos Apple baratos para oficina",
+        response: '{"category":"electronics","brand":"Apple","priceRange":"economic"}'
+      },
+      {
+        query: "Electrodomésticos marca Bosch entre 300 y 800",
+        response: '{"category":"home","brand":"Bosch","minPrice":300,"maxPrice":800}'
+      },
+      {
+        query: "Tecnología premium para gaming",
+        response: '{"category":"electronics","priceRange":"premium"}'
+      },
+      {
+        query: "Ropa casual marca Gap económica",
+        response: '{"category":"clothing","brand":"Gap","priceRange":"economic"}'
+      },
+      {
+        query: "Smart home devices hasta 250 dólares",
+        response: '{"category":"electronics","maxPrice":250}'
+      }
+    ];
+
+    return testExamples.map(example => ({
+      messages: [
+        { role: 'system', content: QUERY_PARSER_SYSTEM_PROMPT },
+        { role: 'user', content: example.query },
+        { role: 'assistant', content: example.response }
+      ]
+    }));
+  }
+
+  /**
+   * Save examples to JSONL format required by OpenAI fine-tuning
+   */
+  private saveToJsonl(examples: TrainingExample[], filename: string): void {
+    const outputPath = path.join(__dirname, filename);
+    const jsonlContent = examples
+      .map(example => JSON.stringify(example))
+      .join('\n');
+
+    fs.writeFileSync(outputPath, jsonlContent, 'utf8');
+    Logger.info(`📁 Saved ${examples.length} examples to ${filename}`);
+  }
+
+  /**
+   * Generate complete dataset for fine-tuning
+   */
+  async generate(): Promise<void> {
+    try {
+      Logger.info('🏗️ Starting fine-tuning dataset generation...');
+      Logger.info('🎯 Workshop: Progressive Product Semantic Search - Branch 4');
+      
+      // Create output directory if it doesn't exist
+      const outputDir = __dirname;
+      if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+      }
+
+      // Generate training data (30 examples total)
+      const trainingExamples = this.generateTrainingExamples();
+      this.saveToJsonl(trainingExamples, 'training_data.jsonl');
+
+      // Generate test data (20 examples)
+      const testExamples = this.generateTestExamples();
+      this.saveToJsonl(testExamples, 'test_data.jsonl');
+
+      // Summary with workshop context
+      Logger.info('🎯 Dataset generation completed!');
+      Logger.info(`📊 Training examples: ${trainingExamples.length} (complete dataset)`);
+      Logger.info(`🧪 Test examples: ${testExamples.length}`);
+      Logger.info('📁 Files saved to data/fine-tuning/');
+      Logger.info('💡 Ready for fine-tuning workflow');
+      
+      console.log('\n✅ Complete dataset generated successfully!');
+      console.log('📋 Dataset composition:');
+      console.log('   📊 Training: 30 examples (3 batches of 10)');
+      console.log('   🧪 Testing: 20 examples (comprehensive evaluation)');
+      console.log('📋 Next steps:');
+      console.log('   1. npm run fine-tuning:train');
+      console.log('   2. npm run fine-tuning:status');
+      console.log('   3. npm run fine-tuning:evaluate');
+
+    } catch (error) {
+      Logger.error('❌ Dataset generation failed:', error);
+      throw error;
+    }
+  }
 }
 
-// Run if called directly
+// Execute if run directly
 if (require.main === module) {
-  generateEnhancedDatasets();
+  const generator = new DatasetGenerator();
+  generator.generate().catch(console.error);
 }
+
+export { DatasetGenerator };

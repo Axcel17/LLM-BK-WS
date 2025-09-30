@@ -1,524 +1,313 @@
-import express from 'express';
+import { Router, Request, Response } from 'express';
 import { openai } from '../config/index';
+import { QueryParserService } from '../services/QueryParserService';
 import { Logger } from '../utils/logger';
-import { ProductRAGService } from '../services/ProductRAGService';
-import { PRODUCTS_CATALOG, AVAILABLE_CATEGORIES } from "../data/product-catalog";
-
-const router = express.Router();
-
-// Interface for intent classification request
-interface IntentClassificationRequest {
-    query: string;
-    modelId?: string; // Optional, defaults to base model
-    temperature?: number;
-    maxTokens?: number;
-}
-
-// Interface for intent classification
-interface IntentClassification {
-    intent_type: 'GIFT' | 'PERSONAL_USE' | 'BUSINESS' | 'COMPARISON' | 'URGENT';
-    category?: string;
-    budget_tier: 'economic' | 'mid_range' | 'premium' | 'unspecified';
-    recipient?: string;
-    context_tags: string[];
-    priority_features: string[];
-    confidence?: number;
-}
-
-// Extended interface for analysis
-interface IntentAnalysis extends IntentClassification {
-    extracted_budget: number | null;
-    enhanced_query: string;
-}
-
-// Default models available
-const AVAILABLE_MODELS = {
-    base: 'gpt-4o-mini-2024-07-18',
-    'fine-tuned': 'ft:gpt-4o-mini-2024-07-18:personal::CKAp8rjB',
-} as const;
-
-// ============================================================================
-// INTENT CLASSIFICATION ENDPOINT
-// ============================================================================
-
-let ragService: ProductRAGService;
-
-ragService = new ProductRAGService(PRODUCTS_CATALOG)
-
-router.post('/classify-intent', async (req, res) => {
-    try {
-        const {
-            query,
-            modelId = 'base',
-            temperature = 0.1,
-            maxTokens = 250
-        }: IntentClassificationRequest = req.body;
-
-        // Validation
-        if (!query || query.trim().length === 0) {
-            return res.status(400).json({
-                success: false,
-                error: 'Query is required',
-                example: {
-                    query: "regalo para mi mamá que le gusta cocinar, presupuesto $100",
-                    modelId: "fine-tuned", // optional, defaults to "base"
-                    temperature: 0.1, // optional
-                    maxTokens: 150 // optional
-                }
-            });
-        }
-
-        // Determine which model to use
-        const actualModelId = AVAILABLE_MODELS[modelId as keyof typeof AVAILABLE_MODELS] || modelId;
-
-        Logger.info('Intent classification request', {
-            query: query.substring(0, 100),
-            modelId: actualModelId,
-            temperature,
-            maxTokens
-        });
-
-        const startTime = Date.now();
-
-        // Call OpenAI API
-        const response = await openai.chat.completions.create({
-            model: actualModelId,
-            messages: [
-                {
-                    role: 'system',
-                    content: `Eres un experto clasificador de intenciones comerciales para un sistema de recomendación de productos. 
-
-Tu trabajo es analizar consultas de usuarios en español y extraer:
-1. Tipo de intención: GIFT, PERSONAL_USE, BUSINESS, COMPARISON, URGENT
-2. Categoría de producto (si se especifica): electrónicos, ropa, hogar, deportes, etc.
-3. Nivel de presupuesto: economic, mid_range, premium, unspecified
-4. Destinatario (si es regalo): mother, father, friend, spouse, child, etc.
-5. Tags contextuales: ocasión, características importantes
-6. Características prioritarias: funcionalidades clave que busca
-
-Responde ÚNICAMENTE en formato JSON válido, sin texto adicional.
-
-Ejemplos:
-- "regalo para mi mamá cocinera, $100" → {"intent_type": "GIFT", "category": "hogar", "budget_tier": "mid_range", "recipient": "mother", "context_tags": ["cooking", "gift"], "priority_features": ["kitchen_appliances", "cooking_tools"]}
-- "necesito laptop para trabajo" → {"intent_type": "BUSINESS", "category": "electrónicos", "budget_tier": "unspecified", "context_tags": ["work", "productivity"], "priority_features": ["performance", "reliability"]}`
-                },
-                {
-                    role: 'user',
-                    content: query
-                }
-            ],
-            max_tokens: maxTokens,
-            temperature: temperature
-        });
-
-        const endTime = Date.now();
-        const responseTime = endTime - startTime;
-
-        const resultText = response.choices[0]?.message?.content;
-
-        if (!resultText) {
-            return res.status(500).json({
-                success: false,
-                error: 'No response from model',
-                modelId: actualModelId,
-                workshop: 'Product Semantic Search - Fine-tuning'
-            });
-        }
-
-        let classification: IntentClassification;
-        try {
-            classification = JSON.parse(resultText) as IntentClassification;
-        } catch (parseError) {
-            Logger.error('Failed to parse intent classification JSON', {
-                modelId: actualModelId,
-                query,
-                response: resultText,
-                error: parseError
-            });
-
-            return res.status(500).json({
-                success: false,
-                error: 'Invalid JSON response from model',
-                rawResponse: resultText,
-                modelId: actualModelId,
-                suggestion: 'The model may need additional fine-tuning for consistent JSON output',
-                workshop: 'Product Semantic Search - Fine-tuning'
-            });
-        }
-
-        // Success response
-        res.json({
-            success: true,
-            classification,
-            metadata: {
-                query: query,
-                modelId: actualModelId,
-                responseTime: `${responseTime}ms`,
-                temperature,
-                maxTokens,
-                usage: {
-                    promptTokens: response.usage?.prompt_tokens || 0,
-                    completionTokens: response.usage?.completion_tokens || 0,
-                    totalTokens: response.usage?.total_tokens || 0
-                }
-            },
-            workshop: 'Product Semantic Search - Fine-tuning Branch',
-            timestamp: new Date().toISOString()
-        });
-
-        Logger.info('Intent classification completed', {
-            modelId: actualModelId,
-            responseTime,
-            intentType: classification.intent_type,
-            budgetTier: classification.budget_tier,
-            tokensUsed: response.usage?.total_tokens
-        });
-
-    } catch (error: any) {
-        Logger.error('Intent classification error', { error: error.message, stack: error.stack });
-
-        res.status(500).json({
-            success: false,
-            error: 'Internal server error',
-            message: error.message || 'Failed to classify intent',
-            workshop: 'Product Semantic Search - Fine-tuning',
-            support: 'Check if the model ID is correct and accessible'
-        });
-    }
-});
-
-// ============================================================================
-// AVAILABLE MODELS ENDPOINT
-// ============================================================================
-
-router.get('/models', (req, res) => {
-    res.json({
-        availableModels: {
-            base: {
-                id: AVAILABLE_MODELS.base,
-                description: 'Base GPT-4o-mini model',
-                performance: {
-                    accuracy: '~60% JSON validity, ~0% intent accuracy',
-                    speed: 'Fast (~2s response time)',
-                    cost: 'Low'
-                },
-                recommendedFor: 'General purpose, cost optimization'
-            },
-            'fine-tuned': {
-                id: AVAILABLE_MODELS['fine-tuned'],
-                description: 'Fine-tuned model for intent classification',
-                performance: {
-                    accuracy: '100% JSON validity, 100% intent accuracy',
-                    speed: 'Slower (~9s response time)',
-                    cost: 'Higher (fine-tuned model pricing)'
-                },
-                recommendedFor: 'Production intent classification, high accuracy requirements'
-            }
-        },
-        usage: {
-            default: 'Uses "base" model if no modelId specified',
-            customModel: 'You can also provide any OpenAI model ID directly',
-            endpoint: 'POST /fine-tuning/classify-intent'
-        },
-        workshop: 'Product Semantic Search - Fine-tuning'
-    });
-});
-
-// ============================================================================
-// INTEGRATED SMART RECOMMENDATION ENDPOINT
-// ============================================================================
-
-router.post('/smart-recommend', async (req, res) => {
-    try {
-        const {
-            query,
-            useFineTuned = true,
-            maxProducts = 5
-        } = req.body;
-
-        if (!query || query.trim().length === 0) {
-            return res.status(400).json({
-                success: false,
-                error: 'Query is required',
-                example: {
-                    query: "regalo para mi mamá que le gusta cocinar, presupuesto $150",
-                    useFineTuned: true, // optional, defaults to true
-                    maxProducts: 3 // optional, defaults to 3
-                }
-            });
-        }
-
-        const startTime = Date.now();
-        Logger.info('Smart recommendation request', { query: query, useFineTuned });
-
-        // STEP 1: Intent Analysis - Intent + Budget + Enhanced Query
-        let IntentAnalysis: IntentAnalysis | null = null;
-        let enhancedQuery = query;
-        let userBudget: number | null = null;
-
-        const modelToUse = useFineTuned ? AVAILABLE_MODELS['fine-tuned'] : AVAILABLE_MODELS.base;
-
-        try {
-            Logger.info('🎯 Step 1: Intent analysis with', useFineTuned ? 'fine-tuned' : 'base', 'model...');
-
-            const analysisResponse = await openai.chat.completions.create({
-                model: modelToUse,
-                messages: [
-                    {
-                        role: 'system',
-                        content: `Eres un experto analista de intenciones comerciales y búsquedas de productos. Tu trabajo es analizar la consulta del usuario y extraer TODA la información relevante en un solo paso.
-
-Analiza la consulta y responde SOLO con JSON válido que incluya:
-1. Clasificación de intención
-2. Presupuesto extraído (número o null)
-3. Query mejorado para búsqueda semántica
-
-FORMATO DE RESPUESTA:
-{
-  "intent_type": "GIFT|PERSONAL_USE|BUSINESS|COMPARISON|URGENT",
-  "category": "categoría del producto si se especifica",
-  "budget_tier": "economic|mid_range|premium|unspecified", 
-  "recipient": "destinatario si es regalo",
-  "context_tags": ["tags", "contextuales", "relevantes"],
-  "priority_features": ["características", "importantes", "buscadas"],
-  "extracted_budget": 300,
-  "enhanced_query": "query expandido con sinónimos y términos relacionados"
-}
-
-REGLAS PARA EXTRACTED_BUDGET:
-- Si mencionan "$300", "300 dólares", "presupuesto 300", etc. → extracted_budget: 300
-- Si NO mencionan presupuesto específico → extracted_budget: null
-
-REGLAS PARA ENHANCED_QUERY:
-- Mantén el sentido original
-- Agrega sinónimos y términos relacionados
-- Incluye palabras clave técnicas relevantes
-- Expande para mejorar búsqueda semántica
-
-EJEMPLOS:
-Consulta: "regalo para mamá que cocina, presupuesto $150"
-→ enhanced_query: "regalo cocina madre familia cuchillos sartén electrodomésticos culinarios chef cooking hogar kitchen"
-
-Consulta: "necesito algo para escribir digitalmente"
-→ enhanced_query: "escritura digital tabletas stylus iPad Pro Apple Pencil teclados mecánicos writing notas drawing"
-
-Consulta: "equipos para ejercicio en casa, máximo $200"
-→ enhanced_query: "fitness hogar equipos deportivos bandas yoga colchoneta ejercicio casa entrenamiento gym home workout"`
-                    },
-                    {
-                        role: 'user',
-                        content: query
-                    }
-                ],
-                max_tokens: 200,
-                temperature: 0.1
-            });
-
-            const analysisText = analysisResponse.choices[0]?.message?.content;
-            if (analysisText) {
-                IntentAnalysis = JSON.parse(analysisText);
-                enhancedQuery = IntentAnalysis?.enhanced_query || query;
-                userBudget = IntentAnalysis?.extracted_budget || null;
-                Logger.info('🎯 Intent analysis completed', { IntentAnalysis });
-            }
-        } catch (error) {
-            Logger.error('⚠️ Intent analysis failed, using original query and fallback budget extraction...');
-        }
-        // STEP 2: Multi-Stage RAG Search
-        Logger.info('📚 Step 2: Performing intelligent product search...');
-
-        // Perform two searches: original + enhanced, then combine results
-        const searchResults = await ragService.searchProducts(enhancedQuery, maxProducts);
-
-        // If enhanced search found nothing, fallback to original query
-        if (searchResults.products.length === 0 && enhancedQuery !== query) {
-            const fallbackResults = await ragService.searchProducts(query, maxProducts);
-            searchResults.products = fallbackResults.products;
-        }
-
-        // STEP 3: Generate Smart Recommendations with Context
-        Logger.info('🤖 Step 3: Generating intelligent recommendations...');
-
-        let recommendationPrompt: string;
-        let systemMessage: string;
-
-        if (searchResults.products.length === 0) {
-            // Case: No products found - provide helpful guidance
-            Logger.warn('⚠️ No products found, generating guidance...');
-
-            recommendationPrompt = `El usuario busca: "${query}"
-
-INTENCIÓN CLASIFICADA:
-${IntentAnalysis ? JSON.stringify(IntentAnalysis, null, 2) : 'No clasificada'}
-
-SITUACIÓN: NO encontré productos específicos que coincidan con esta búsqueda en nuestro catálogo actual.
-
-NUESTRO CATÁLOGO INCLUYE ESTAS CATEGORÍAS:
-- Electronics (iPhone, iPad, MacBook, audífonos, teclados mecánicos, monitores, webcams)
-- Sports (equipos ejercicio, bandas elásticas, colchonetas yoga, mancuernas)  
-- Kitchen (cuchillos, cafeteras, freidoras, licuadoras, sartenes)
-- Home (aspiradoras, purificadores, lámparas, organizadores)
-- Clothing (zapatillas, chaquetas, leggings, camisas)
-- Beauty (sets spa, cepillos faciales, secadores)
-- Accessories (mochilas, relojes inteligentes, botellas térmicas, powerbanks)
-- Education (cursos online, kits Arduino)
-
-INSTRUCCIONES CRÍTICAS:
-1. Sé COMPLETAMENTE HONESTO: "No encontré productos específicos para tu búsqueda"
-2. NO menciones productos específicos como "iPad Pro con Apple Pencil" a menos que aparezcan en resultados de búsqueda
-3. NO inventes categorías o productos que no existen
-4. Sugiere que el usuario sea más específico o busque en tiendas especializadas
-5. Mantén un tono empático pero honesto
-
-EJEMPLO DE RESPUESTA HONESTA:
-"Lamentablemente, no encontré productos específicos en nuestro catálogo que coincidan exactamente con tu búsqueda de [necesidad específica]. 
-
-Nuestro catálogo se enfoca en [categorías relevantes], pero no tenemos la solución específica que buscas.
-
-Te sugiero buscar en tiendas especializadas en [área específica] para encontrar exactamente lo que necesitas."`;
-
-            systemMessage = 'Eres un asistente COMPLETAMENTE HONESTO. Si no encontraste productos específicos, dilo claramente. NO inventes productos ni sugerencias.';
-
-        } else {
-            // Case: Products found - use budget from intent analysis
-            Logger.info(`✅ Found ${searchResults.products.length} products, generating recommendations...`);
-            Logger.info(`💰 Budget from analysis: ${userBudget ? '$' + userBudget : 'None'}`);
-
-            recommendationPrompt = `Usuario busca: "${query}" ${userBudget ? `Presupuesto: $${userBudget}` : 'Sin límite de presupuesto'}`;
-
-            if (userBudget !== null) {
-                const withinBudget = searchResults.products.filter((p: any) => {
-                    return p.price && userBudget && p.price <= userBudget;
-                });
-
-                const overBudget = searchResults.products.filter((p: any) => {
-                    return p.price && userBudget && p.price > userBudget;
-                });
-
-                if (withinBudget.length > 0) {
-                    recommendationPrompt += `\nPRODUCTOS RECOMENDADOS (dentro del presupuesto):\n${withinBudget.map((p: any) => `- ${p.title}: ${p.price}${p.description ? ' - ' + p.description.substring(0, 100) : ''}`).join('\n')}`;
-                }
-
-                if (overBudget.length > 0) {
-                    recommendationPrompt += `\nOPCIONES ADICIONALES (requieren más presupuesto):\n${overBudget.map((p: any) => {
-                        const excess = userBudget ? p.price - userBudget : null;
-                        return `- ${p.title}: ${p.price} (excede por $${excess})`;
-                    }).join('\n')}`;
-                }
-
-            } else {
-                // No userBudget provided, list all products
-                Logger.info(`💰 No budget provided, listing all products...`);
-                recommendationPrompt += `Usuario busca: "${query}" Sin límite de presupuesto\n\nPRODUCTOS RECOMENDADOS:\n${searchResults.products.map((p: any) => `- ${p.title}: ${p.price}${p.description ? ' - ' + p.description.substring(0, 100) : ''}`).join('\n')}`;
-            }
-
-            systemMessage = `Eres un asistente de compras COMPLETAMENTE HONESTO. 
-
-REGLAS CRÍTICAS:
-1. SOLO menciona productos que están en la lista proporcionada
-2. NUNCA inventes productos, precios o descripciones
-3. USA EXACTAMENTE los nombres y precios que te proporciono
-4. NO agregues productos adicionales que no aparezcan en la lista
-5. Si no hay productos dentro del presupuesto, dilo claramente
-
-Presenta de forma clara los productos reales encontrados, separando por presupuesto.`;
-        }
-        const recommendationResponse = await openai.chat.completions.create({
-            model: AVAILABLE_MODELS.base, // Use base model for final recommendations
-            messages: [
-                {
-                    role: 'system',
-                    content: systemMessage
-                },
-                {
-                    role: 'user',
-                    content: recommendationPrompt
-                }
-            ],
-            max_tokens: 200,
-            temperature: 0.1
-        });
-
-        const recommendation = recommendationResponse.choices[0]?.message?.content || 'No se pudo generar recomendación';
-
-        const endTime = Date.now();
-        const totalTime = endTime - startTime;
-
-        // Success Response
-        res.json({
-            success: true,
-            workflow: {
-                step1: 'Analysis (Intent + Budget + Enhanced Query)',
-                step2: 'Multi-Stage RAG Search',
-                step3: 'Smart Recommendations'
-            },
-            classification: IntentAnalysis || { error: 'Analysis failed, used fallback' },
-            searchResults: {
-                query: enhancedQuery,
-                found: searchResults.products.length,
-                products: searchResults.products
-            },
-            recommendation,
-            performance: {
-                totalTime: `${totalTime}ms`,
-                modelUsed: useFineTuned ? 'fine-tuned + base' : 'base only'
-            },
-            metadata: {
-                workshop: 'Product Semantic Search - Integrated Fine-tuning',
-                timestamp: new Date().toISOString(),
-                enhanced: !!IntentAnalysis
-            }
-        });
-
-        Logger.info('Smart recommendation completed', {
-            totalTime,
-            enhanced: !!IntentAnalysis,
-            productsFound: searchResults.products.length,
-            intentType: IntentAnalysis?.intent_type
-        });
-
-    } catch (error: any) {
-    Logger.error('Smart recommendation error', { error: error.message });
-
-    res.status(500).json({
+import { ProductFiltersSchema } from '../types/product';
+import fs from 'fs';
+import path from 'path';
+
+const router = Router();
+const queryParser = new QueryParserService();
+
+/**
+ * Fine-tuning Routes - Branch 4
+ * Following workshop modular route structure and cost optimization patterns
+ */
+
+/**
+ * Extract filters using specified model
+ * POST /fine-tuning/extract-filters
+ */
+router.post('/extract-filters', async (req: Request, res: Response) => {
+    
+  try {
+    const { query, modelId = 'gpt-4o-mini-2024-07-18' } = req.body;
+
+    // Input validation with helpful error messages
+    if (!query) {
+      return res.status(400).json({
         success: false,
-        error: 'Internal server error',
-        message: error.message,
-        workflow: 'Failed during smart recommendation process',
-        workshop: 'Product Semantic Search - Integrated Fine-tuning'
-    });
-}});
+        error: 'Query is required',
+        workshop: 'Progressive Product Semantic Search',
+        currentBranch: 'Branch 4: Fine-tuning',
+        example: {
+          query: "busco laptop gaming barata",
+          modelId: "gpt-4o-mini-2024-07-18" // optional
+        }
+      });
+    }
 
-// ============================================================================
-// HEALTH CHECK ENDPOINT
-// ============================================================================
+    Logger.info(`🔍 Extracting filters with model: ${modelId}`);
+    Logger.info(`📝 Query: "${query}"`);
 
-router.get('/health', (req, res) => {
+    const startTime = Date.now();
+
+    // Use QueryParserService with specified model following workshop patterns
+    const filters = await queryParser.extractFilters(query, modelId);
+    
+    const responseTime = Date.now() - startTime;
+
+    // Structured response with usage metadata following workshop patterns
     res.json({
-        service: 'Fine-tuning Intent Classification',
-        status: 'healthy',
-        availableEndpoints: [
-            'POST /fine-tuning/classify-intent - Classify user intent',
-            'POST /fine-tuning/smart-recommend - Full integrated workflow',
-            'GET /fine-tuning/models - List available models',
-            'GET /fine-tuning/health - Service health check'
-        ],
-        models: {
-            base: AVAILABLE_MODELS.base,
-            'fine-tuned': AVAILABLE_MODELS['fine-tuned']
-        },
-        performance: {
-            baseModel: '60% JSON validity, 0% intent accuracy, ~2s response',
-            fineTunedModel: '100% JSON validity, 100% intent accuracy, ~9s response'
-        },
-        integratedWorkflow: {
-            description: 'Fine-tuned intent classification + RAG search + Smart recommendations',
-            steps: ['Intent Analysis', 'Enhanced Search', 'Personalized Recommendations'],
-            totalTime: '~12s with fine-tuned model, ~4s with base model'
-        },
-        workshop: 'Product Semantic Search - Fine-tuning',
-        timestamp: new Date().toISOString()
+      success: true,
+      query,
+      modelUsed: modelId,
+      extractedFilters: filters,
+      performance: {
+        responseTime: `${responseTime}ms`,
+        modelType: modelId.includes('ft:') ? 'fine-tuned' : 'base'
+      },
+      workshop: 'Progressive Product Semantic Search',
+      currentBranch: 'Branch 4: Fine-tuning',
+      costOptimization: {
+        baseModel: 'gpt-4o-mini (100x cheaper than GPT-4o)',
+        tokenLimit: 150,
+        temperature: 0.1
+      }
     });
+
+  } catch (error) {
+    Logger.error('❌ Filter extraction failed:', error);
+    
+    // Comprehensive error handling with workshop context
+    res.status(500).json({
+      success: false,
+      error: 'Filter extraction failed',
+      details: error instanceof Error ? error.message : 'Unknown error',
+      workshop: 'Progressive Product Semantic Search',
+      currentBranch: 'Branch 4: Fine-tuning',
+      troubleshooting: [
+        'Verify model ID is correct',
+        'Check OpenAI API connectivity',
+        'Ensure query is a valid string'
+      ]
+    });
+  }
+});
+
+/**
+ * Compare base model vs fine-tuned model
+ * POST /fine-tuning/compare-models
+ */
+router.post('/compare-models', async (req: Request, res: Response) => {
+  try {
+    const { query, fineTunedModelId } = req.body;
+
+    // Input validation following workshop patterns
+    if (!query || !fineTunedModelId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Both query and fineTunedModelId are required',
+        workshop: 'Progressive Product Semantic Search',
+        currentBranch: 'Branch 4: Fine-tuning',
+        example: {
+          query: "busco smartphone Samsung económico",
+          fineTunedModelId: "ft:gpt-4o-mini-2024-07-18:personal::abc123"
+        }
+      });
+    }
+
+    Logger.info(`🔄 Comparing models for query: "${query}"`);
+
+    const startTime = Date.now();
+
+    // Test base model following cost optimization
+    const baseModelResult = await queryParser.extractFilters(query, 'gpt-4o-mini-2024-07-18');
+    const baseModelTime = Date.now() - startTime;
+
+    const fineTunedStartTime = Date.now();
+
+    // Test fine-tuned model
+    const fineTunedResult = await queryParser.extractFilters(query, fineTunedModelId);
+    const fineTunedTime = Date.now() - fineTunedStartTime;
+
+    // Calculate improvements following workshop metrics
+    const baseFields = Object.keys(baseModelResult).length;
+    const fineTunedFields = Object.keys(fineTunedResult).length;
+    const fieldsImprovement = fineTunedFields - baseFields;
+
+    // Structured response with workshop metadata
+    res.json({
+      success: true,
+      query,
+      comparison: {
+        baseModel: {
+          modelId: 'gpt-4o-mini-2024-07-18',
+          extractedFilters: baseModelResult,
+          fieldsExtracted: baseFields,
+          responseTime: `${baseModelTime}ms`
+        },
+        fineTunedModel: {
+          modelId: fineTunedModelId,
+          extractedFilters: fineTunedResult,
+          fieldsExtracted: fineTunedFields,
+          responseTime: `${fineTunedTime}ms`
+        },
+        improvement: {
+          additionalFields: fieldsImprovement,
+          fieldsImprovement: fieldsImprovement > 0 ? `+${fieldsImprovement} more fields` : 'No additional fields',
+          speedComparison: fineTunedTime < baseModelTime ? 'Faster' : 'Similar speed',
+          overallAssessment: fieldsImprovement > 0 ? 'Fine-tuned model extracts more information' : 'Similar performance'
+        }
+      },
+      workshop: 'Progressive Product Semantic Search',
+      currentBranch: 'Branch 4: Fine-tuning',
+      costOptimization: {
+        note: 'Both models use gpt-4o-mini base for cost efficiency',
+        tokenLimits: '150 max tokens per request'
+      }
+    });
+
+  } catch (error) {
+    Logger.error('❌ Model comparison failed:', error);
+    
+    res.status(500).json({
+      success: false,
+      error: 'Model comparison failed',
+      details: error instanceof Error ? error.message : 'Unknown error',
+      workshop: 'Progressive Product Semantic Search',
+      currentBranch: 'Branch 4: Fine-tuning',
+      troubleshooting: [
+        'Verify fine-tuned model ID is correct',
+        'Ensure fine-tuning job completed successfully',
+        'Check: npm run fine-tuning:status'
+      ]
+    });
+  }
+});
+
+/**
+ * List available models
+ * GET /fine-tuning/models
+ */
+router.get('/models', async (req: Request, res: Response) => {
+  try {
+    Logger.info('📋 Listing available fine-tuned models');
+
+    // Get fine-tuned models from OpenAI following workshop patterns
+    const models = await openai.fineTuning.jobs.list({ limit: 10 });
+    
+    const completedModels = models.data
+      .filter(job => job.status === 'succeeded' && job.fine_tuned_model)
+      .map(job => ({
+        modelId: job.fine_tuned_model,
+        jobId: job.id,
+        baseModel: job.model,
+        createdAt: new Date(job.created_at * 1000).toISOString(),
+        purpose: 'Product filter extraction improvement'
+      }));
+
+    // Check local job info following workshop file patterns
+    const jobsFilePath = path.join(__dirname, '../../data/fine-tuning/fine-tuning-jobs.json');
+    let localJobInfo = null;
+    
+    if (fs.existsSync(jobsFilePath)) {
+      const jobData = fs.readFileSync(jobsFilePath, 'utf8');
+      localJobInfo = JSON.parse(jobData);
+    }
+
+    // Structured response following workshop patterns
+    res.json({
+      success: true,
+      availableModels: {
+        baseModel: {
+          modelId: 'gpt-4o-mini-2024-07-18',
+          type: 'base',
+          description: 'Cost-optimized base model for filter extraction',
+          costPer1MTokens: '$0.15'
+        },
+        fineTunedModels: completedModels
+      },
+      currentWorkshopModel: localJobInfo?.fineTunedModel || null,
+      modelCount: {
+        total: completedModels.length + 1,
+        base: 1,
+        fineTuned: completedModels.length
+      },
+      workshop: 'Progressive Product Semantic Search',
+      currentBranch: 'Branch 4: Fine-tuning',
+      costOptimization: {
+        note: 'All models based on gpt-4o-mini for cost efficiency',
+        fineTuningCost: '$8 per 1M training tokens'
+      }
+    });
+
+  } catch (error) {
+    Logger.error('❌ Failed to list models:', error);
+    
+    res.status(500).json({
+      success: false,
+      error: 'Failed to list models',
+      details: error instanceof Error ? error.message : 'Unknown error',
+      workshop: 'Progressive Product Semantic Search',
+      currentBranch: 'Branch 4: Fine-tuning',
+      troubleshooting: [
+        'Check OpenAI API connectivity',
+        'Verify API key permissions for fine-tuning',
+        'Run: npm run fine-tuning:status'
+      ]
+    });
+  }
+});
+
+/**
+ * Health check for fine-tuning system
+ * GET /fine-tuning/health
+ */
+router.get('/health', async (req: Request, res: Response) => {
+  try {
+    // Check system components following workshop patterns
+    const jobsFilePath = path.join(__dirname, '../../data/fine-tuning/fine-tuning-jobs.json');
+    const trainingDataPath = path.join(__dirname, '../../data/fine-tuning/training_data.jsonl');
+    const testDataPath = path.join(__dirname, '../../data/fine-tuning/test_data.jsonl');
+
+    const systemStatus = {
+      jobsFile: fs.existsSync(jobsFilePath),
+      trainingData: fs.existsSync(trainingDataPath),
+      testData: fs.existsSync(testDataPath),
+      queryParserService: true, // Always available
+      openaiConnection: true // Assume true if we reach this point
+    };
+
+    const allSystemsHealthy = Object.values(systemStatus).every(status => status);
+
+    // Structured response following workshop patterns
+    res.json({
+      success: true,
+      status: allSystemsHealthy ? 'healthy' : 'partial',
+      systemComponents: systemStatus,
+      availableEndpoints: [
+        'POST /fine-tuning/extract-filters',
+        'POST /fine-tuning/compare-models', 
+        'GET /fine-tuning/models',
+        'GET /fine-tuning/health'
+      ],
+      npmScripts: [
+        'npm run fine-tuning:generate - Create training dataset',
+        'npm run fine-tuning:train - Start model training',
+        'npm run fine-tuning:status - Check training progress',
+        'npm run fine-tuning:evaluate - Compare model performance'
+      ],
+      workshop: 'Progressive Product Semantic Search',
+      currentBranch: 'Branch 4: Fine-tuning',
+      costOptimization: {
+        baseModel: 'gpt-4o-mini-2024-07-18',
+        tokenLimits: 'Max 150 tokens per extraction',
+        purpose: 'Improve QueryParserService filter extraction'
+      }
+    });
+
+  } catch (error) {
+    Logger.error('❌ Health check failed:', error);
+    
+    res.status(500).json({
+      success: false,
+      error: 'Health check failed',
+      details: error instanceof Error ? error.message : 'Unknown error',
+      workshop: 'Progressive Product Semantic Search',
+      currentBranch: 'Branch 4: Fine-tuning'
+    });
+  }
 });
 
 export default router;

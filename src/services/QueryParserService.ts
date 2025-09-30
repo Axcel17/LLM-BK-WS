@@ -8,14 +8,15 @@ export class QueryParserService {
    * Extract structured filters from natural language query
    * Uses hybrid approach: regex for budget + OpenAI for intelligent parsing
    */
-  async extractFilters(query: string): Promise<ProductFilters> {
+  async extractFilters(query: string, modelId?: string): Promise<ProductFilters> {
     
     try {
-      Logger.info('🔍 Parsing query for filters with hybrid approach:', query);
+      const modelToUse = modelId || 'gpt-4o-mini';
+      Logger.info('🔍 Parsing query for filters with hybrid approach:', { query, model: modelToUse });
 
       // 1. OPENAI APPROACH: Intelligent extraction with context
       const completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: modelToUse,
         messages: [
           { 
             role: 'system', 

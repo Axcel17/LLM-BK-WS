@@ -1,0 +1,5 @@
+{
+  "query": "smartphone Samsung económico para estudiante",
+  "fineTunedModelId": "ft:gpt-4o-mini-2024-07-18:personal::abc123",
+  "note": "This will compare base gpt-4o-mini vs fine-tuned model side by side"
+}

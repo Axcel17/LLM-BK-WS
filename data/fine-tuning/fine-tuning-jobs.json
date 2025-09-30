@@ -1,0 +1,15 @@
+{
+  "jobId": "ftjob-eugHMQTV1ifEocVMex61tyx4",
+  "fileId": "file-N72guc24PJF6kqQb76mufe",
+  "createdAt": "2025-09-30T21:44:04.765Z",
+  "workshop": "Progressive Product Semantic Search",
+  "branch": "Branch 4: Fine-tuning",
+  "purpose": "Improve QueryParserService filter extraction",
+  "baseModel": "gpt-4o-mini-2024-07-18",
+  "status": "validating_files",
+  "lastChecked": "2025-09-30T22:51:30.592Z",
+  "currentStatus": "succeeded",
+  "fineTunedModel": "ft:gpt-4o-mini-2024-07-18:personal:product-filter-extractor:CLcfRsmb",
+  "trainedTokens": 83136,
+  "estimatedFinish": null
+}

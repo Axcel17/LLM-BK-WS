@@ -110,6 +110,19 @@ app.get("/docs", (req, res) => {
           "Structured output",
         ],
         duration: "40 minutes",
+        npmScripts: {
+          'fine-tuning:generate': 'Create training dataset (30 examples)',
+          'fine-tuning:train': 'Start OpenAI fine-tuning job',
+          'fine-tuning:status': 'Monitor training progress',
+          'fine-tuning:evaluate': 'Compare base vs fine-tuned performance'
+        },
+        endpoints: {
+          'POST /fine-tuning/extract-filters': 'Extract filters with specified model',
+          'POST /fine-tuning/compare-models': 'A/B test base vs fine-tuned',
+          'GET /fine-tuning/models': 'List available models',
+          'GET /fine-tuning/health': 'System status check'
+        },
+        testFiles: "inputs/fine-tuning/*.json",
       },
       "5-moderation-production": {
         description: "Production-ready system with safety and robustness",
