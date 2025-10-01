@@ -30,9 +30,9 @@ app.get("/", (req, res) => {
       "Complete AI pipeline: Setup → RAG → Tool Calling → Fine-tuning → Production",
     currentBranch: "4-fine-tuning",
     objective:
-      "Intent classification with fine-tuned models and performance measurement",
+      "Enhanced filter extraction with fine-tuned models and performance measurement",
     nextStep:
-      "Run fine-tuning baseline: npm run fine-tuning:setup",
+      "Run fine-tuning pipeline: npm run fine-tuning:generate, then fine-tuning:train",
     documentation: "/docs",
     health: "/health",
     demo: "Ready for fine-tuning experiments! 🎯",
@@ -101,11 +101,11 @@ app.get("/docs", (req, res) => {
         testFiles: "inputs/tools/*.json",
       },
       "4-fine-tuning": {
-        description: "Specialized model for commercial intent understanding",
+        description: "Specialized model for enhanced filter extraction",
         features: [
-          "Commercial intent dataset",
+          "Enhanced filter extraction dataset",
           "gpt-4o-mini fine-tuning",
-          "Intent parsing",
+          "Filter parsing",
           "Base vs fine-tuned comparison",
           "Structured output",
         ],
@@ -148,7 +148,7 @@ app.get("/docs", (req, res) => {
       "Voice-to-product search",
       "Image-based product discovery",
       "Intelligent product comparison",
-      "Commercial intent understanding",
+      "Enhanced filter extraction",
       "Production-grade safety",
     ],
   });
@@ -165,7 +165,7 @@ app.get("/features", (req, res) => {
       response: "AI responds via text or personalized voice",
     },
     intelligence: {
-      semantic: "Understands intent, not just keywords",
+      semantic: "Understands meaning, not just keywords",
       contextual: "Considers budget, recipient, occasion automatically",
       comparative: "Smart product comparisons with recommendations",
       personalized: "Learns from user preferences and context",
@@ -203,8 +203,8 @@ app.use("*", (req, res) => {
       "/tools/chat",
       "/tools/available",
       "/tools/health",
-      "/fine-tuning/classify-intent",
-      "/fine-tuning/smart-recommend",
+      "/fine-tuning/extract-filters",
+      "/fine-tuning/compare-models",
       "/fine-tuning/models",
       "/fine-tuning/health"
     ],
@@ -218,15 +218,14 @@ app.use("*", (req, res) => {
       "/tools/available": "GET - List available tools (search_products, get_purchase_policies)"
     },
     fineTuning: {
-      "/fine-tuning/classify-intent": "POST - Intent classification with model selection (base|fine-tuned)",
-      "/fine-tuning/smart-recommend": "POST - Complete integrated workflow (intent + RAG + recommendations)",
+      "/fine-tuning/extract-filters": "POST - Filter extraction with model selection (base|fine-tuned)",
+      "/fine-tuning/compare-models": "POST - Compare base vs fine-tuned model performance",
       "/fine-tuning/models": "GET - Available models and performance metrics", 
       "/fine-tuning/health": "GET - Fine-tuning service health check"
     },
     currentBranch: "4-fine-tuning",
-    hint: "Try integrated workflow: POST /fine-tuning/smart-recommend with useFineTuned: true",
     nextEndpoints: {
-      "current-branch-4": ["/fine-tuning/smart-recommend", "/fine-tuning/classify-intent"],
+      "current-branch-4": ["/fine-tuning/extract-filters", "/fine-tuning/compare-models"],
       "previous-branches": ["/tools/chat", "/tools/available"],
       "branch-5": ["/moderate", "/metrics"]
     }

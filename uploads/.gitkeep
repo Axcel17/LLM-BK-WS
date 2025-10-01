@@ -4,7 +4,7 @@ Esta carpeta almacenará archivos subidos durante las diferentes ramas del works
 
 - **Rama 2**: Catálogo de productos y embeddings generados
 - **Rama 3**: Imágenes de productos para búsqueda visual
-- **Rama 4**: Datasets para fine-tuning de intención comercial  
+- **Rama 4**: Datasets para fine-tuning de extracción de filtros mejorada  
 - **Rama 5**: Logs de moderación y métricas de producción
 
 Los archivos se gitignorean por seguridad, pero la carpeta se mantiene para estructura.

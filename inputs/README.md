@@ -9,7 +9,7 @@ inputs/
 ├── basic/              # Rama 1: Setup multimodal básico
 ├── rag/               # Rama 2: Búsqueda semántica con embeddings  
 ├── tool-calling/      # Rama 3: Tool calling inteligente
-├── fine-tuning/       # Rama 4: Fine-tuning para intención comercial
+├── fine-tuning/       # Rama 4: Fine-tuning para extracción de filtros
 └── moderation/        # Rama 5: Moderación y producción
 ```
 
@@ -81,7 +81,7 @@ curl -X POST http://localhost:3000/search \
 - `test-assistant-chat.json` - Chat con asistente inteligente
 
 ### Fine-tuning (Rama 4)
-- `test-intent-recognition.json` - Reconocimiento de intención comercial
+- `test-filter-extraction.json` - Extracción mejorada de filtros
 - `test-base-vs-finetuned.json` - Comparación de modelos
 - `test-commercial-queries.json` - Consultas comerciales específicas
 - `test-structured-output.json` - Salida estructurada

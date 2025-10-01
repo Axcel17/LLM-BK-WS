@@ -27,10 +27,10 @@ Construir un sistema inteligente de búsqueda de productos que entiende voz, tex
 - 📋 Manejo contextual de consultas
 
 ### Rama 4: `4-fine-tuning`
-- 📋 Fine-tuning de gpt-4o-mini para intención comercial
+- 📋 Fine-tuning de gpt-4o-mini para extracción de filtros mejorada
 - 📋 Dataset de entrenamiento de consultas de productos
 - 📋 Comparación modelo base vs fine-tuned
-- 📋 Parsing estructurado de intención
+- 📋 Parsing estructurado de filtros
 
 ### Rama 5: `5-moderation-production`
 - 📋 Integración de omni-moderation-latest
