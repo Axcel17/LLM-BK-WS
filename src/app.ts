@@ -22,7 +22,7 @@ app.get("/health", (req, res) => {
 // Welcome endpoint - Introduction to the workshop
 app.get("/", (req, res) => {
   res.json({
-    message: "🛍️ Product Semantic Search Workshop v4 - OpenAI API Practitioner",
+    message: "🛍️ Product Semantic Search Workshop - OpenAI API Practitioner",
     description:
       "Progressive multimodal AI system: Chat → Voice → Vision → Production",
     currentBranch: "1-initial-project",
