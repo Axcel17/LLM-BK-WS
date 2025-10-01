@@ -22,17 +22,17 @@ app.get("/health", (req, res) => {
 // Welcome endpoint - Introduction to the workshop
 app.get("/", (req, res) => {
   res.json({
-    message: "🛍️ Product Semantic Search Workshop v3 - OpenAI API Practitioner",
+    message: "🛍️ Product Semantic Search Workshop v4 - OpenAI API Practitioner",
     description:
-      "Progressive multimodal AI system: Setup → RAG → Tool Calling → Fine-tuning → Production",
-    currentBranch: "3-tool-calling",
+      "Progressive multimodal AI system: Chat → Voice → Vision → Production",
+    currentBranch: "1-initial-project",
     objective:
-      "Intelligent assistant with semantic search and automated tool calling",
+      "Multimodal AI foundations with chat, voice-to-text, text-to-voice, and image analysis",
     nextStep:
-      "Try conversational search: POST /tools/chat with natural language",
+      "Try multimodal features: POST /chat, /query-voice-to-text, /query-text-to-voice, /analyze-image",
     documentation: "/docs",
     health: "/health",
-    demo: "Ready for intelligent tool-powered conversations! 🤖",
+    demo: "Ready for multimodal AI interactions! 🤖🎤🖼️",
   });
 });
 
