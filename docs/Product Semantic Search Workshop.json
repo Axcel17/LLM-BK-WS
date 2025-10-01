@@ -1,0 +1,722 @@
+{
+	"info": {
+		"_postman_id": "8386d516-3401-43e7-a242-cc89fda54727",
+		"name": "Product Semantic Search Workshop",
+		"description": "🛍️ **Colección COMPLETA para el Product Semantic Search Workshop v2**\n\n**✅ ALINEADA con OpenAI API Practitioner Certification**\n\nEste workshop te guía desde setup básico hasta un sistema completo de búsqueda semántica multimodal de productos.\n\n🎯 **Estructura por Rama:**\n- **Rama 1**: Initial Project - Setup multimodal básico ✅\n- **Rama 2**: RAG Implementation - Búsqueda semántica con embeddings ✅\n- **Rama 3**: Tool Calling - Herramientas inteligentes optimizadas ✅\n- **Rama 4**: Fine-tuning - Modelo especializado para intenciones comerciales ✅\n- **Rama 5**: Moderation + Production - Sistema robusto y seguro ✅\n\n📚 **Objetivo Final:**\nSistema que entiende consultas como:\n- 🎤 \"Necesito algo para ejercicio en casa\" (voz)\n- 📷 Foto de producto → \"Encuentra similares\"\n- 💬 \"Regalo para mi mamá, presupuesto $100\"\n\n🔧 **Variables de Entorno Requeridas:**\n- `baseUrl`: http://localhost\n- `port`: 3000\n- `OPENAI_API_KEY`: Tu API key (configurar en entorno, NO en colección)\n\n🚀 **Uso:**\n```bash\ngit checkout [rama-deseada]\nnpm run dev\n# Usar endpoints correspondientes a la rama\n```\n\n💡 **Optimizado para costos:** ~$0.20 total para todo el workshop",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48656927"
+	},
+	"item": [
+		{
+			"name": "🏠 Branch 1: Initial Project / Multimodal Basics",
+			"item": [
+				{
+					"name": "Workshop Welcome - Overview",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								""
+							]
+						},
+						"description": "🛍️ **Información del Workshop**\n\n**Disponible:** Todas las ramas (1-5)\n\n**Respuesta:**\n- Descripción del workshop completo\n- Rama actual y progreso\n- Objetivo final del sistema\n- Próximos pasos\n\n**Uso:** Verificar en qué rama estás y entender el roadmap completo hacia un sistema de búsqueda semántica inteligente."
+					},
+					"response": []
+				},
+				{
+					"name": "Basic Chat - Testing",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Hola, estoy buscando algo cómodo para caminar.\",\n  \"temperature\": 0.3\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/chat",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"chat"
+							]
+						},
+						"description": "💬 **Chat Básico con GPT-4o**\n\n**Disponible:** Rama 1+\n\n**Body:**\n```json\n{\n  \"message\": \"Hola, quiero aprender sobre búsqueda semántica\",\n  \"temperature\": 0.3\n}\n```\n\n**Proceso:**\n- Usa GPT-4o para respuestas conversacionales\n- Temperature controlable para creatividad\n- Respuesta con tokens usados\n\n**Uso:** Validar configuración básica de OpenAI y comunicación con modelos."
+					},
+					"response": []
+				},
+				{
+					"name": "Speech to Text - Text response",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "audio",
+									"description": "Archivo de audio (MP3, WAV, M4A, FLAC) - Máximo 25MB",
+									"type": "file",
+									"src": "/C:/Users/Dell/Desktop/freelance/INNOVAT_LATAM/LLM-BK-WS/inputs/basic/query-voice.mp3"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/query-voice-to-text",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"query-voice-to-text"
+							]
+						},
+						"description": "🎤 **Speech to Text - Transcripción**\n\n**Disponible:** Rama 1+\n\n**Proceso:**\n1. Sube archivo de audio\n2. gpt-4o-transcribe convierte a texto\n3. Respuesta con texto transcrito\n\n**Formatos soportados:** MP3, WAV, M4A, FLAC\n**Límite:** 25MB\n\n**Respuesta:**\n- text: Texto transcrito\n- confidence: Nivel de confianza\n- duration: Duración del audio\n\n**Uso:** Base para consultas de productos por voz."
+					},
+					"response": []
+				},
+				{
+					"name": "Text to Speech - Voice response",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Recomiendame zapatos deportivos perfectos para trotar\",\n  \"voice\": \"nova\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/query-text-to-voice",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"query-text-to-voice"
+							]
+						},
+						"description": "🔊 **Text to Speech con Estilos**\n\n**Disponible:** Rama 1+\n\n**Body:**\n```json\n{\n  \"text\": \"Te recomiendo estos auriculares...\",\n  \"style\": \"friendly customer service representative\",\n  \"voice\": \"nova\",\n  \"speed\": 1.0\n}\n```\n\n**Proceso:**\n- Usa gpt-4o-mini-tts con instrucciones de estilo\n- Voces disponibles: alloy, echo, fable, onyx, nova, shimmer\n- Estilos personalizables\n\n**Respuesta:** Archivo MP3 con audio generado\n\n**Uso:** Respuestas por voz para recomendaciones de productos."
+					},
+					"response": []
+				},
+				{
+					"name": "Analyze Image - Text response",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/Dell/Desktop/freelance/INNOVAT_LATAM/LLM-BK-WS/inputs/basic/image.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/analyze-image",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"analyze-image"
+							]
+						},
+						"description": "📷 **Análisis de Imágenes de Productos**\n\n**Disponible:** Rama 1+\n\n**Body:**\n```json\n{\n  \"imageUrl\": \"https://example.com/product.jpg\",\n  \"analysisType\": \"product\"\n}\n```\n\n**Tipos de análisis:**\n- product: Identifica categoría, características, uso\n- similarity: Describe para encontrar similares\n- defects: Examina defectos o problemas\n\n**Proceso:**\n- GPT-4o analiza imagen con detail: 'high'\n- Extrae información relevante para búsqueda\n- Optimizado para productos comerciales\n\n**Uso:** Base para búsqueda por imagen y similitud visual."
+					},
+					"response": []
+				},
+				{
+					"name": "Documentation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/docs",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"docs"
+							]
+						},
+						"description": "📚 **Documentación Completa del Workshop**\n\n**Disponible:** Todas las ramas (1-5)\n\n**Respuesta:**\n- Información de cada rama y duración\n- Features implementados por rama\n- Casos de uso y ejemplos\n- Roadmap hacia certificación\n\n**Uso:** Referencia completa del workshop y planificación de sesiones."
+					},
+					"response": []
+				},
+				{
+					"name": "Features Showcase",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/features",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"features"
+							]
+						},
+						"description": "🎯 **Showcase de Capacidades**\n\n**Disponible:** Todas las ramas (1-5)\n\n**Respuesta:**\n- Capacidades multimodales (voz, texto, imagen)\n- Inteligencia del sistema (semántica, contextual)\n- Detalles técnicos (embeddings, modelos)\n- Casos de uso reales\n\n**Uso:** Entender el alcance completo del sistema que se va a construir."
+					},
+					"response": []
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"health"
+							]
+						},
+						"description": "❤️ **Health Check del Sistema**\n\n**Disponible:** Todas las ramas (1-5)\n\n**Respuesta:**\n- status: 'healthy'\n- timestamp\n- version\n- environment\n\n**Uso:** Verificar que el servidor está funcionando y listo para recibir requests."
+					},
+					"response": []
+				}
+			],
+			"description": "Configuración inicial multimodal con OpenAI SDK y gpt-4o-mini.\n\n## Features disponibles:\n\n- `POST /chat` - Chat básico con GPT-4o-mini\n    \n- `POST /query-voice-to-text` - Transcripción de audio (Whisper)\n    \n- `POST /query-text-to-voice` - Síntesis de voz (TTS)\n    \n- `POST /analyze-image` - Análisis de imágenes (GPT-4o Vision)\n    \n\n## Objetivo:\n\nEstablecer los fundamentos multimodales:\n\n- **Chat**: \"¿Qué productos tienes?\" → Respuesta inteligente con GPT-4o-mini\n    \n- **Audio**: archivo.mp3 → transcripción + mejoras sugeridas\n    \n- **Voz**: \"texto\" → respuesta en audio español\n    \n- **Imagen**: producto.jpg → análisis detallado de características\n    \n\n**Dataset**: Configuración base con límites de tokens optimizados para costos"
+		},
+		{
+			"name": "🔍 Branch 2: RAG Implementation",
+			"item": [
+				{
+					"name": "Search Products - Filters",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"Productos de la marca Apple para trabajo profesional\",\n  \"filters\": {\n    \"brand\": \"Apple\",\n    \"minPrice\": 500,\n    \"maxPrice\": 1500\n  },\n  \"limit\": 2\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/rag/search-by-filters",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"rag",
+								"search-by-filters"
+							]
+						},
+						"description": "🏋️ **Ejemplo: Fitness en Espacios Pequeños**\n\n**Disponible:** Rama 2+\n\n**Caso de uso:** Búsqueda con restricciones:\n- Activity: \"ejercicio\"\n- Location: \"en casa\"\n- Constraint: \"sin ocupar mucho espacio\"\n- Budget: \"máximo $100\"\n\n**Respuesta esperada:**\n- Productos compactos y portátiles\n- Énfasis en versatilidad y almacenamiento\n- Opciones como bandas elásticas, colchonetas\n\n**Uso:** Probar comprensión de restricciones espaciales."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Products - Natural Language",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"Busco auriculares baratos para trabajar desde casa\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/rag/search-natural-language",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"rag",
+								"search-natural-language"
+							]
+						},
+						"description": "🔍 **Búsqueda Semántica Básica**\n\n**Disponible:** Rama 2+\n\n**Body:**\n```json\n{\n  \"text\": \"auriculares inalámbricos para deporte\",\n  \"limit\": 5\n}\n```\n\n**Proceso:**\n1. Convierte consulta a embedding\n2. Calcula similitud coseno con productos\n3. Ordena por relevancia\n4. Genera respuesta natural con ProductRAGService\n\n**Respuesta:**\n- answer: Respuesta conversacional generada\n- products: Productos encontrados con similarity scores\n- tokensUsed: Tokens consumidos\n\n**Ejemplos de consultas:**\n- \"smartphone con buena cámara\"\n- \"algo para hacer ejercicio en casa\"\n- \"regalo para cocinar\""
+					},
+					"response": []
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/rag/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"rag",
+								"health"
+							]
+						},
+						"description": "📊 **Estadísticas del Vector Store**\n\n**Disponible:** Rama 2+\n\n**Respuesta:**\n- totalProducts: Número total indexado\n- categories: Categorías disponibles\n- withImages: Productos con imágenes\n- imagePercentage: % con análisis visual\n- avgPrice: Precio promedio\n- indexed: Estado de indexación\n\n**Uso:** Debug y optimización del sistema RAG. Verificar que la indexación fue exitosa."
+					},
+					"response": []
+				}
+			],
+			"description": "Sistema de búsqueda semántica con embeddings y vector store optimizado.\n\n## Features disponibles:\n\n- `POST /rag/search-by-filters` - Búsqueda semántica de productos por filtros\n    \n- `POST /rag/search-natural-language` - Búsqueda con procesamiento de lenguaje natural\n    \n- `GET /rag/health` - Estado del servicio RAG\n    \n\n## Objetivo:\n\nBúsqueda inteligente de productos usando embeddings:\n\n- **\"zapatillas para correr\"** → productos deportivos relevantes por similitud\n    \n- **\"regalo cocina mamá $100\"** → filtrado por categoría, precio y contexto\n    \n- **\"laptop trabajo programador\"** → scoring semántico + filtros de marca\n    \n\n**Dataset**: 42 productos across 8 categorías con text-embedding-3-small"
+		},
+		{
+			"name": "🛠️ Branch 3: Tool Calling",
+			"item": [
+				{
+					"name": "Tool Execute - Consulta Simple - Productos",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Busco laptops Apple que tengan buen procesamiento. Quiero usarla para el trabajo.\",\n  \"include_tool_details\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/tools/chat",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"tools",
+								"chat"
+							]
+						},
+						"description": "🤖 **Asistente con Tool Calling Automático**\n\n**Disponible:** Rama 3+\n\n**Body:**\n```json\n{\n  \"query\": \"Necesito auriculares para trabajo remoto\",\n  \"responseFormat\": \"text\"\n}\n```\n\n**Proceso:**\n1. GPT-4o-mini analiza la consulta\n2. Decide automáticamente qué herramientas usar\n3. Ejecuta search_products con parámetros inteligentes\n4. Genera respuesta natural con resultados\n\n**Respuesta:**\n- text: Respuesta conversacional\n- products: Productos encontrados (máximo 3)\n- toolsUsed: Herramientas utilizadas\n- intent: Intención detectada\n\n**Ventaja:** Sistema decide automáticamente la mejor estrategia."
+					},
+					"response": []
+				},
+				{
+					"name": "Tool Execute - Consulta Simple - Póliticas",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Cómo pido el reembolso de un producto que llegó defectuoso?\",\n  \"include_tool_details\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/tools/chat",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"tools",
+								"chat"
+							]
+						},
+						"description": "🤖 **Asistente con Tool Calling Automático**\n\n**Disponible:** Rama 3+\n\n**Body:**\n```json\n{\n  \"query\": \"Necesito auriculares para trabajo remoto\",\n  \"responseFormat\": \"text\"\n}\n```\n\n**Proceso:**\n1. GPT-4o-mini analiza la consulta\n2. Decide automáticamente qué herramientas usar\n3. Ejecuta search_products con parámetros inteligentes\n4. Genera respuesta natural con resultados\n\n**Respuesta:**\n- text: Respuesta conversacional\n- products: Productos encontrados (máximo 3)\n- toolsUsed: Herramientas utilizadas\n- intent: Intención detectada\n\n**Ventaja:** Sistema decide automáticamente la mejor estrategia."
+					},
+					"response": []
+				},
+				{
+					"name": "Tool Execute - Consulta Intermedia",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tool\": \"get_product_details\",\n  \"arguments\": {\n    \"product_ids\": [\"prod-001\"],\n    \"include_reviews\": true,\n    \"include_specifications\": true\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/tools/execute",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"tools",
+								"execute"
+							]
+						},
+						"description": "🔍 **Herramienta: get_product_details**\n\n**Disponible:** Rama 3+\n\n**Argumentos:**\n- product_ids: Array de IDs de productos\n- include_reviews: Boolean (datos mock)\n- include_specifications: Boolean (datos mock)\n\n**Proceso:**\n- Extrae información base del vector store\n- Genera reviews convincentes (mock data)\n- Añade especificaciones por categoría (mock)\n- SIN costo API adicional\n\n**Respuesta:**\n- products: Array con detalles completos\n  - Información base + reviews + specs\n  - stock_info, shipping, warranty\n\n**Uso:** Información detallada para decisiones de compra."
+					},
+					"response": []
+				},
+				{
+					"name": "Tool Execute - Consulta Intermedia v2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Compara entre dos celulares, y recomiendame uno. Sin presupuestos\",\n  \"include_tool_details\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/tools/chat",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"tools",
+								"chat"
+							]
+						},
+						"description": "🔍 **Herramienta: get_product_details**\n\n**Disponible:** Rama 3+\n\n**Argumentos:**\n- product_ids: Array de IDs de productos\n- include_reviews: Boolean (datos mock)\n- include_specifications: Boolean (datos mock)\n\n**Proceso:**\n- Extrae información base del vector store\n- Genera reviews convincentes (mock data)\n- Añade especificaciones por categoría (mock)\n- SIN costo API adicional\n\n**Respuesta:**\n- products: Array con detalles completos\n  - Información base + reviews + specs\n  - stock_info, shipping, warranty\n\n**Uso:** Información detallada para decisiones de compra."
+					},
+					"response": []
+				},
+				{
+					"name": "Tool Execute - Consulta Avanzada",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Recomienda el mejor celular que tengas, y dame las politicas de reembolso en caso de daños o incorrecto funcionamiento del dispositivo\",\n  \"include_tool_details\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/tools/chat",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"tools",
+								"chat"
+							]
+						},
+						"description": "🔍 **Herramienta: get_product_details**\n\n**Disponible:** Rama 3+\n\n**Argumentos:**\n- product_ids: Array de IDs de productos\n- include_reviews: Boolean (datos mock)\n- include_specifications: Boolean (datos mock)\n\n**Proceso:**\n- Extrae información base del vector store\n- Genera reviews convincentes (mock data)\n- Añade especificaciones por categoría (mock)\n- SIN costo API adicional\n\n**Respuesta:**\n- products: Array con detalles completos\n  - Información base + reviews + specs\n  - stock_info, shipping, warranty\n\n**Uso:** Información detallada para decisiones de compra."
+					},
+					"response": []
+				},
+				{
+					"name": "Available Tools - Lista de Herramientas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/tools/available",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"tools",
+								"available"
+							]
+						},
+						"description": "📋 **Lista de Herramientas Disponibles**\n\n**Disponible:** Rama 3+\n\n**Respuesta:**\n- tools: Array con definición de cada herramienta\n  - name, description, parameters\n  - Esquemas JSON completos\n- total_tools: 3 herramientas optimizadas\n- cost_optimization: Detalles de optimización\n\n**Herramientas incluidas:**\n1. search_products - Búsqueda inteligente\n2. compare_products - Comparación estructurada  \n3. get_product_details - Información detallada\n\n**Uso:** Referencia para desarrolladores sobre capacidades disponibles."
+					},
+					"response": []
+				},
+				{
+					"name": "Status del servicio",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/tools//health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"tools",
+								"",
+								"health"
+							]
+						},
+						"description": "📋 **Lista de Herramientas Disponibles**\n\n**Disponible:** Rama 3+\n\n**Respuesta:**\n- tools: Array con definición de cada herramienta\n  - name, description, parameters\n  - Esquemas JSON completos\n- total_tools: 3 herramientas optimizadas\n- cost_optimization: Detalles de optimización\n\n**Herramientas incluidas:**\n1. search_products - Búsqueda inteligente\n2. compare_products - Comparación estructurada  \n3. get_product_details - Información detallada\n\n**Uso:** Referencia para desarrolladores sobre capacidades disponibles."
+					},
+					"response": []
+				}
+			],
+			"description": "Conversaciones inteligentes con selección automática de herramientas.\n\n## Features disponibles:\n\n- `POST /tools/chat` - IA conversacional con herramientas automáticas\n    \n- `GET /tools/available` - Lista de herramientas disponibles\n    \n- `GET /tools/health` - Estado del sistema de herramientas\n    \n\n## Objetivo:\n\nAutomatizar acciones basadas en intención del usuario:\n\n- **\"Compara iPhone vs Samsung\"** → `compare_products()` automático\n    \n- **\"Busco algo para ejercicio\"** → `search_products(fitness)` + recomendaciones\n    \n- **\"Detalles del MacBook\"** → `get_product_details()` + análisis completo\n    \n\n**Dataset**: 3 herramientas especializadas con preservación de contexto"
+		},
+		{
+			"name": "🎯 Branch 4: Fine-tuning",
+			"item": [
+				{
+					"name": "Get Models",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"model\": \"gpt-4o-mini\",\n  \"dataset_size\": 500,\n  \"epochs\": 3\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/fine-tuning/models",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"fine-tuning",
+								"models"
+							]
+						},
+						"description": "🚀 **Iniciar Job de Fine-tuning**\n\n**Disponible:** Rama 4+\n\n**Body:**\n```json\n{\n  \"model\": \"gpt-4o-mini\",\n  \"dataset_size\": 500,\n  \"epochs\": 3\n}\n```\n\n**Proceso:**\n1. Genera dataset JSONL con ejemplos de intenciones\n2. Sube archivo a OpenAI\n3. Crea fine-tuning job\n4. Configuración optimizada para comercio\n\n**Respuesta:**\n- message: \"Fine-tuning iniciado\"\n- job_id: ID del job para seguimiento\n- estimated_time: \"10-20 minutos\"\n\n**Costo aproximado:** ~$3-5 por entrenamiento\n\n**Uso:** Especializar modelo para entender intenciones comerciales."
+					},
+					"response": []
+				},
+				{
+					"name": "Extract filters - Modelo Base",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"busco laptop gaming barata marca Apple entre $15-$500\",\n  \"modelId\": \"gpt-4o-mini-2024-07-18\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/fine-tuning/extract-filters",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"fine-tuning",
+								"extract-filters"
+							]
+						},
+						"description": "🎯 **Análisis de Intención - Modelo Base**\n\n**Disponible:** Rama 4+\n\n**Body:**\n```json\n{\n  \"query\": \"Algo para ejercicio en departamento pequeño\",\n  \"model\": \"base\"\n}\n```\n\n**Proceso:**\n- Usa gpt-4o-mini base (sin fine-tuning)\n- Intenta extraer intención en formato libre\n- Sin estructura específica para comercio\n\n**Respuesta:**\n- query: Consulta analizada\n- intent: Intención detectada (no estructurada)\n- model_used: \"base\"\n\n**Uso:** Baseline para comparar con modelo fine-tuned."
+					},
+					"response": []
+				},
+				{
+					"name": "Extract filters - Modelo Fine-tuned",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"busco laptop gaming barata marca Apple entre $15-$500\",\n  \"modelId\": \"ft:gpt-4o-mini-2024-07-18:personal:product-filter-extractor:CLcfRsmb\",\n  \"note\": \"Replace abc123 with actual fine-tuned model ID from npm run fine-tuning:status\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/fine-tuning/extract-filters",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"fine-tuning",
+								"extract-filters"
+							]
+						},
+						"description": "🎯 **Análisis de Intención - Modelo Fine-tuned**\n\n**Disponible:** Rama 4+ (requiere fine-tuning completado)\n\n**Body:**\n```json\n{\n  \"query\": \"Regalo para mi mamá cocinera\",\n  \"model\": \"fine-tuned\"\n}\n```\n\n**Proceso:**\n- Usa modelo especializado ft:gpt-4o-mini:...\n- Extrae intención en formato estructurado\n- Optimizado para intenciones comerciales\n\n**Respuesta estructurada:**\n- intent: \"gift-purchase\"\n- categories: [\"kitchen\", \"cookware\"]\n- features: [\"practical\", \"quality\", \"giftable\"]\n- recipient: \"mother\"\n- budget: tipo y rango\n\n**Uso:** Intenciones estructuradas para mejor tool calling."
+					},
+					"response": []
+				},
+				{
+					"name": "Compare Fine-tuned vs Foundation model",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"busco laptop gaming barata marca Apple entre $15-$500\",\n  \"fineTunedModelId\": \"ft:gpt-4o-mini-2024-07-18:personal:product-filter-extractor:CLcfRsmb\",\n  \"note\": \"Replace abc123 with actual fine-tuned model ID from npm run fine-tuning:status\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/fine-tuning/compare-models",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"fine-tuning",
+								"compare-models"
+							]
+						},
+						"description": "⚖️ **Comparar Modelos Base vs Fine-tuned**\n\n**Disponible:** Rama 4+ (requiere fine-tuning completado)\n\n**Body:**\n```json\n{\n  \"testQueries\": [\n    \"Auriculares para trabajo remoto\",\n    \"Algo elegante pero económico para oficina\",\n    \"Juguete para niño de 10 años\"\n  ]\n}\n```\n\n**Proceso:**\n1. Analiza cada query con modelo base\n2. Analiza cada query con modelo fine-tuned\n3. Compara estructuración y precisión\n4. Calcula métricas de mejora\n\n**Respuesta:**\n- results: Array con comparación por query\n  - base_model: Respuesta del modelo base\n  - fine_tuned: Respuesta estructurada\n  - improvement: Métricas de mejora\n\n**Uso:** Validar efectividad del fine-tuning."
+					},
+					"response": []
+				},
+				{
+					"name": "Status del servicio",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}:{{port}}/fine-tuning/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"fine-tuning",
+								"health"
+							]
+						},
+						"description": "📈 **Métricas de Entrenamiento**\n\n**Disponible:** Rama 4+\n\n**Respuesta:**\n- training_loss: Pérdida durante entrenamiento\n- validation_loss: Pérdida en validación\n- epochs_completed: Épocas completadas\n- tokens_processed: Tokens procesados\n- model_performance: Métricas de rendimiento\n\n**Métricas incluidas:**\n- Precisión en extracción de intenciones\n- Consistencia en formato estructurado\n- Mejora vs modelo base\n\n**Uso:** Evaluar calidad del modelo fine-tuned y optimizar futuros entrenamientos."
+					},
+					"response": []
+				}
+			],
+			"description": "Modelo especializado para comprensión de intenciones comerciales usando gpt-4o-mini.\n\n## Features disponibles:\n\n- `POST /fine-tuning/classify-intent` - Clasificación de intenciones (base vs fine-tuned)\n    \n- `GET /fine-tuning/models` - Modelos disponibles y métricas de rendimiento\n    \n- `POST /fine-tuning/smart-recommend` - Workflow integrado completo\n    \n- `GET /fine-tuning/health` - Estado del servicio de fine-tuning\n    \n\n## Objetivo:\n\nMejorar comprensión de intenciones con modelo especializado:\n\n- **\"Regalo para mi mamá cocinera, $150\"** → `INTENT: gift, RECIPIENT: mother, BUDGET: 150, CATEGORY: kitchen`\n    \n- **\"Necesito laptop trabajo\"** → `INTENT: business, CATEGORY: electronics, FEATURES: performance`\n    \n- **\"Algo para ejercicio casa\"** → `INTENT: personal, CATEGORY: sports, CONSTRAINT: home`\n    \n\n**Dataset**: 400+ ejemplos de intenciones comerciales estructuradas con 100% accuracy"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Set dynamic variables for product search workshop",
+					"pm.environment.set('timestamp', new Date().toISOString());",
+					"pm.environment.set('requestId', pm.variables.replaceIn('{{$randomUUID}}'));",
+					"console.log('🛍️ Product Search Workshop - Request initiated at', pm.environment.get('timestamp'));"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Enhanced response validation for product search workshop",
+					"pm.test('Status code is successful', function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+					"});",
+					"",
+					"pm.test('Response time is reasonable', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(15000); // 15s for AI responses",
+					"});",
+					"",
+					"pm.test('Content-Type is appropriate', function () {",
+					"    const contentType = pm.response.headers.get('Content-Type');",
+					"    pm.expect(contentType).to.satisfy(function(ct) {",
+					"        return ct.includes('application/json') || ct.includes('audio/mpeg');",
+					"    });",
+					"});",
+					"",
+					"// Specific tests for product search responses",
+					"if (pm.response.headers.get('Content-Type').includes('application/json')) {",
+					"    pm.test('Response has expected structure', function () {",
+					"        const jsonData = pm.response.json();",
+					"        ",
+					"        // For search endpoints",
+					"        if (pm.request.url.toString().includes('/search')) {",
+					"            pm.expect(jsonData).to.have.property('answer');",
+					"            pm.expect(jsonData).to.have.property('products');",
+					"        }",
+					"        ",
+					"        // For assistant endpoints",
+					"        if (pm.request.url.toString().includes('/assistant')) {",
+					"            pm.expect(jsonData).to.have.property('text');",
+					"        }",
+					"        ",
+					"        // For tool execution",
+					"        if (pm.request.url.toString().includes('/tools')) {",
+					"            pm.expect(jsonData).to.be.an('object');",
+					"        }",
+					"    });",
+					"",
+					"    // Log interesting data for debugging",
+					"    const jsonData = pm.response.json();",
+					"    if (jsonData.products && jsonData.products.length > 0) {",
+					"        console.log(`Found ${jsonData.products.length} products`);",
+					"    }",
+					"    if (jsonData.toolsUsed) {",
+					"        console.log('Tools used:', jsonData.toolsUsed);",
+					"    }",
+					"    if (jsonData.tokensUsed) {",
+					"        console.log('Tokens used:', jsonData.tokensUsed);",
+					"    }",
+					"}",
+					"",
+					"// Log response for debugging",
+					"console.log('📊 Response Status:', pm.response.code);",
+					"console.log('⏱️ Response Time:', pm.response.responseTime + 'ms');"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost",
+			"type": "string"
+		},
+		{
+			"key": "port",
+			"value": "3000",
+			"type": "string"
+		}
+	]
+}
